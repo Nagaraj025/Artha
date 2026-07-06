@@ -43,4 +43,20 @@ class BankSmsParserTest {
         val body = "Your account was debited for a transaction. Contact support for details."
         assertNull(BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L))
     }
+
+    @Test
+    fun `merchant name stops at the sentence boundary, not the whole trailing clause`() {
+        val body = "Rs.500.00 debited from A/c XX1234 on 03-07-26 at SWIGGY. Avl Bal Rs.10,000.00"
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("SWIGGY", result.merchant)
+    }
+
+    @Test
+    fun `picks the transaction amount over an earlier balance figure in the body`() {
+        val body = "A/c XX1234 bal Rs.10,000.00. Rs.500 debited on 03-07-26 at SWIGGY"
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(500.0, result.amount, 0.001)
+    }
 }

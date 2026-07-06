@@ -1,6 +1,7 @@
 package com.subramanya.artha.sms
 
 import com.subramanya.artha.domain.model.SmsDirection
+import kotlin.math.abs
 
 data class ParsedBankSms(
     val sender: String,
@@ -29,19 +30,34 @@ object BankSmsParser {
         """(?:a/c|acct|account|card)[^\d]{0,10}(?:no\.?)?\s*[xX*]*(\d{3,6})""",
         RegexOption.IGNORE_CASE,
     )
-    private val MERCHANT_REGEX = Regex("""(?:at|to)\s+([A-Za-z0-9 &.'-]{3,30})""", RegexOption.IGNORE_CASE)
+    // Non-greedy capture stops at the nearest punctuation or common trailing-clause marker
+    // (e.g. "Avl Bal ...") instead of swallowing the rest of the SMS. A leading pronoun/article
+    // ("to your account", "at the branch") is excluded outright — null is preferable to garbage.
+    private val MERCHANT_REGEX = Regex(
+        """(?:at|to)\s+(?!your\b|the\b)([A-Za-z0-9 &.'-]{3,30}?)(?=[.,:]|\s+(?:avl|bal|on|dt|info)\b|$)""",
+        RegexOption.IGNORE_CASE,
+    )
 
     fun parse(sender: String, body: String, receivedAt: Long): ParsedBankSms? {
         val lower = body.lowercase()
         if (EXCLUDE_KEYWORDS.any { lower.contains(it) }) return null
 
-        val direction = when {
-            DEBIT_KEYWORDS.any { lower.contains(it) } -> SmsDirection.DEBIT
-            CREDIT_KEYWORDS.any { lower.contains(it) } -> SmsDirection.CREDIT
+        val debitKeyword = DEBIT_KEYWORDS.firstOrNull { lower.contains(it) }
+        val creditKeyword = CREDIT_KEYWORDS.firstOrNull { lower.contains(it) }
+        val (direction, directionKeyword) = when {
+            debitKeyword != null -> SmsDirection.DEBIT to debitKeyword
+            creditKeyword != null -> SmsDirection.CREDIT to creditKeyword
             else -> return null
         }
 
-        val amountMatch = AMOUNT_REGEX.find(body) ?: return null
+        // Many bank templates state the running balance before the transaction amount
+        // (e.g. "bal Rs.10,000.00. Rs.500 debited..."), so take every Rs./INR figure in the
+        // body and prefer whichever one sits closest to the matched debit/credit keyword,
+        // rather than always trusting the first figure that appears.
+        val keywordIndex = lower.indexOf(directionKeyword)
+        val amountMatches = AMOUNT_REGEX.findAll(body).toList()
+        if (amountMatches.isEmpty()) return null
+        val amountMatch = amountMatches.minBy { abs(it.range.first - keywordIndex) }
         val amount = amountMatch.groupValues[1].replace(",", "").toDoubleOrNull() ?: return null
         if (amount <= 0.0) return null
 
