@@ -54,9 +54,13 @@ class SmsReceiver : BroadcastReceiver() {
                             suggestedCategoryId = ruleResult.transaction.categoryId,
                         ),
                     )
-                    // Notification update is handled process-wide by ArthaApplication's
-                    // observeCount() collector (see ArthaApplication.onCreate) — no need to
-                    // update it here too, that would just double-update on every SMS.
+                    // Re-add notifier call to guarantee update within goAsync() keep-alive
+                    // window on cold-start. Process-wide ArthaApplication collector still
+                    // handles in-app dismiss/save paths. Both mechanisms are safe — update()
+                    // is idempotent and posting the same notification twice has no adverse
+                    // effect (it just replaces the existing notification with identical content).
+                    val count = app.pendingTransactionRepository.observeCount().first()
+                    PendingTransactionNotifier.update(context, count)
                 }
             } finally {
                 pendingResult.finish()
