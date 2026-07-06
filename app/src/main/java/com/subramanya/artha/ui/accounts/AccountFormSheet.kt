@@ -58,7 +58,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
+fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit, prefillLast4: String? = null) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -67,7 +67,9 @@ fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
     var name by remember(editing) { mutableStateOf(editing?.name.orEmpty()) }
     var type by remember(editing) { mutableStateOf(editing?.type ?: AccountType.SAVINGS) }
     var institution by remember(editing) { mutableStateOf(editing?.institution.orEmpty()) }
-    var last4 by remember(editing) { mutableStateOf(editing?.accountNumberLast4.orEmpty()) }
+    var last4 by remember(editing) {
+        mutableStateOf(editing?.accountNumberLast4 ?: prefillLast4.orEmpty())
+    }
     var openingText by remember(editing) {
         mutableStateOf(editing?.openingBalance?.toPlainString() ?: "")
     }
@@ -78,7 +80,7 @@ fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
     val parsedBalance = remember(openingText) {
         if (openingText.isBlank()) 0.0 else openingText.toDoubleOrNull()
     }
-    val last4Valid = last4.isEmpty() || (last4.length == 4 && last4.all { it.isDigit() })
+    val last4Valid = last4.length in 3..6 && last4.all { it.isDigit() }
     val isValid = name.isNotBlank() && parsedBalance != null && last4Valid
 
     val typeOptions = listOf(
@@ -147,11 +149,10 @@ fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
 
             FieldRow(
                 label = stringResource(R.string.account_form_last4_label),
-                optional = true,
             ) {
                 ArthaTextField(
                     value = last4,
-                    onValueChange = { v -> last4 = v.filter { it.isDigit() }.take(4) },
+                    onValueChange = { v -> last4 = v.filter { it.isDigit() }.take(6) },
                     placeholder = "7421",
                     isError = showErrors && !last4Valid,
                     supportingText = if (showErrors && !last4Valid) {
@@ -211,7 +212,7 @@ fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
                         name = name.trim(),
                         type = type,
                         institution = institution.trim().takeIf { it.isNotBlank() },
-                        accountNumberLast4 = last4.takeIf { it.length == 4 },
+                        accountNumberLast4 = last4.takeIf { it.length in 3..6 },
                         openingBalance = parsedBalance ?: 0.0,
                         currency = editing?.currency ?: "INR",
                         icon = icon,

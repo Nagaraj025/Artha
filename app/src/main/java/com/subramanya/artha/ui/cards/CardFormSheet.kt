@@ -58,7 +58,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
+fun CardFormSheet(editing: Card?, onDismiss: () -> Unit, prefillLast4: String? = null) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -71,7 +71,9 @@ fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
     var type by remember(editing) { mutableStateOf(editing?.type ?: CardType.CREDIT) }
     var network by remember(editing) { mutableStateOf(editing?.network ?: CardNetwork.VISA) }
     var issuer by remember(editing) { mutableStateOf(editing?.issuer.orEmpty()) }
-    var last4 by remember(editing) { mutableStateOf(editing?.cardNumberLast4.orEmpty()) }
+    var last4 by remember(editing) {
+        mutableStateOf(editing?.cardNumberLast4 ?: prefillLast4.orEmpty())
+    }
     var creditLimitText by remember(editing) {
         mutableStateOf(editing?.creditLimit?.toPlainString() ?: "")
     }
@@ -88,7 +90,7 @@ fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
     val parsedLimit = creditLimitText.toDoubleOrNull()
     val parsedStatement = statementDayText.toIntOrNull()
     val parsedDue = dueDayText.toIntOrNull()
-    val last4Valid = last4.isEmpty() || (last4.length == 4 && last4.all { it.isDigit() })
+    val last4Valid = last4.length in 3..6 && last4.all { it.isDigit() }
 
     val isValid: Boolean = name.isNotBlank() && last4Valid && when (type) {
         CardType.CREDIT -> (parsedLimit != null && parsedLimit > 0.0) &&
@@ -169,11 +171,10 @@ fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
             }
             FieldRow(
                 label = stringResource(R.string.card_form_last4_label),
-                optional = true,
             ) {
                 ArthaTextField(
                     value = last4,
-                    onValueChange = { v -> last4 = v.filter { it.isDigit() }.take(4) },
+                    onValueChange = { v -> last4 = v.filter { it.isDigit() }.take(6) },
                     placeholder = "8842",
                     isError = showErrors && !last4Valid,
                     keyboardOptions = KeyboardOptions(
@@ -274,7 +275,7 @@ fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
                         type = type,
                         issuer = issuer.trim().takeIf { it.isNotBlank() },
                         network = network,
-                        cardNumberLast4 = last4.takeIf { it.length == 4 },
+                        cardNumberLast4 = last4.takeIf { it.length in 3..6 },
                         creditLimit = parsedLimit?.takeIf { type == CardType.CREDIT },
                         statementDayOfMonth = parsedStatement?.takeIf { type == CardType.CREDIT },
                         dueDayOfMonth = parsedDue?.takeIf { type == CardType.CREDIT },

@@ -299,14 +299,14 @@
     <string name="account_form_type_label">Type</string>
     <string name="account_form_institution_label">Institution (optional)</string>
     <string name="account_form_institution_placeholder">e.g. ICICI Bank</string>
-    <string name="account_form_last4_label">Last 4 digits (optional)</string>
+    <string name="account_form_last4_label">Last digits</string>
     <string name="account_form_opening_label">Opening balance</string>
     <string name="account_form_icon_label">Icon</string>
     <string name="account_form_color_label">Color</string>
     <string name="account_form_save">Save</string>
     <string name="account_form_validation_name">Name is required</string>
     <string name="account_form_validation_balance">Enter a valid amount</string>
-    <string name="account_form_validation_last4">Must be 4 digits</string>
+    <string name="account_form_validation_last4">Enter the last 3–6 digits</string>
 
     <!-- Account detail -->
     <string name="account_detail_back">Back</string>
@@ -374,7 +374,7 @@
     <string name="card_form_network_diners">Diners</string>
     <string name="card_form_issuer_label">Issuer (optional)</string>
     <string name="card_form_issuer_placeholder">e.g. ICICI Bank</string>
-    <string name="card_form_last4_label">Last 4 digits (optional)</string>
+    <string name="card_form_last4_label">Last digits</string>
     <string name="card_form_credit_limit_label">Credit limit</string>
     <string name="card_form_statement_day_label">Statement day of month</string>
     <string name="card_form_due_day_label">Due day of month</string>
