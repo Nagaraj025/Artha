@@ -59,4 +59,28 @@ class BankSmsParserTest {
         requireNotNull(result)
         assertEquals(500.0, result.amount, 0.001)
     }
+
+    @Test
+    fun `recognizes 'sent' as a debit keyword`() {
+        val body = "Rs.200.00 sent from A/c XX1234 to SWIGGY on 06-07-26"
+        val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals(200.0, result.amount, 0.001)
+    }
+
+    @Test
+    fun `recognizes 'received' as a credit keyword`() {
+        val body = "Rs.1,000.00 received in A/c XX1234 from RAVI on 06-07-26"
+        val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.CREDIT, result.direction)
+        assertEquals(1000.0, result.amount, 0.001)
+    }
+
+    @Test
+    fun `does not false-positive on 'sent' as a substring of an unrelated word`() {
+        val body = "Please give your consent for the KYC update process to continue using UPI worth Rs.500"
+        assertNull(BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L))
+    }
 }

@@ -28,8 +28,8 @@ object BankSmsParser {
         "sale",
         "discount",
     )
-    private val DEBIT_KEYWORDS = listOf("debited", "debit", "spent", "withdrawn")
-    private val CREDIT_KEYWORDS = listOf("credited", "credit")
+    private val DEBIT_KEYWORDS = listOf("debited", "debit", "spent", "withdrawn", "sent")
+    private val CREDIT_KEYWORDS = listOf("credited", "credit", "received")
     private val AMOUNT_REGEX = Regex("""(?:Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)""", RegexOption.IGNORE_CASE)
     private val ACCOUNT_REGEX = Regex(
         """(?:a/c|acct|account|card)[^\d]{0,10}(?:no\.?)?\s*[xX*]*(\d{3,6})""",
@@ -48,11 +48,14 @@ object BankSmsParser {
         val lower = body.lowercase()
         if (EXCLUDE_KEYWORDS.any { lower.contains(it) }) return null
 
-        val debitKeyword = DEBIT_KEYWORDS.firstOrNull { lower.contains(it) }
-        val creditKeyword = CREDIT_KEYWORDS.firstOrNull { lower.contains(it) }
-        val (direction, directionKeyword) = when {
-            debitKeyword != null -> SmsDirection.DEBIT to debitKeyword
-            creditKeyword != null -> SmsDirection.CREDIT to creditKeyword
+        // Word-boundary match, not a bare substring check: short generic words like "sent"
+        // are also substrings of unrelated words ("consent", "represent"), which a plain
+        // `contains` would wrongly treat as a debit keyword.
+        val debitMatch = firstWordMatch(lower, DEBIT_KEYWORDS)
+        val creditMatch = firstWordMatch(lower, CREDIT_KEYWORDS)
+        val (direction, keywordIndex) = when {
+            debitMatch != null -> SmsDirection.DEBIT to debitMatch
+            creditMatch != null -> SmsDirection.CREDIT to creditMatch
             else -> return null
         }
 
@@ -60,7 +63,6 @@ object BankSmsParser {
         // (e.g. "bal Rs.10,000.00. Rs.500 debited..."), so take every Rs./INR figure in the
         // body and prefer whichever one sits closest to the matched debit/credit keyword,
         // rather than always trusting the first figure that appears.
-        val keywordIndex = lower.indexOf(directionKeyword)
         val amountMatches = AMOUNT_REGEX.findAll(body).toList()
         if (amountMatches.isEmpty()) return null
         val amountMatch = amountMatches.minBy { abs(it.range.first - keywordIndex) }
@@ -78,5 +80,14 @@ object BankSmsParser {
             accountHint = accountHint,
             merchant = merchant,
         )
+    }
+
+    /** Index of the first whole-word match among [words] in [text], or null if none match. */
+    private fun firstWordMatch(text: String, words: List<String>): Int? {
+        for (word in words) {
+            val match = Regex("""\b${Regex.escape(word)}\b""").find(text)
+            if (match != null) return match.range.first
+        }
+        return null
     }
 }
