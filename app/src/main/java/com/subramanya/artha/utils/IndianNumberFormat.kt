@@ -49,8 +49,11 @@ object IndianNumberFormat {
             abs >= 1_00_00_000.0 -> abs / 1_00_00_000.0 to "Cr"
             else -> abs / 1_00_000.0 to "L"
         }
-        val rendered = if (value >= 10.0) "%.0f".format(value)
-                       else "%.1f".format(value).trimEnd('0').trimEnd('.')
+        val rendered = if (value >= 10.0) {
+            "%.0f".format(value)
+        } else {
+            "%.1f".format(value).trimEnd('0').trimEnd('.')
+        }
         return (if (isNegative) NEG_SIGN else "") + INR_SYMBOL + rendered + " " + suffix
     }
 

@@ -17,7 +17,4 @@ data class Account(
     val createdAt: Long,
 )
 
-data class AccountWithBalance(
-    val account: Account,
-    val currentBalance: Double,
-)
+data class AccountWithBalance(val account: Account, val currentBalance: Double)

@@ -24,10 +24,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -82,11 +81,7 @@ val SheetWindowInsets: @Composable () -> WindowInsets = {
  * 36×4 drag handle.
  */
 @Composable
-fun SheetTitle(
-    title: String,
-    sub: String? = null,
-    modifier: Modifier = Modifier,
-) {
+fun SheetTitle(title: String, sub: String? = null, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(start = 4.dp, end = 4.dp, top = 4.dp, bottom = 6.dp)) {
         Text(
             text = title,
@@ -170,12 +165,7 @@ data class PillOption<T>(val value: T, val label: String, val icon: ImageVector?
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun <T> PillRadio(
-    value: T?,
-    options: List<PillOption<T>>,
-    onChange: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun <T> PillRadio(value: T?, options: List<PillOption<T>>, onChange: (T) -> Unit, modifier: Modifier = Modifier) {
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -194,12 +184,7 @@ fun <T> PillRadio(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun <T> PillRadioMulti(
-    values: Set<T>,
-    options: List<PillOption<T>>,
-    onToggle: (T) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun <T> PillRadioMulti(values: Set<T>, options: List<PillOption<T>>, onToggle: (T) -> Unit, modifier: Modifier = Modifier) {
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -217,12 +202,7 @@ fun <T> PillRadioMulti(
 }
 
 @Composable
-private fun ChipPill(
-    active: Boolean,
-    label: String,
-    icon: ImageVector?,
-    onClick: () -> Unit,
-) {
+private fun ChipPill(active: Boolean, label: String, icon: ImageVector?, onClick: () -> Unit) {
     val container = if (active) Teal900 else Color.Transparent
     val border = if (active) Teal500 else Line1
     val content = if (active) Teal300 else Text1
@@ -282,61 +262,61 @@ fun ArthaTextField(
     val height = if (large) 56.dp else 48.dp
     val border = if (isError) com.subramanya.artha.ui.theme.Danger else Line1
     Column(modifier = modifier.fillMaxWidth()) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height)
-            .clip(RoundedCornerShape(10.dp))
-            .background(Surface2)
-            .border(1.dp, border, RoundedCornerShape(10.dp))
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = singleLine,
-            keyboardOptions = keyboardOptions,
-            cursorBrush = SolidColor(Teal300),
-            textStyle = TextStyle(
-                fontFamily = PlusJakartaSans,
-                fontSize = if (large) 16.sp else 14.sp,
-                color = Text1,
-            ),
-            // fillMaxWidth + weight(1f) ensures the tappable + focusable region
-            // covers the whole input — without it, an empty BasicTextField is
-            // 0dp wide so taps on the placeholder land on the parent Row and
-            // nothing happens. (This is what shipped before the fix.)
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            decorationBox = { inner ->
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = TextStyle(
-                            fontFamily = PlusJakartaSans,
-                            fontSize = if (large) 16.sp else 14.sp,
-                            color = Text4,
-                        ),
-                    )
-                }
-                inner()
-            },
-        )
-        if (suffix != null) {
-            Spacer(Modifier.size(10.dp))
-            Text(
-                text = suffix,
-                style = TextStyle(
-                    fontFamily = IbmPlexMono,
-                    fontSize = 13.sp,
-                    color = Text3,
-                    fontFeatureSettings = "tnum, lnum",
+                .fillMaxWidth()
+                .height(height)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Surface2)
+                .border(1.dp, border, RoundedCornerShape(10.dp))
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = singleLine,
+                keyboardOptions = keyboardOptions,
+                cursorBrush = SolidColor(Teal300),
+                textStyle = TextStyle(
+                    fontFamily = PlusJakartaSans,
+                    fontSize = if (large) 16.sp else 14.sp,
+                    color = Text1,
                 ),
+                // fillMaxWidth + weight(1f) ensures the tappable + focusable region
+                // covers the whole input — without it, an empty BasicTextField is
+                // 0dp wide so taps on the placeholder land on the parent Row and
+                // nothing happens. (This is what shipped before the fix.)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                decorationBox = { inner ->
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            style = TextStyle(
+                                fontFamily = PlusJakartaSans,
+                                fontSize = if (large) 16.sp else 14.sp,
+                                color = Text4,
+                            ),
+                        )
+                    }
+                    inner()
+                },
             )
+            if (suffix != null) {
+                Spacer(Modifier.size(10.dp))
+                Text(
+                    text = suffix,
+                    style = TextStyle(
+                        fontFamily = IbmPlexMono,
+                        fontSize = 13.sp,
+                        color = Text3,
+                        fontFeatureSettings = "tnum, lnum",
+                    ),
+                )
+            }
         }
-    }
         if (supportingText != null) {
             Spacer(Modifier.size(6.dp))
             Text(
@@ -486,12 +466,7 @@ fun IconChipRow(
  * Width-stretched by default so Add sheets can use it as a footer.
  */
 @Composable
-fun SavePrimaryButton(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
+fun SavePrimaryButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val container = if (enabled) Teal700 else Surface3
     val content = if (enabled) Text1 else Text3
     Box(
@@ -518,11 +493,7 @@ fun SavePrimaryButton(
 
 /** Ghost variant used for secondary buttons (Cancel / Skip). 44dp tall. */
 @Composable
-fun GhostButton(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun GhostButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -547,12 +518,7 @@ fun GhostButton(
  * visual weight so they line up neatly inside a sheet.
  */
 @Composable
-fun SheetChip(
-    label: String,
-    leading: ImageVector? = null,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SheetChip(label: String, leading: ImageVector? = null, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .heightIn(min = 44.dp)

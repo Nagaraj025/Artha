@@ -31,10 +31,7 @@ sealed interface RuleCondition {
     data class TimeOfDayBetween(val fromMinuteOfDay: Int, val toMinuteOfDay: Int) : RuleCondition
 }
 
-data class RuleConditions(
-    val logic: ConditionLogic = ConditionLogic.ALL,
-    val items: List<RuleCondition> = emptyList(),
-)
+data class RuleConditions(val logic: ConditionLogic = ConditionLogic.ALL, val items: List<RuleCondition> = emptyList())
 
 sealed interface RuleAction {
     data class SetType(val type: TransactionType) : RuleAction
@@ -42,12 +39,12 @@ sealed interface RuleAction {
     data class SetTaxSection(val section: String) : RuleAction
     data class AddTag(val tagId: String) : RuleAction
     data class AddPerson(val personId: String) : RuleAction
+
     /** Marks the transaction so the MonthlyTotals aggregator skips it (e.g., card payments). */
     data object ExcludeFromExpenseTotal : RuleAction
+
     /** Routes via the spouse-prompt dialog at save-time instead of auto-applying. */
     data object PromptSpouse : RuleAction
 }
 
-data class RuleActions(
-    val items: List<RuleAction> = emptyList(),
-)
+data class RuleActions(val items: List<RuleAction> = emptyList())

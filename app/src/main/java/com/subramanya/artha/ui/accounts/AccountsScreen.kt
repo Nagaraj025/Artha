@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,19 +24,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +59,7 @@ import com.subramanya.artha.utils.IndianNumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountsScreen(
-    modifier: Modifier = Modifier,
-    onOpenAccount: (String) -> Unit = {},
-) {
+fun AccountsScreen(modifier: Modifier = Modifier, onOpenAccount: (String) -> Unit = {}) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: AccountsViewModel = viewModel(
@@ -113,8 +106,11 @@ fun AccountsScreen(
                         EmptyState(
                             icon = Icons.Filled.AccountBalance,
                             title = stringResource(
-                                if (state.view == AccountsView.ACTIVE) R.string.accounts_empty_active
-                                else R.string.accounts_empty_archived,
+                                if (state.view == AccountsView.ACTIVE) {
+                                    R.string.accounts_empty_active
+                                } else {
+                                    R.string.accounts_empty_archived
+                                },
                             ),
                         )
                     }
@@ -298,11 +294,17 @@ private fun ActiveAccountRow(
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.account_detail_action_edit)) },
-                            onClick = { menuOpen = false; onEdit() },
+                            onClick = {
+                                menuOpen = false
+                                onEdit()
+                            },
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.account_detail_action_archive)) },
-                            onClick = { menuOpen = false; onArchive() },
+                            onClick = {
+                                menuOpen = false
+                                onArchive()
+                            },
                             leadingIcon = { Icon(Icons.Filled.Archive, contentDescription = null) },
                         )
                         DropdownMenuItem(
@@ -312,7 +314,10 @@ private fun ActiveAccountRow(
                                     color = com.subramanya.artha.ui.theme.Danger,
                                 )
                             },
-                            onClick = { menuOpen = false; onDelete() },
+                            onClick = {
+                                menuOpen = false
+                                onDelete()
+                            },
                             leadingIcon = {
                                 Icon(
                                     Icons.Filled.Delete,
@@ -329,11 +334,7 @@ private fun ActiveAccountRow(
 }
 
 @Composable
-private fun ArchivedAccountRow(
-    row: AccountWithBalance,
-    onRestore: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun ArchivedAccountRow(row: AccountWithBalance, onRestore: () -> Unit, onDelete: () -> Unit) {
     var menuOpen by remember { mutableStateOf(false) }
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -388,7 +389,10 @@ private fun ArchivedAccountRow(
                                 color = com.subramanya.artha.ui.theme.Danger,
                             )
                         },
-                        onClick = { menuOpen = false; onDelete() },
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
                         leadingIcon = {
                             Icon(
                                 Icons.Filled.Delete,
@@ -483,12 +487,18 @@ private fun AccountsEditorialHeader(
                     if (view == AccountsView.ACTIVE) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.accounts_menu_show_archived)) },
-                            onClick = { onShowArchived(); onOverflowToggle(false) },
+                            onClick = {
+                                onShowArchived()
+                                onOverflowToggle(false)
+                            },
                         )
                     } else {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.accounts_menu_back_active)) },
-                            onClick = { onShowActive(); onOverflowToggle(false) },
+                            onClick = {
+                                onShowActive()
+                                onOverflowToggle(false)
+                            },
                         )
                     }
                 }

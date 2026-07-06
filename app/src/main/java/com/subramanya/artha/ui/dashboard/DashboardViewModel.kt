@@ -10,12 +10,6 @@ import com.subramanya.artha.data.repository.CardRepository
 import com.subramanya.artha.data.repository.InsuranceRepository
 import com.subramanya.artha.data.repository.InvestmentRepository
 import com.subramanya.artha.data.repository.TransactionRepository
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.minus
-import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import com.subramanya.artha.utils.TimeRange
 import com.subramanya.artha.utils.thisCalendarMonth
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +23,12 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 
 class DashboardViewModel(
     private val accountRepository: AccountRepository,
@@ -157,13 +157,9 @@ class DashboardViewModel(
         val investmentTotalValue: Double,
         val premiumsDueThisWeek: List<com.subramanya.artha.domain.model.Insurance>,
     )
-    private data class Phase2BagWithTxns(
-        val bag: Phase2Bag,
-        val transactions: List<com.subramanya.artha.domain.model.Transaction>,
-    )
+    private data class Phase2BagWithTxns(val bag: Phase2Bag, val transactions: List<com.subramanya.artha.domain.model.Transaction>)
 
-    private fun weekFromNow(): Long =
-        Clock.System.now().toEpochMilliseconds() + WEEK_MILLIS
+    private fun weekFromNow(): Long = Clock.System.now().toEpochMilliseconds() + WEEK_MILLIS
 
     fun onRecentRangeChanged(range: TimeRange) {
         recentRange.update { range }

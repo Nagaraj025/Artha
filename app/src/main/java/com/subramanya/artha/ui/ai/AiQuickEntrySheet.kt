@@ -105,10 +105,7 @@ import com.subramanya.artha.utils.IndianNumberFormat
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun AiQuickEntrySheet(
-    onDismiss: () -> Unit,
-    onConfirmed: (AiQuickEntryParsed) -> Unit,
-) {
+fun AiQuickEntrySheet(onDismiss: () -> Unit, onConfirmed: (AiQuickEntryParsed) -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: AiQuickEntryViewModel = viewModel(
@@ -384,10 +381,7 @@ private fun AiComposer(
 }
 
 @Composable
-private fun ComposerIconButton(
-    onClick: () -> Unit,
-    content: @Composable () -> Unit,
-) {
+private fun ComposerIconButton(onClick: () -> Unit, content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .size(36.dp)
@@ -483,11 +477,7 @@ private fun ParsingIndicator() {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ParsedCard(
-    parsed: AiQuickEntryParsed,
-    onCancel: () -> Unit,
-    onSave: () -> Unit,
-) {
+private fun ParsedCard(parsed: AiQuickEntryParsed, onCancel: () -> Unit, onSave: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -581,12 +571,7 @@ private fun ParsedCard(
 
 /** Single value pill — label eyebrow + value, tinted by confidence band. */
 @Composable
-private fun <T> chipFor(
-    label: String,
-    field: AiField<T>,
-    render: (T?) -> String,
-    mono: Boolean = false,
-) {
+private fun <T> chipFor(label: String, field: AiField<T>, render: (T?) -> String, mono: Boolean = false) {
     val (border, valueColor) = when (field.confidence) {
         Confidence.LOW -> Danger to Danger
         Confidence.MEDIUM -> Line1 to Text2

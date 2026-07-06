@@ -31,9 +31,7 @@ import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -74,20 +72,18 @@ import com.subramanya.artha.ui.theme.AccSaffron
 import com.subramanya.artha.ui.theme.AccTeal
 import com.subramanya.artha.ui.theme.AccViolet
 import com.subramanya.artha.ui.theme.ArthaAmountStyles
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
 import com.subramanya.artha.ui.theme.ExpenseSoft
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.theme.IncomeSoft
 import com.subramanya.artha.ui.theme.LineTeal
-import com.subramanya.artha.ui.theme.Ochre
 import com.subramanya.artha.ui.theme.OchreSoft
 import com.subramanya.artha.ui.theme.Surface2
 import com.subramanya.artha.ui.theme.Surface4
 import com.subramanya.artha.ui.theme.Teal300
 import com.subramanya.artha.ui.theme.Teal700
-import com.subramanya.artha.ui.theme.Teal900
 import com.subramanya.artha.ui.theme.Teal950
 import com.subramanya.artha.ui.theme.Text3
 import com.subramanya.artha.ui.theme.TiroDevanagariHindi
@@ -301,13 +297,18 @@ private fun NetPositionHero(state: DashboardUiState) {
             val change = state.netChangeThisMonth
             val pct = if (state.netPosition - change != 0.0) {
                 change / (state.netPosition - change) * 100.0
-            } else 0.0
+            } else {
+                0.0
+            }
             val positive = change >= 0
             val changeTint = if (positive) Income else Expense
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = if (positive) Icons.AutoMirrored.Filled.TrendingUp
-                                  else Icons.AutoMirrored.Filled.TrendingDown,
+                    imageVector = if (positive) {
+                        Icons.AutoMirrored.Filled.TrendingUp
+                    } else {
+                        Icons.AutoMirrored.Filled.TrendingDown
+                    },
                     contentDescription = null,
                     tint = changeTint,
                     modifier = Modifier.size(14.dp),
@@ -388,10 +389,7 @@ private fun BreakdownCell(label: String, value: Double, color: Color, modifier: 
 // ───────────────────────────── Premium-Due Banner ────────────────────────────
 
 @Composable
-private fun PremiumDueBanner(
-    policies: List<com.subramanya.artha.domain.model.Insurance>,
-    onTap: () -> Unit,
-) {
+private fun PremiumDueBanner(policies: List<com.subramanya.artha.domain.model.Insurance>, onTap: () -> Unit) {
     val nearest = policies.first()
     val dueText = nearest.nextPremiumDate?.let { DateFormatter.longDate(it) }.orEmpty()
     Surface(
@@ -460,13 +458,7 @@ private fun FlowStrip(state: DashboardUiState) {
 }
 
 @Composable
-private fun FlowTile(
-    modifier: Modifier,
-    inDirection: Boolean,
-    label: String,
-    value: Double,
-    footer: String,
-) {
+private fun FlowTile(modifier: Modifier, inDirection: Boolean, label: String, value: Double, footer: String) {
     val tint = if (inDirection) Income else Expense
     val softTint = if (inDirection) IncomeSoft else ExpenseSoft
     Column(
@@ -485,8 +477,11 @@ private fun FlowTile(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = if (inDirection) Icons.AutoMirrored.Filled.TrendingUp
-                    else Icons.AutoMirrored.Filled.TrendingDown,
+                    imageVector = if (inDirection) {
+                        Icons.AutoMirrored.Filled.TrendingUp
+                    } else {
+                        Icons.AutoMirrored.Filled.TrendingDown
+                    },
                     contentDescription = null,
                     tint = tint,
                     modifier = Modifier.size(13.dp),
@@ -573,11 +568,7 @@ private fun AiEntryCard(onOpen: () -> Unit) {
 private val ACCOUNT_GRADIENTS = listOf(AccTeal, AccIndigo, AccSaffron, AccEmerald, AccMagenta, AccViolet)
 
 @Composable
-private fun AccountsRow(
-    accounts: List<AccountWithBalance>,
-    onOpenAccount: (String) -> Unit,
-    onAddAccount: () -> Unit,
-) {
+private fun AccountsRow(accounts: List<AccountWithBalance>, onOpenAccount: (String) -> Unit, onAddAccount: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         SectionHeader(
             title = stringResource(R.string.dashboard_section_accounts),
@@ -689,11 +680,7 @@ private fun Color.darken(amount: Float): Color {
 // ───────────────────────────── Cards Row ─────────────────────────────────────
 
 @Composable
-private fun CardsRow(
-    cards: List<CardWithBalance>,
-    onOpenCard: (String) -> Unit,
-    onAddCard: () -> Unit,
-) {
+private fun CardsRow(cards: List<CardWithBalance>, onOpenCard: (String) -> Unit, onAddCard: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         SectionHeader(
             title = stringResource(R.string.dashboard_section_cards),
@@ -757,7 +744,12 @@ private fun CardChip(row: CardWithBalance, tone: Color, onClick: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.CreditCard, contentDescription = null, tint = Color.White.copy(alpha = 0.85f), modifier = Modifier.size(14.dp))
+                Icon(
+                    Icons.Filled.CreditCard,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.85f),
+                    modifier = Modifier.size(14.dp),
+                )
                 Spacer(Modifier.width(6.dp))
                 Text(
                     text = row.card.network.name,
@@ -821,11 +813,7 @@ private fun AddChip(onClick: () -> Unit, label: String) {
 // ───────────────────────────── Recent activity ───────────────────────────────
 
 @Composable
-private fun RecentSection(
-    transactions: List<Transaction>,
-    onViewAll: () -> Unit,
-    onOpenTransaction: (String) -> Unit,
-) {
+private fun RecentSection(transactions: List<Transaction>, onViewAll: () -> Unit, onOpenTransaction: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         SectionHeader(
             title = "Recent activity",
@@ -1006,8 +994,12 @@ private fun FabRow(onTap: () -> Unit, modifier: Modifier = Modifier) {
 // ───────────────────────────── helpers ───────────────────────────────────────
 
 private fun TransactionType.isIncomeLike() = this in setOf(
-    TransactionType.INCOME, TransactionType.REFUND, TransactionType.CASHBACK,
-    TransactionType.INTEREST, TransactionType.LOAN_RECEIVED, TransactionType.GIFT_RECEIVED,
+    TransactionType.INCOME,
+    TransactionType.REFUND,
+    TransactionType.CASHBACK,
+    TransactionType.INTEREST,
+    TransactionType.LOAN_RECEIVED,
+    TransactionType.GIFT_RECEIVED,
 )
 
 private fun signedAmount(txn: Transaction): String {
@@ -1024,7 +1016,8 @@ private fun signedAmount(txn: Transaction): String {
 private fun iconForType(type: TransactionType) = when (type) {
     TransactionType.CARD_PAYMENT -> Icons.Filled.CreditCard
     TransactionType.INCOME, TransactionType.REFUND, TransactionType.CASHBACK,
-    TransactionType.INTEREST -> Icons.AutoMirrored.Filled.TrendingDown
+    TransactionType.INTEREST,
+    -> Icons.AutoMirrored.Filled.TrendingDown
     TransactionType.LOAN_GIVEN, TransactionType.GIFT_SENT -> Icons.AutoMirrored.Filled.TrendingUp
     else -> Icons.Filled.Add
 }

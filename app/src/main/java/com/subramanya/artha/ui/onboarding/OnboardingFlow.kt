@@ -16,12 +16,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import com.subramanya.artha.ui.common.GhostButton
-import com.subramanya.artha.ui.common.SavePrimaryButton
-import com.subramanya.artha.ui.theme.Surface1
-import com.subramanya.artha.ui.theme.Surface4
-import com.subramanya.artha.ui.theme.Teal700
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,16 +27,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.subramanya.artha.R
+import com.subramanya.artha.ui.common.GhostButton
+import com.subramanya.artha.ui.common.SavePrimaryButton
+import com.subramanya.artha.ui.theme.Surface1
+import com.subramanya.artha.ui.theme.Surface4
+import com.subramanya.artha.ui.theme.Teal700
 import kotlinx.coroutines.launch
 
 private const val PAGE_COUNT: Int = 3
 
 @Composable
-fun OnboardingFlow(
-    viewModel: OnboardingViewModel,
-    onCompleted: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun OnboardingFlow(viewModel: OnboardingViewModel, onCompleted: () -> Unit, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { PAGE_COUNT })
     val scope = rememberCoroutineScope()
@@ -172,4 +167,3 @@ private fun canAdvance(currentPage: Int, state: OnboardingUiState): Boolean = wh
     1 -> state.name.isNotBlank()
     else -> false
 }
-

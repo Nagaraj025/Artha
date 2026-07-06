@@ -46,5 +46,4 @@ private fun clampToMonth(year: Int, month: Int, day: Int): LocalDate {
     return LocalDate(year, month, day.coerceAtMost(lastDayOfMonth))
 }
 
-private fun nextMonth(year: Int, month: Int): Pair<Int, Int> =
-    if (month == 12) (year + 1) to 1 else year to (month + 1)
+private fun nextMonth(year: Int, month: Int): Pair<Int, Int> = if (month == 12) (year + 1) to 1 else year to (month + 1)

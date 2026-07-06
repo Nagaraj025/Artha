@@ -19,22 +19,13 @@ enum class TransactionTab { EXPENSE, INCOME, TRANSFER, INVEST }
  * pre-resolved so the chip can render without re-querying. `isCreditCard` lets the
  * sheet auto-detect Transfer → CARD_PAYMENT without another lookup.
  */
-data class FundsEndpoint(
-    val kind: SourceKind,
-    val id: String,
-    val displayName: String,
-    val isCreditCard: Boolean = false,
-)
+data class FundsEndpoint(val kind: SourceKind, val id: String, val displayName: String, val isCreditCard: Boolean = false)
 
 /**
  * Snapshot of what the spouse-prompt dialog needs to render. Non-null when the dialog
  * is showing; cleared when the user responds or cancels.
  */
-data class SpousePromptInfo(
-    val amount: Double,
-    val personId: String,
-    val personName: String,
-)
+data class SpousePromptInfo(val amount: Double, val personId: String, val personName: String)
 
 data class AddTransactionUiState(
     val tab: TransactionTab = TransactionTab.EXPENSE,
@@ -72,8 +63,11 @@ data class AddTransactionUiState(
             TransactionTab.EXPENSE -> TransactionType.EXPENSE
             TransactionTab.INCOME -> TransactionType.INCOME
             TransactionTab.TRANSFER ->
-                if (destination?.isCreditCard == true) TransactionType.CARD_PAYMENT
-                else TransactionType.TRANSFER
+                if (destination?.isCreditCard == true) {
+                    TransactionType.CARD_PAYMENT
+                } else {
+                    TransactionType.TRANSFER
+                }
             TransactionTab.INVEST -> TransactionType.INVESTMENT_BUY
         }
 

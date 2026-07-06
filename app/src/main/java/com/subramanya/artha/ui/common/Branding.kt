@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,8 +38,6 @@ import com.subramanya.artha.ui.theme.Teal700
 import com.subramanya.artha.ui.theme.Teal900
 import com.subramanya.artha.ui.theme.Text3
 import com.subramanya.artha.ui.theme.TiroDevanagariHindi
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 
 /**
  * The अ brand mark in a tinted rounded box. Used in the top bar, hero cards, etc.
@@ -105,11 +105,7 @@ fun SectionEyebrow(
  * cards. Tints the dots with [tint]; default opacity ~6% matches the design.
  */
 @Composable
-fun BlockPrintOverlay(
-    modifier: Modifier = Modifier,
-    tint: Color = Teal300,
-    alpha: Float = 0.06f,
-) {
+fun BlockPrintOverlay(modifier: Modifier = Modifier, tint: Color = Teal300, alpha: Float = 0.06f) {
     Canvas(modifier = modifier) {
         val step = 12.dp.toPx()
         val r = 0.7.dp.toPx()
@@ -137,11 +133,7 @@ fun BlockPrintOverlay(
  * Net Position hero and the credit-card tile.
  */
 @Composable
-fun JaaliOverlay(
-    modifier: Modifier = Modifier,
-    tint: Color = Teal300,
-    alpha: Float = 0.06f,
-) {
+fun JaaliOverlay(modifier: Modifier = Modifier, tint: Color = Teal300, alpha: Float = 0.06f) {
     Canvas(modifier = modifier) {
         val tile = 32.dp.toPx()
         val r = 14.dp.toPx()
@@ -197,8 +189,10 @@ fun Chhatri(modifier: Modifier = Modifier, tint: Color = Color.White) {
         val dome = androidx.compose.ui.graphics.Path().apply {
             moveTo(w * 10f / 64f, h * 29f / 64f)
             quadraticBezierTo(
-                w * 32f / 64f, h * 4f / 64f,
-                w * 54f / 64f, h * 29f / 64f,
+                w * 32f / 64f,
+                h * 4f / 64f,
+                w * 54f / 64f,
+                h * 29f / 64f,
             )
             close()
         }
@@ -223,11 +217,7 @@ fun Chhatri(modifier: Modifier = Modifier, tint: Color = Color.White) {
  * Tinted white at low alpha; the gradient under it does the heavy lifting.
  */
 @Composable
-fun BandhaniOverlay(
-    modifier: Modifier = Modifier,
-    tint: Color = Color.White,
-    alpha: Float = 0.18f,
-) {
+fun BandhaniOverlay(modifier: Modifier = Modifier, tint: Color = Color.White, alpha: Float = 0.18f) {
     Canvas(modifier = modifier) {
         val step = 20.dp.toPx()
         val rCentre = 1.2.dp.toPx()
@@ -252,11 +242,7 @@ fun BandhaniOverlay(
 
 /** Compact-form sparkline (no axis, no labels) for hero cards. */
 @Composable
-fun Sparkline(
-    points: List<Double>,
-    modifier: Modifier = Modifier,
-    color: Color = Teal300,
-) {
+fun Sparkline(points: List<Double>, modifier: Modifier = Modifier, color: Color = Teal300) {
     if (points.size < 2) {
         Box(modifier = modifier.background(Surface4.copy(alpha = 0.4f)))
         return
@@ -284,7 +270,8 @@ fun Sparkline(
             path = areaPath,
             brush = androidx.compose.ui.graphics.Brush.verticalGradient(
                 colors = listOf(color.copy(alpha = 0.30f), color.copy(alpha = 0f)),
-                startY = 0f, endY = h,
+                startY = 0f,
+                endY = h,
             ),
         )
         // Stroked line
@@ -394,9 +381,7 @@ fun ArthaSheetHandle() {
  * be on screen for long.
  */
 @Composable
-fun LoadingPlaceholder(
-    modifier: Modifier = Modifier,
-) {
+fun LoadingPlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxWidth().padding(48.dp),
         contentAlignment = Alignment.Center,
@@ -461,10 +446,11 @@ fun ArthaAlertDialog(
             androidx.compose.material3.TextButton(onClick = onConfirm) {
                 androidx.compose.material3.Text(
                     text = confirmLabel,
-                    color = if (confirmDestructive)
+                    color = if (confirmDestructive) {
                         com.subramanya.artha.ui.theme.Danger
-                    else
-                        com.subramanya.artha.ui.theme.Teal300,
+                    } else {
+                        com.subramanya.artha.ui.theme.Teal300
+                    },
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
@@ -480,7 +466,9 @@ fun ArthaAlertDialog(
                     )
                 }
             }
-        } else null,
+        } else {
+            null
+        },
     )
 }
 
@@ -491,11 +479,7 @@ fun ArthaAlertDialog(
  * showing M3's default green.
  */
 @Composable
-fun ArthaSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun ArthaSwitch(checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
     androidx.compose.material3.Switch(
         checked = checked,
         onCheckedChange = onCheckedChange,
@@ -547,5 +531,6 @@ fun LinearMeter(
 @Suppress("unused")
 private fun previewKeep() {
     // Keep an unused reference so Teal700 doesn't get flagged as unused import.
-    @Suppress("UNUSED_VARIABLE") val t = Teal700
+    @Suppress("UNUSED_VARIABLE")
+    val t = Teal700
 }

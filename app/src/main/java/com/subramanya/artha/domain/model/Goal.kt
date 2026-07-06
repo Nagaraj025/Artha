@@ -13,9 +13,4 @@ data class Goal(
     val createdAt: Long,
 )
 
-data class GoalWithProgress(
-    val goal: Goal,
-    val currentAmount: Double,
-    val percentDone: Double,
-    val daysRemaining: Int?,
-)
+data class GoalWithProgress(val goal: Goal, val currentAmount: Double, val percentDone: Double, val daysRemaining: Int?)

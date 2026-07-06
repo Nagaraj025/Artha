@@ -26,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,8 +51,8 @@ import com.subramanya.artha.ui.common.AutoShrinkAmountText
 import com.subramanya.artha.ui.common.EmptyState
 import com.subramanya.artha.ui.theme.ArthaAmountStyles
 import com.subramanya.artha.ui.theme.Danger
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.theme.IncomeSoft
@@ -83,12 +83,7 @@ import kotlinx.datetime.toLocalDateTime
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonDetailScreen(
-    personId: String,
-    onBack: () -> Unit,
-    onOpenTransaction: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
-) {
+fun PersonDetailScreen(personId: String, onBack: () -> Unit, onOpenTransaction: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as ArthaApplication
     val vm: PersonDetailViewModel = viewModel(
         factory = PersonDetailViewModelFactory(
@@ -106,8 +101,11 @@ fun PersonDetailScreen(
     // we skip the very first emit (loading) via a flag.
     var seenPerson by remember { mutableStateOf(false) }
     LaunchedEffect(state.person) {
-        if (state.person != null) seenPerson = true
-        else if (seenPerson) onBack()
+        if (state.person != null) {
+            seenPerson = true
+        } else if (seenPerson) {
+            onBack()
+        }
     }
 
     Surface(color = Surface1, modifier = modifier.fillMaxSize()) {
@@ -147,7 +145,10 @@ fun PersonDetailScreen(
     if (editingNow != null) {
         PersonFormSheet(
             editing = editingNow,
-            onSave = { resolved -> vm.upsert(resolved); editing = null },
+            onSave = { resolved ->
+                vm.upsert(resolved)
+                editing = null
+            },
             onDismiss = { editing = null },
         )
     }
@@ -167,10 +168,7 @@ fun PersonDetailScreen(
 }
 
 @Composable
-private fun Body(
-    state: PersonDetailUiState,
-    onOpenTransaction: (String) -> Unit,
-) {
+private fun Body(state: PersonDetailUiState, onOpenTransaction: (String) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item("hero") { Hero(state) }
         item("txnsHeader") {
@@ -266,12 +264,7 @@ private fun Hero(state: PersonDetailUiState) {
 }
 
 @Composable
-private fun HeroFigure(
-    labelRes: Int,
-    amount: Double,
-    color: androidx.compose.ui.graphics.Color,
-    modifier: Modifier = Modifier,
-) {
+private fun HeroFigure(labelRes: Int, amount: Double, color: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))

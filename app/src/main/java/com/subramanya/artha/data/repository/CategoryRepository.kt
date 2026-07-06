@@ -10,14 +10,11 @@ import kotlinx.coroutines.flow.map
 
 class CategoryRepository(private val categoryDao: CategoryDao) {
 
-    fun observeAll(): Flow<List<Category>> =
-        categoryDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Category>> = categoryDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeByType(type: CategoryType): Flow<List<Category>> =
-        categoryDao.observeByType(type).map { list -> list.map { it.toDomain() } }
+    fun observeByType(type: CategoryType): Flow<List<Category>> = categoryDao.observeByType(type).map { list -> list.map { it.toDomain() } }
 
-    fun observeRoots(): Flow<List<Category>> =
-        categoryDao.observeRoots().map { list -> list.map { it.toDomain() } }
+    fun observeRoots(): Flow<List<Category>> = categoryDao.observeRoots().map { list -> list.map { it.toDomain() } }
 
     fun observeChildren(parentId: String): Flow<List<Category>> =
         categoryDao.observeChildren(parentId).map { list -> list.map { it.toDomain() } }

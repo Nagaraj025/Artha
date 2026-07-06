@@ -90,29 +90,27 @@ class OnboardingViewModel(
         }
     }
 
-    private fun AccountDraft.toPending(): PendingAccount =
-        PendingAccount(
-            name = name.trim(),
-            type = type,
-            institution = institution.trim().takeIf { it.isNotBlank() },
-            openingBalance = parsedBalance ?: 0.0,
-        )
+    private fun AccountDraft.toPending(): PendingAccount = PendingAccount(
+        name = name.trim(),
+        type = type,
+        institution = institution.trim().takeIf { it.isNotBlank() },
+        openingBalance = parsedBalance ?: 0.0,
+    )
 
-    private fun PendingAccount.toDomain(displayOrder: Int, createdAt: Long): Account =
-        Account(
-            id = UUID.randomUUID().toString(),
-            name = name,
-            type = type,
-            institution = institution,
-            accountNumberLast4 = null,
-            openingBalance = openingBalance,
-            currency = "INR",
-            icon = type.defaultIcon,
-            color = type.defaultColor,
-            isArchived = false,
-            displayOrder = displayOrder,
-            createdAt = createdAt,
-        )
+    private fun PendingAccount.toDomain(displayOrder: Int, createdAt: Long): Account = Account(
+        id = UUID.randomUUID().toString(),
+        name = name,
+        type = type,
+        institution = institution,
+        accountNumberLast4 = null,
+        openingBalance = openingBalance,
+        currency = "INR",
+        icon = type.defaultIcon,
+        color = type.defaultColor,
+        isArchived = false,
+        displayOrder = displayOrder,
+        createdAt = createdAt,
+    )
 
     private val AccountType.defaultIcon: String
         get() = when (this) {
@@ -131,10 +129,8 @@ class OnboardingViewModel(
         }
 }
 
-class OnboardingViewModelFactory(
-    private val accountRepository: AccountRepository,
-    private val settingsPreferences: SettingsPreferences,
-) : ViewModelProvider.Factory {
+class OnboardingViewModelFactory(private val accountRepository: AccountRepository, private val settingsPreferences: SettingsPreferences) :
+    ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(OnboardingViewModel::class.java)) {

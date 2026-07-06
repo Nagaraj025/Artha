@@ -17,8 +17,4 @@ data class Budget(
 )
 
 /** Domain view that pairs the budget with this-period spend + days remaining. */
-data class BudgetWithProgress(
-    val budget: Budget,
-    val spent: Double,
-    val daysRemainingInPeriod: Int,
-)
+data class BudgetWithProgress(val budget: Budget, val spent: Double, val daysRemainingInPeriod: Int)

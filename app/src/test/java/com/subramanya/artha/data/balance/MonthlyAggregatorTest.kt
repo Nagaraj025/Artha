@@ -71,35 +71,34 @@ class MonthlyAggregatorTest {
         assertEquals(200.0, result.income, EPS)
     }
 
-    private fun txn(type: TransactionType, amount: Double, excluded: Boolean = false): TransactionEntity =
-        TransactionEntity(
-            id = "txn-${idSeq++}",
-            type = type,
-            amount = amount,
-            currency = "INR",
-            date = 0L,
-            description = "test",
-            categoryId = null,
-            subCategoryId = null,
-            sourceType = SourceKind.ACCOUNT,
-            sourceId = "acct",
-            destinationType = null,
-            destinationId = null,
-            paymentApp = PaymentApp.OTHER,
-            place = null,
-            latitude = null,
-            longitude = null,
-            receiptUri = null,
-            notes = null,
-            taxSection = null,
-            recurringRuleId = null,
-            isSplit = false,
-            splitGroupId = null,
-            source = TransactionSource.MANUAL,
-            createdAt = 0L,
-            updatedAt = 0L,
-            excludedFromExpenseTotal = excluded,
-        )
+    private fun txn(type: TransactionType, amount: Double, excluded: Boolean = false): TransactionEntity = TransactionEntity(
+        id = "txn-${idSeq++}",
+        type = type,
+        amount = amount,
+        currency = "INR",
+        date = 0L,
+        description = "test",
+        categoryId = null,
+        subCategoryId = null,
+        sourceType = SourceKind.ACCOUNT,
+        sourceId = "acct",
+        destinationType = null,
+        destinationId = null,
+        paymentApp = PaymentApp.OTHER,
+        place = null,
+        latitude = null,
+        longitude = null,
+        receiptUri = null,
+        notes = null,
+        taxSection = null,
+        recurringRuleId = null,
+        isSplit = false,
+        splitGroupId = null,
+        source = TransactionSource.MANUAL,
+        createdAt = 0L,
+        updatedAt = 0L,
+        excludedFromExpenseTotal = excluded,
+    )
 
     private companion object {
         private const val EPS: Double = 1e-9

@@ -13,9 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
-class InsurancesViewModel(
-    private val insuranceRepository: InsuranceRepository,
-) : ViewModel() {
+class InsurancesViewModel(private val insuranceRepository: InsuranceRepository) : ViewModel() {
 
     val state: StateFlow<InsurancesUiState> =
         insuranceRepository.observeActive().map { active ->
@@ -60,9 +58,7 @@ internal fun Insurance.annualisedPremium(): Double = when (premiumFrequency) {
     PremiumFrequency.SINGLE -> 0.0
 }
 
-class InsurancesViewModelFactory(
-    private val insuranceRepository: InsuranceRepository,
-) : ViewModelProvider.Factory {
+class InsurancesViewModelFactory(private val insuranceRepository: InsuranceRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(InsurancesViewModel::class.java)) {

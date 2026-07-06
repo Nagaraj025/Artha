@@ -21,7 +21,12 @@ data class ParsedBankSms(
 object BankSmsParser {
 
     private val EXCLUDE_KEYWORDS = listOf(
-        "otp", "one time password", "offer", "cashback offer", "sale", "discount",
+        "otp",
+        "one time password",
+        "offer",
+        "cashback offer",
+        "sale",
+        "discount",
     )
     private val DEBIT_KEYWORDS = listOf("debited", "debit", "spent", "withdrawn")
     private val CREDIT_KEYWORDS = listOf("credited", "credit")
@@ -30,6 +35,7 @@ object BankSmsParser {
         """(?:a/c|acct|account|card)[^\d]{0,10}(?:no\.?)?\s*[xX*]*(\d{3,6})""",
         RegexOption.IGNORE_CASE,
     )
+
     // Non-greedy capture stops at the nearest punctuation or common trailing-clause marker
     // (e.g. "Avl Bal ...") instead of swallowing the rest of the SMS. A leading pronoun/article
     // ("to your account", "at the branch") is excluded outright — null is preferable to garbage.

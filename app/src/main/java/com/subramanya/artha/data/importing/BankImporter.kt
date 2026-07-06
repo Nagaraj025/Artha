@@ -27,15 +27,14 @@ import java.util.UUID
  * every transaction whose notes start with `Imported from ` plus the two
  * named accounts — so the round-trip (import → wipe → re-import) works.
  */
-class BankImporter(
-    private val context: Context,
-    private val database: AppDatabase,
-) {
+class BankImporter(private val context: Context, private val database: AppDatabase) {
     sealed interface Result {
         /** Asset bundled by the Python script not present in the APK build. */
         data object AssetMissing : Result
+
         /** Bundled JSON couldn't be parsed — should never happen in a release. */
         data class ParseError(val message: String) : Result
+
         /** Successful import — counts surfaced to the user via toast. */
         data class Success(
             val accountsCreated: Int,

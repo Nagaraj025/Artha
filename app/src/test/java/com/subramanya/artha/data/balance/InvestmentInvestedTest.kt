@@ -59,8 +59,14 @@ class InvestmentInvestedTest {
             buy(from = accountA, to = investmentX, amount = 10_000.0),
             // ordinary spending unrelated to investments
             txn(TransactionType.EXPENSE, SourceKind.ACCOUNT, accountA, 500.0),
-            txn(TransactionType.TRANSFER, SourceKind.ACCOUNT, accountA, 1_000.0,
-                destinationKind = SourceKind.ACCOUNT, destinationId = "acct-other"),
+            txn(
+                TransactionType.TRANSFER,
+                SourceKind.ACCOUNT,
+                accountA,
+                1_000.0,
+                destinationKind = SourceKind.ACCOUNT,
+                destinationId = "acct-other",
+            ),
         )
         val result = BalanceCalculator.computeInvestmentInvested(investmentX, txns)
         assertEquals(10_000.0, result, EPS)
@@ -68,22 +74,24 @@ class InvestmentInvestedTest {
 
     // ---------- helpers ----------
 
-    private fun buy(from: String, to: String, amount: Double, idx: Int? = null): TransactionEntity =
-        txn(
-            type = TransactionType.INVESTMENT_BUY,
-            sourceKind = SourceKind.ACCOUNT, sourceId = from,
-            amount = amount,
-            destinationKind = SourceKind.INVESTMENT, destinationId = to,
-            idOverride = idx?.let { "txn-buy-$it" },
-        )
+    private fun buy(from: String, to: String, amount: Double, idx: Int? = null): TransactionEntity = txn(
+        type = TransactionType.INVESTMENT_BUY,
+        sourceKind = SourceKind.ACCOUNT,
+        sourceId = from,
+        amount = amount,
+        destinationKind = SourceKind.INVESTMENT,
+        destinationId = to,
+        idOverride = idx?.let { "txn-buy-$it" },
+    )
 
-    private fun sell(from: String, to: String, amount: Double): TransactionEntity =
-        txn(
-            type = TransactionType.INVESTMENT_SELL,
-            sourceKind = SourceKind.INVESTMENT, sourceId = from,
-            amount = amount,
-            destinationKind = SourceKind.ACCOUNT, destinationId = to,
-        )
+    private fun sell(from: String, to: String, amount: Double): TransactionEntity = txn(
+        type = TransactionType.INVESTMENT_SELL,
+        sourceKind = SourceKind.INVESTMENT,
+        sourceId = from,
+        amount = amount,
+        destinationKind = SourceKind.ACCOUNT,
+        destinationId = to,
+    )
 
     private fun txn(
         type: TransactionType,
@@ -93,34 +101,33 @@ class InvestmentInvestedTest {
         destinationKind: SourceKind? = null,
         destinationId: String? = null,
         idOverride: String? = null,
-    ): TransactionEntity =
-        TransactionEntity(
-            id = idOverride ?: "txn-${idSeq++}",
-            type = type,
-            amount = amount,
-            currency = "INR",
-            date = 0L,
-            description = "test",
-            categoryId = null,
-            subCategoryId = null,
-            sourceType = sourceKind,
-            sourceId = sourceId,
-            destinationType = destinationKind,
-            destinationId = destinationId,
-            paymentApp = PaymentApp.OTHER,
-            place = null,
-            latitude = null,
-            longitude = null,
-            receiptUri = null,
-            notes = null,
-            taxSection = null,
-            recurringRuleId = null,
-            isSplit = false,
-            splitGroupId = null,
-            source = TransactionSource.MANUAL,
-            createdAt = 0L,
-            updatedAt = 0L,
-        )
+    ): TransactionEntity = TransactionEntity(
+        id = idOverride ?: "txn-${idSeq++}",
+        type = type,
+        amount = amount,
+        currency = "INR",
+        date = 0L,
+        description = "test",
+        categoryId = null,
+        subCategoryId = null,
+        sourceType = sourceKind,
+        sourceId = sourceId,
+        destinationType = destinationKind,
+        destinationId = destinationId,
+        paymentApp = PaymentApp.OTHER,
+        place = null,
+        latitude = null,
+        longitude = null,
+        receiptUri = null,
+        notes = null,
+        taxSection = null,
+        recurringRuleId = null,
+        isSplit = false,
+        splitGroupId = null,
+        source = TransactionSource.MANUAL,
+        createdAt = 0L,
+        updatedAt = 0L,
+    )
 
     private companion object {
         private const val EPS: Double = 1e-9

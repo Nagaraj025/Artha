@@ -27,23 +27,18 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,10 +71,7 @@ private const val DUE_HIGHLIGHT_THRESHOLD_DAYS: Int = 10
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardsScreen(
-    modifier: Modifier = Modifier,
-    onOpenCard: (String) -> Unit = {},
-) {
+fun CardsScreen(modifier: Modifier = Modifier, onOpenCard: (String) -> Unit = {}) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: CardsViewModel = viewModel(factory = CardsViewModelFactory(app.cardRepository))
@@ -118,8 +110,11 @@ fun CardsScreen(
                         EmptyState(
                             icon = Icons.Filled.CreditCard,
                             title = stringResource(
-                                if (state.view == CardsView.ACTIVE) R.string.cards_empty_active
-                                else R.string.cards_empty_archived,
+                                if (state.view == CardsView.ACTIVE) {
+                                    R.string.cards_empty_active
+                                } else {
+                                    R.string.cards_empty_archived
+                                },
                             ),
                         )
                     }
@@ -276,11 +271,17 @@ private fun ActiveCardRow(
                         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.card_detail_action_edit)) },
-                                onClick = { menuOpen = false; onEdit() },
+                                onClick = {
+                                    menuOpen = false
+                                    onEdit()
+                                },
                             )
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.card_detail_action_archive)) },
-                                onClick = { menuOpen = false; onArchive() },
+                                onClick = {
+                                    menuOpen = false
+                                    onArchive()
+                                },
                                 leadingIcon = { Icon(Icons.Filled.Archive, contentDescription = null) },
                             )
                             DropdownMenuItem(
@@ -290,7 +291,10 @@ private fun ActiveCardRow(
                                         color = com.subramanya.artha.ui.theme.Danger,
                                     )
                                 },
-                                onClick = { menuOpen = false; onDelete() },
+                                onClick = {
+                                    menuOpen = false
+                                    onDelete()
+                                },
                                 leadingIcon = {
                                     Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger)
                                 },
@@ -412,16 +416,25 @@ private fun CreditCardTile(
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.card_detail_action_edit)) },
-                        onClick = { menuOpen = false; onEdit() },
+                        onClick = {
+                            menuOpen = false
+                            onEdit()
+                        },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.card_detail_action_archive)) },
-                        onClick = { menuOpen = false; onArchive() },
+                        onClick = {
+                            menuOpen = false
+                            onArchive()
+                        },
                         leadingIcon = { Icon(Icons.Filled.Archive, contentDescription = null) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.card_action_delete), color = com.subramanya.artha.ui.theme.Danger) },
-                        onClick = { menuOpen = false; onDelete() },
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
                         leadingIcon = { Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger) },
                     )
                 }
@@ -506,11 +519,7 @@ private fun CreditCardTile(
 }
 
 @Composable
-private fun ArchivedCardRow(
-    row: CardWithBalance,
-    onRestore: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun ArchivedCardRow(row: CardWithBalance, onRestore: () -> Unit, onDelete: () -> Unit) {
     var menuOpen by remember { mutableStateOf(false) }
     ListItem(
         modifier = Modifier.fillMaxWidth(),
@@ -544,7 +553,10 @@ private fun ArchivedCardRow(
                                     color = com.subramanya.artha.ui.theme.Danger,
                                 )
                             },
-                            onClick = { menuOpen = false; onDelete() },
+                            onClick = {
+                                menuOpen = false
+                                onDelete()
+                            },
                             leadingIcon = {
                                 Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger)
                             },
@@ -558,11 +570,7 @@ private fun ArchivedCardRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CardRowSupport(
-    row: CardWithBalance,
-    showDueChip: Boolean = true,
-    showUtilization: Boolean = true,
-) {
+private fun CardRowSupport(row: CardWithBalance, showDueChip: Boolean = true, showUtilization: Boolean = true) {
     Column {
         val subtitle = formatSubtitle(row.card)
         if (subtitle != null) {
@@ -579,10 +587,11 @@ private fun CardRowSupport(
                 Spacer(Modifier.height(6.dp))
                 com.subramanya.artha.ui.common.LinearMeter(
                     fraction = utilFraction,
-                    fillColor = if (utilFraction > 0.3f)
+                    fillColor = if (utilFraction > 0.3f) {
                         com.subramanya.artha.ui.theme.Ochre
-                    else
-                        com.subramanya.artha.ui.theme.Teal500,
+                    } else {
+                        com.subramanya.artha.ui.theme.Teal500
+                    },
                 )
                 Text(
                     text = stringResource(R.string.cards_utilization_label, (utilFraction * 100).toInt()),
@@ -708,12 +717,18 @@ private fun CardsEditorialHeader(
                     if (view == CardsView.ACTIVE) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.cards_menu_show_archived)) },
-                            onClick = { onShowArchived(); onOverflowToggle(false) },
+                            onClick = {
+                                onShowArchived()
+                                onOverflowToggle(false)
+                            },
                         )
                     } else {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.cards_menu_back_active)) },
-                            onClick = { onShowActive(); onOverflowToggle(false) },
+                            onClick = {
+                                onShowActive()
+                                onOverflowToggle(false)
+                            },
                         )
                     }
                 }
@@ -723,9 +738,7 @@ private fun CardsEditorialHeader(
 }
 
 @Composable
-private fun CardsTotalOutstandingCard(
-    rows: List<com.subramanya.artha.domain.model.CardWithBalance>,
-) {
+private fun CardsTotalOutstandingCard(rows: List<com.subramanya.artha.domain.model.CardWithBalance>) {
     val totalOut = rows.sumOf { it.currentOutstanding }
     val totalLimit = rows.sumOf { it.card.creditLimit ?: 0.0 }
     val util = if (totalLimit > 0.0) (totalOut / totalLimit * 100).toInt() else 0

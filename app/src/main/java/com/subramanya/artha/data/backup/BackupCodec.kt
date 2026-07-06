@@ -108,139 +108,212 @@ object BackupCodec {
     // ---- per-entity encoders ----
 
     private fun accountToJson(a: AccountEntity) = JSONObject().apply {
-        put("id", a.id); put("name", a.name); put("type", a.type.name)
+        put("id", a.id)
+        put("name", a.name)
+        put("type", a.type.name)
         putNullable("institution", a.institution)
         putNullable("account_number_last4", a.accountNumberLast4)
-        put("opening_balance", a.openingBalance); put("currency", a.currency)
-        put("icon", a.icon); put("color", a.color)
-        put("is_archived", a.isArchived); put("display_order", a.displayOrder)
+        put("opening_balance", a.openingBalance)
+        put("currency", a.currency)
+        put("icon", a.icon)
+        put("color", a.color)
+        put("is_archived", a.isArchived)
+        put("display_order", a.displayOrder)
         put("created_at", a.createdAt)
     }
 
     private fun cardToJson(c: CardEntity) = JSONObject().apply {
-        put("id", c.id); put("name", c.name); put("type", c.type.name)
-        putNullable("issuer", c.issuer); put("network", c.network.name)
+        put("id", c.id)
+        put("name", c.name)
+        put("type", c.type.name)
+        putNullable("issuer", c.issuer)
+        put("network", c.network.name)
         putNullable("card_number_last4", c.cardNumberLast4)
         putNullable("credit_limit", c.creditLimit)
         putNullable("statement_day_of_month", c.statementDayOfMonth)
         putNullable("due_day_of_month", c.dueDayOfMonth)
         putNullable("linked_account_id", c.linkedAccountId)
-        put("icon", c.icon); put("color", c.color)
-        put("is_archived", c.isArchived); put("display_order", c.displayOrder)
+        put("icon", c.icon)
+        put("color", c.color)
+        put("is_archived", c.isArchived)
+        put("display_order", c.displayOrder)
         put("created_at", c.createdAt)
     }
 
     private fun categoryToJson(c: CategoryEntity) = JSONObject().apply {
-        put("id", c.id); put("name", c.name); putNullable("parent_id", c.parentId)
-        put("type", c.type.name); put("icon", c.icon); put("color", c.color)
-        put("is_system", c.isSystem); put("display_order", c.displayOrder)
+        put("id", c.id)
+        put("name", c.name)
+        putNullable("parent_id", c.parentId)
+        put("type", c.type.name)
+        put("icon", c.icon)
+        put("color", c.color)
+        put("is_system", c.isSystem)
+        put("display_order", c.displayOrder)
     }
 
     private fun personToJson(p: PersonEntity) = JSONObject().apply {
-        put("id", p.id); put("name", p.name); put("relation", p.relation.name)
-        putNullable("contact", p.contact); putNullable("avatar_uri", p.avatarUri)
+        put("id", p.id)
+        put("name", p.name)
+        put("relation", p.relation.name)
+        putNullable("contact", p.contact)
+        putNullable("avatar_uri", p.avatarUri)
         put("created_at", p.createdAt)
     }
 
     private fun tagToJson(t: TagEntity) = JSONObject().apply {
-        put("id", t.id); put("name", t.name); put("color", t.color)
+        put("id", t.id)
+        put("name", t.name)
+        put("color", t.color)
     }
 
     private fun investmentToJson(i: InvestmentEntity) = JSONObject().apply {
-        put("id", i.id); put("name", i.name); put("type", i.type.name)
+        put("id", i.id)
+        put("name", i.name)
+        put("type", i.type.name)
         putNullable("institution", i.institution)
-        put("current_value", i.currentValue); put("valuation_mode", i.valuationMode.name)
+        put("current_value", i.currentValue)
+        put("valuation_mode", i.valuationMode.name)
         put("opening_contribution", i.openingContribution)
-        putNullable("units", i.units); putNullable("nav", i.nav)
-        put("start_date", i.startDate); putNullable("maturity_date", i.maturityDate)
+        putNullable("units", i.units)
+        putNullable("nav", i.nav)
+        put("start_date", i.startDate)
+        putNullable("maturity_date", i.maturityDate)
         putNullable("tax_section", i.taxSection)
-        put("icon", i.icon); put("color", i.color)
+        put("icon", i.icon)
+        put("color", i.color)
         putNullable("linked_insurance_id", i.linkedInsuranceId)
-        put("is_archived", i.isArchived); put("display_order", i.displayOrder)
+        put("is_archived", i.isArchived)
+        put("display_order", i.displayOrder)
         put("created_at", i.createdAt)
     }
 
     private fun insuranceToJson(i: InsuranceEntity) = JSONObject().apply {
-        put("id", i.id); put("name", i.name); put("type", i.type.name)
-        put("provider", i.provider); putNullable("policy_number", i.policyNumber)
-        put("sum_assured", i.sumAssured); put("premium_amount", i.premiumAmount)
+        put("id", i.id)
+        put("name", i.name)
+        put("type", i.type.name)
+        put("provider", i.provider)
+        putNullable("policy_number", i.policyNumber)
+        put("sum_assured", i.sumAssured)
+        put("premium_amount", i.premiumAmount)
         put("premium_frequency", i.premiumFrequency.name)
         putNullable("next_premium_date", i.nextPremiumDate)
-        put("start_date", i.startDate); putNullable("end_date", i.endDate)
-        putNullable("nominee", i.nominee); putNullable("agent_contact", i.agentContact)
-        putNullable("policy_doc_uri", i.policyDocUri); putNullable("tax_section", i.taxSection)
-        put("icon", i.icon); put("color", i.color)
-        put("is_archived", i.isArchived); put("created_at", i.createdAt)
+        put("start_date", i.startDate)
+        putNullable("end_date", i.endDate)
+        putNullable("nominee", i.nominee)
+        putNullable("agent_contact", i.agentContact)
+        putNullable("policy_doc_uri", i.policyDocUri)
+        putNullable("tax_section", i.taxSection)
+        put("icon", i.icon)
+        put("color", i.color)
+        put("is_archived", i.isArchived)
+        put("created_at", i.createdAt)
     }
 
     private fun transactionRuleToJson(r: TransactionRuleEntity) = JSONObject().apply {
-        put("id", r.id); put("name", r.name)
-        put("conditions_json", r.conditionsJson); put("actions_json", r.actionsJson)
-        put("priority", r.priority); put("is_active", r.isActive)
-        put("is_system", r.isSystem); put("created_at", r.createdAt)
+        put("id", r.id)
+        put("name", r.name)
+        put("conditions_json", r.conditionsJson)
+        put("actions_json", r.actionsJson)
+        put("priority", r.priority)
+        put("is_active", r.isActive)
+        put("is_system", r.isSystem)
+        put("created_at", r.createdAt)
     }
 
     private fun budgetToJson(b: BudgetEntity) = JSONObject().apply {
-        put("id", b.id); put("name", b.name); put("scope", b.scope.name)
-        putNullable("category_id", b.categoryId); put("amount", b.amount)
-        put("period", b.period.name); put("start_date", b.startDate)
+        put("id", b.id)
+        put("name", b.name)
+        put("scope", b.scope.name)
+        putNullable("category_id", b.categoryId)
+        put("amount", b.amount)
+        put("period", b.period.name)
+        put("start_date", b.startDate)
         put("alert_threshold_percent", b.alertThresholdPercent)
-        put("is_active", b.isActive); put("created_at", b.createdAt)
+        put("is_active", b.isActive)
+        put("created_at", b.createdAt)
     }
 
     private fun goalToJson(g: GoalEntity) = JSONObject().apply {
-        put("id", g.id); put("name", g.name); put("target_amount", g.targetAmount)
+        put("id", g.id)
+        put("name", g.name)
+        put("target_amount", g.targetAmount)
         putNullable("target_date", g.targetDate)
         put("linked_account_ids", g.linkedAccountIdsJson)
         put("linked_investment_ids", g.linkedInvestmentIdsJson)
-        put("icon", g.icon); put("color", g.color)
-        put("is_achieved", g.isAchieved); put("created_at", g.createdAt)
+        put("icon", g.icon)
+        put("color", g.color)
+        put("is_achieved", g.isAchieved)
+        put("created_at", g.createdAt)
     }
 
     private fun subscriptionToJson(s: SubscriptionEntity) = JSONObject().apply {
-        put("id", s.id); put("name", s.name); putNullable("provider", s.provider)
-        put("amount", s.amount); put("frequency", s.frequency.name)
-        put("next_due_date", s.nextDueDate); putNullable("last_paid_date", s.lastPaidDate)
+        put("id", s.id)
+        put("name", s.name)
+        putNullable("provider", s.provider)
+        put("amount", s.amount)
+        put("frequency", s.frequency.name)
+        put("next_due_date", s.nextDueDate)
+        putNullable("last_paid_date", s.lastPaidDate)
         putNullable("category_id", s.categoryId)
         putNullable("payment_method_type", s.paymentMethodType)
         putNullable("payment_method_id", s.paymentMethodId)
-        put("status", s.status.name); put("auto_charge", s.autoCharge)
-        putNullable("logo_uri", s.logoUri); put("color", s.color)
+        put("status", s.status.name)
+        put("auto_charge", s.autoCharge)
+        putNullable("logo_uri", s.logoUri)
+        put("color", s.color)
         put("created_at", s.createdAt)
     }
 
     private fun recurringRuleToJson(r: RecurringRuleEntity) = JSONObject().apply {
-        put("id", r.id); put("name", r.name)
-        put("transaction_template", r.transactionTemplate); put("frequency", r.frequency.name)
-        putNullable("day_of_period", r.dayOfPeriod); put("next_run_date", r.nextRunDate)
-        putNullable("last_run_date", r.lastRunDate); put("auto_confirm", r.autoConfirm)
-        put("is_active", r.isActive); put("created_at", r.createdAt)
+        put("id", r.id)
+        put("name", r.name)
+        put("transaction_template", r.transactionTemplate)
+        put("frequency", r.frequency.name)
+        putNullable("day_of_period", r.dayOfPeriod)
+        put("next_run_date", r.nextRunDate)
+        putNullable("last_run_date", r.lastRunDate)
+        put("auto_confirm", r.autoConfirm)
+        put("is_active", r.isActive)
+        put("created_at", r.createdAt)
     }
 
     private fun transactionToJson(t: TransactionEntity) = JSONObject().apply {
-        put("id", t.id); put("type", t.type.name); put("amount", t.amount)
-        put("currency", t.currency); put("date", t.date); put("description", t.description)
-        putNullable("category_id", t.categoryId); putNullable("sub_category_id", t.subCategoryId)
-        put("source_type", t.sourceType.name); putNullable("source_id", t.sourceId)
+        put("id", t.id)
+        put("type", t.type.name)
+        put("amount", t.amount)
+        put("currency", t.currency)
+        put("date", t.date)
+        put("description", t.description)
+        putNullable("category_id", t.categoryId)
+        putNullable("sub_category_id", t.subCategoryId)
+        put("source_type", t.sourceType.name)
+        putNullable("source_id", t.sourceId)
         putNullable("destination_type", t.destinationType?.name)
         putNullable("destination_id", t.destinationId)
         put("payment_app", t.paymentApp.name)
-        putNullable("place", t.place); putNullable("latitude", t.latitude)
-        putNullable("longitude", t.longitude); putNullable("receipt_uri", t.receiptUri)
-        putNullable("notes", t.notes); putNullable("tax_section", t.taxSection)
+        putNullable("place", t.place)
+        putNullable("latitude", t.latitude)
+        putNullable("longitude", t.longitude)
+        putNullable("receipt_uri", t.receiptUri)
+        putNullable("notes", t.notes)
+        putNullable("tax_section", t.taxSection)
         putNullable("recurring_rule_id", t.recurringRuleId)
-        put("is_split", t.isSplit); putNullable("split_group_id", t.splitGroupId)
+        put("is_split", t.isSplit)
+        putNullable("split_group_id", t.splitGroupId)
         put("source", t.source.name)
-        put("created_at", t.createdAt); put("updated_at", t.updatedAt)
+        put("created_at", t.createdAt)
+        put("updated_at", t.updatedAt)
         put("excluded_from_expense_total", t.excludedFromExpenseTotal)
     }
 
     private fun transactionPersonToJson(x: TransactionPersonCrossRef) = JSONObject().apply {
-        put("transaction_id", x.transactionId); put("person_id", x.personId)
+        put("transaction_id", x.transactionId)
+        put("person_id", x.personId)
     }
 
     private fun transactionTagToJson(x: TransactionTagCrossRef) = JSONObject().apply {
-        put("transaction_id", x.transactionId); put("tag_id", x.tagId)
+        put("transaction_id", x.transactionId)
+        put("tag_id", x.tagId)
     }
 
     // ---- per-entity decoders ----
@@ -271,22 +344,29 @@ object BackupCodec {
     )
 
     private fun categoryFromJson(o: JSONObject) = CategoryEntity(
-        id = o.getString("id"), name = o.getString("name"),
+        id = o.getString("id"),
+        name = o.getString("name"),
         parentId = o.stringOrNull("parent_id"),
         type = enumValueOf<CategoryType>(o.getString("type")),
-        icon = o.getString("icon"), color = o.getLong("color"),
-        isSystem = o.getBoolean("is_system"), displayOrder = o.getInt("display_order"),
+        icon = o.getString("icon"),
+        color = o.getLong("color"),
+        isSystem = o.getBoolean("is_system"),
+        displayOrder = o.getInt("display_order"),
     )
 
     private fun personFromJson(o: JSONObject) = PersonEntity(
-        id = o.getString("id"), name = o.getString("name"),
+        id = o.getString("id"),
+        name = o.getString("name"),
         relation = enumValueOf<PersonRelation>(o.getString("relation")),
-        contact = o.stringOrNull("contact"), avatarUri = o.stringOrNull("avatar_uri"),
+        contact = o.stringOrNull("contact"),
+        avatarUri = o.stringOrNull("avatar_uri"),
         createdAt = o.getLong("created_at"),
     )
 
     private fun tagFromJson(o: JSONObject) = TagEntity(
-        id = o.getString("id"), name = o.getString("name"), color = o.getLong("color"),
+        id = o.getString("id"),
+        name = o.getString("name"),
+        color = o.getLong("color"),
     )
 
     private fun investmentFromJson(o: JSONObject) = InvestmentEntity(
@@ -320,10 +400,14 @@ object BackupCodec {
     )
 
     private fun transactionRuleFromJson(o: JSONObject) = TransactionRuleEntity(
-        id = o.getString("id"), name = o.getString("name"),
-        conditionsJson = o.getString("conditions_json"), actionsJson = o.getString("actions_json"),
-        priority = o.getInt("priority"), isActive = o.getBoolean("is_active"),
-        isSystem = o.getBoolean("is_system"), createdAt = o.getLong("created_at"),
+        id = o.getString("id"),
+        name = o.getString("name"),
+        conditionsJson = o.getString("conditions_json"),
+        actionsJson = o.getString("actions_json"),
+        priority = o.getInt("priority"),
+        isActive = o.getBoolean("is_active"),
+        isSystem = o.getBoolean("is_system"),
+        createdAt = o.getLong("created_at"),
     )
 
     private fun budgetFromJson(o: JSONObject) = BudgetEntity(
@@ -388,11 +472,13 @@ object BackupCodec {
     )
 
     private fun transactionPersonFromJson(o: JSONObject) = TransactionPersonCrossRef(
-        transactionId = o.getString("transaction_id"), personId = o.getString("person_id"),
+        transactionId = o.getString("transaction_id"),
+        personId = o.getString("person_id"),
     )
 
     private fun transactionTagFromJson(o: JSONObject) = TransactionTagCrossRef(
-        transactionId = o.getString("transaction_id"), tagId = o.getString("tag_id"),
+        transactionId = o.getString("transaction_id"),
+        tagId = o.getString("tag_id"),
     )
 
     // ---- JSON helpers ----
@@ -415,15 +501,11 @@ object BackupCodec {
         put(key, value ?: JSONObject.NULL)
     }
 
-    private fun JSONObject.stringOrNull(key: String): String? =
-        if (isNull(key)) null else getString(key)
+    private fun JSONObject.stringOrNull(key: String): String? = if (isNull(key)) null else getString(key)
 
-    private fun JSONObject.intOrNull(key: String): Int? =
-        if (isNull(key)) null else getInt(key)
+    private fun JSONObject.intOrNull(key: String): Int? = if (isNull(key)) null else getInt(key)
 
-    private fun JSONObject.longOrNull(key: String): Long? =
-        if (isNull(key)) null else getLong(key)
+    private fun JSONObject.longOrNull(key: String): Long? = if (isNull(key)) null else getLong(key)
 
-    private fun JSONObject.doubleOrNull(key: String): Double? =
-        if (isNull(key)) null else getDouble(key)
+    private fun JSONObject.doubleOrNull(key: String): Double? = if (isNull(key)) null else getDouble(key)
 }

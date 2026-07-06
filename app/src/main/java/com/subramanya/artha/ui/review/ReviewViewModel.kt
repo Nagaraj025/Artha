@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /** One pending SMS-detected transaction plus its rule-suggested category name, if any. */
-data class ReviewItem(
-    val pending: PendingSmsTransaction,
-    val suggestedCategoryName: String?,
-)
+data class ReviewItem(val pending: PendingSmsTransaction, val suggestedCategoryName: String?)
 
 data class ReviewUiState(val items: List<ReviewItem> = emptyList())
 

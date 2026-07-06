@@ -16,13 +16,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.subramanya.artha.ui.theme.Line1
-import com.subramanya.artha.ui.theme.Surface3
-import com.subramanya.artha.ui.theme.Teal300
-import com.subramanya.artha.ui.theme.Teal500
-import com.subramanya.artha.ui.theme.Text1
-import com.subramanya.artha.ui.theme.Text2
-import com.subramanya.artha.ui.theme.Text3
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.subramanya.artha.R
 import com.subramanya.artha.data.preferences.SpouseTransactionDefault
+import com.subramanya.artha.ui.theme.Line1
+import com.subramanya.artha.ui.theme.Surface3
+import com.subramanya.artha.ui.theme.Teal300
+import com.subramanya.artha.ui.theme.Teal500
+import com.subramanya.artha.ui.theme.Text1
+import com.subramanya.artha.ui.theme.Text2
+import com.subramanya.artha.ui.theme.Text3
 import com.subramanya.artha.utils.IndianNumberFormat
 
 /**
@@ -133,12 +133,7 @@ fun SpousePromptDialog(
 enum class SpouseChoice { TRANSFER, EXPENSE }
 
 @Composable
-private fun ChoiceRow(
-    selected: Boolean,
-    onSelect: () -> Unit,
-    title: String,
-    body: String,
-) {
+private fun ChoiceRow(selected: Boolean, onSelect: () -> Unit, title: String, body: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

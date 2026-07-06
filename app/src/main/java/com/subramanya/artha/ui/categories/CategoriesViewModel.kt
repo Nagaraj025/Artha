@@ -20,9 +20,7 @@ import kotlinx.coroutines.launch
  * VM lifetime — leaving and re-entering this screen forgets state, which is fine
  * for Phase 1 (and matches the "fresh look every time" mental model).
  */
-class CategoriesViewModel(
-    private val categoryRepository: CategoryRepository,
-) : ViewModel() {
+class CategoriesViewModel(private val categoryRepository: CategoryRepository) : ViewModel() {
 
     private val selectedType = MutableStateFlow(CategoryType.EXPENSE)
     private val expanded = MutableStateFlow<Set<String>>(emptySet())
@@ -68,9 +66,7 @@ class CategoriesViewModel(
     }
 }
 
-class CategoriesViewModelFactory(
-    private val categoryRepository: CategoryRepository,
-) : ViewModelProvider.Factory {
+class CategoriesViewModelFactory(private val categoryRepository: CategoryRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(CategoriesViewModel::class.java)) {

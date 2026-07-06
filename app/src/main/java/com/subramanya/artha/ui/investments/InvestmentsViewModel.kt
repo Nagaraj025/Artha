@@ -15,9 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class InvestmentsViewModel(
-    private val investmentRepository: InvestmentRepository,
-) : ViewModel() {
+class InvestmentsViewModel(private val investmentRepository: InvestmentRepository) : ViewModel() {
 
     private val view = MutableStateFlow(InvestmentsView.ALL)
 
@@ -58,9 +56,7 @@ class InvestmentsViewModel(
     }
 }
 
-class InvestmentsViewModelFactory(
-    private val investmentRepository: InvestmentRepository,
-) : ViewModelProvider.Factory {
+class InvestmentsViewModelFactory(private val investmentRepository: InvestmentRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(InvestmentsViewModel::class.java)) {

@@ -14,14 +14,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.subramanya.artha.ui.accounts.AccountDetailScreen
 import com.subramanya.artha.ui.accounts.AccountsScreen
+import com.subramanya.artha.ui.budgets.BudgetsScreen
 import com.subramanya.artha.ui.cards.CardDetailScreen
 import com.subramanya.artha.ui.cards.CardsScreen
 import com.subramanya.artha.ui.categories.CategoriesScreen
 import com.subramanya.artha.ui.dashboard.DashboardScreen
+import com.subramanya.artha.ui.goals.GoalsScreen
 import com.subramanya.artha.ui.insurance.InsuranceDetailScreen
 import com.subramanya.artha.ui.insurance.InsurancesScreen
-import com.subramanya.artha.ui.budgets.BudgetsScreen
-import com.subramanya.artha.ui.goals.GoalsScreen
 import com.subramanya.artha.ui.investments.InvestmentDetailScreen
 import com.subramanya.artha.ui.investments.InvestmentsScreen
 import com.subramanya.artha.ui.people.PeopleScreen
@@ -31,8 +31,8 @@ import com.subramanya.artha.ui.review.ReviewScreen
 import com.subramanya.artha.ui.rules.RulesScreen
 import com.subramanya.artha.ui.search.SearchScreen
 import com.subramanya.artha.ui.settings.AboutScreen
-import com.subramanya.artha.ui.subscriptions.SubscriptionsScreen
 import com.subramanya.artha.ui.settings.SettingsScreen
+import com.subramanya.artha.ui.subscriptions.SubscriptionsScreen
 import com.subramanya.artha.ui.tags.TagsScreen
 import com.subramanya.artha.ui.transactions.TransactionDetailScreen
 import com.subramanya.artha.ui.transactions.TransactionsScreen
@@ -96,10 +96,7 @@ object SubRoutes {
 private const val NAV_ANIM_MS: Int = 220
 
 @Composable
-fun ArthaNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-) {
+fun ArthaNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = ArthaDestination.Dashboard.route,

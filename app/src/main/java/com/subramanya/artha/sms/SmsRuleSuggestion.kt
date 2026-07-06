@@ -17,11 +17,7 @@ import kotlinx.datetime.TimeZone
  * can suggest a category — never persisted as-is. Only `result.transaction.categoryId` /
  * `.subCategoryId` are read back by the caller.
  */
-fun suggestCategoryFor(
-    parsed: ParsedBankSms,
-    rules: List<TransactionRule>,
-    people: List<Person>,
-): RuleEngineResult {
+fun suggestCategoryFor(parsed: ParsedBankSms, rules: List<TransactionRule>, people: List<Person>): RuleEngineResult {
     val candidate = Transaction(
         id = "sms-candidate",
         type = if (parsed.direction == SmsDirection.DEBIT) TransactionType.EXPENSE else TransactionType.INCOME,

@@ -26,8 +26,8 @@ class IndianNumberFormatTest {
         // Use an explicit unicode literal so this stays robust against editors
         // that try to "auto-fix" en-dashes back to hyphens.
         val enDash = "–"
-        assertEquals("${enDash}₹1,234", IndianNumberFormat.format(-1234.0))
-        assertEquals("${enDash}₹50.25", IndianNumberFormat.format(-50.25))
+        assertEquals("$enDash₹1,234", IndianNumberFormat.format(-1234.0))
+        assertEquals("$enDash₹50.25", IndianNumberFormat.format(-50.25))
     }
 
     @Test fun `formatWithDecimals always shows two decimal places`() {

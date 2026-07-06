@@ -19,11 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Rule
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,9 +32,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -62,7 +56,6 @@ import com.subramanya.artha.domain.rules.ConditionLogic
 import com.subramanya.artha.domain.rules.RuleAction
 import com.subramanya.artha.domain.rules.RuleCondition
 import com.subramanya.artha.ui.common.EmptyState
-import com.subramanya.artha.ui.theme.Danger
 import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.InstrumentSerif
@@ -88,10 +81,7 @@ import com.subramanya.artha.utils.IndianNumberFormat
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RulesScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun RulesScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: RulesViewModel = viewModel(
@@ -170,8 +160,11 @@ fun RulesScreen(
         com.subramanya.artha.ui.common.ArthaAlertDialog(
             onDismissRequest = { pendingDelete = null },
             title = stringResource(R.string.rules_delete_confirm_title),
-            text = if (toDelete.isSystem) stringResource(R.string.rules_delete_system_warning)
-                else stringResource(R.string.rules_delete_confirm_body),
+            text = if (toDelete.isSystem) {
+                stringResource(R.string.rules_delete_system_warning)
+            } else {
+                stringResource(R.string.rules_delete_confirm_body)
+            },
             confirmLabel = stringResource(R.string.rules_delete_confirm_yes),
             confirmDestructive = true,
             onConfirm = {
@@ -214,12 +207,7 @@ private fun RulesEditorialHeader() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun RuleRowCard(
-    rule: TransactionRule,
-    onTap: () -> Unit,
-    onToggle: (Boolean) -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun RuleRowCard(rule: TransactionRule, onTap: () -> Unit, onToggle: (Boolean) -> Unit, onDelete: () -> Unit) {
     Surface(
         color = Surface2,
         shape = RoundedCornerShape(16.dp),
@@ -429,5 +417,4 @@ private fun opLabel(op: AmountOp): String = when (op) {
     AmountOp.LTE -> "≤"
 }
 
-private fun fmtMin(minutes: Int): String =
-    "%02d:%02d".format(minutes / 60, minutes % 60)
+private fun fmtMin(minutes: Int): String = "%02d:%02d".format(minutes / 60, minutes % 60)

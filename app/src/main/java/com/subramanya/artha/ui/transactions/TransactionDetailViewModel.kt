@@ -71,7 +71,9 @@ class TransactionDetailViewModel(
         // the cross-ref-joined variant). For Phase 1 we fetch once on construction.
         val hydratedTxn = if (txn.peopleIds.isEmpty() && txn.tagIds.isEmpty()) {
             transactionRepository.getById(transactionId) ?: txn
-        } else txn
+        } else {
+            txn
+        }
 
         TransactionDetailUiState(
             transaction = hydratedTxn,
@@ -85,7 +87,9 @@ class TransactionDetailViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TransactionDetailUiState())
 
-    fun requestDelete() { if (state.value.transaction != null) showDeleteConfirm.update { true } }
+    fun requestDelete() {
+        if (state.value.transaction != null) showDeleteConfirm.update { true }
+    }
     fun dismissDeleteConfirm() = showDeleteConfirm.update { false }
     fun confirmDelete(onDeleted: () -> Unit) {
         val current = state.value.transaction ?: return

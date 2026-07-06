@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +34,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -51,12 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.subramanya.artha.ArthaApplication
 import com.subramanya.artha.R
-import com.subramanya.artha.domain.model.Category
-import com.subramanya.artha.ui.transaction.CategoryPickerSheet
 import com.subramanya.artha.data.entity.enums.PaymentApp
 import com.subramanya.artha.data.entity.enums.PersonRelation
 import com.subramanya.artha.data.entity.enums.SourceKind
 import com.subramanya.artha.data.entity.enums.TransactionType
+import com.subramanya.artha.domain.model.Category
 import com.subramanya.artha.domain.model.TransactionRule
 import com.subramanya.artha.domain.rules.AmountOp
 import com.subramanya.artha.domain.rules.ConditionLogic
@@ -64,6 +59,7 @@ import com.subramanya.artha.domain.rules.RuleAction
 import com.subramanya.artha.domain.rules.RuleActions
 import com.subramanya.artha.domain.rules.RuleCondition
 import com.subramanya.artha.domain.rules.RuleConditions
+import com.subramanya.artha.ui.transaction.CategoryPickerSheet
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -78,10 +74,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun RuleFormSheet(
-    editing: TransactionRule?,
-    onDismiss: () -> Unit,
-) {
+fun RuleFormSheet(editing: TransactionRule?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -130,8 +123,11 @@ fun RuleFormSheet(
         ) {
             com.subramanya.artha.ui.common.SheetTitle(
                 title = stringResource(
-                    if (editing == null) R.string.rules_form_add_title
-                    else R.string.rules_form_edit_title,
+                    if (editing == null) {
+                        R.string.rules_form_add_title
+                    } else {
+                        R.string.rules_form_edit_title
+                    },
                 ),
                 sub = stringResource(R.string.rules_form_priority_hint),
             )
@@ -239,11 +235,7 @@ private typealias SnapshotActionList = androidx.compose.runtime.snapshots.Snapsh
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ConditionRow(
-    condition: RuleCondition,
-    onChange: (RuleCondition) -> Unit,
-    onRemove: () -> Unit,
-) {
+private fun ConditionRow(condition: RuleCondition, onChange: (RuleCondition) -> Unit, onRemove: () -> Unit) {
     ListItem(
         modifier = Modifier.fillMaxWidth(),
         headlineContent = {
@@ -356,12 +348,7 @@ private fun ConditionEditor(condition: RuleCondition, onChange: (RuleCondition) 
 }
 
 @Composable
-private fun SourceKindEditor(
-    label: String,
-    kind: SourceKind,
-    id: String?,
-    onChange: (SourceKind, String?) -> Unit,
-) {
+private fun SourceKindEditor(label: String, kind: SourceKind, id: String?, onChange: (SourceKind, String?) -> Unit) {
     Column {
         EnumPicker(
             label = label,
@@ -382,13 +369,7 @@ private fun SourceKindEditor(
 }
 
 @Composable
-private fun <T> EnumPicker(
-    label: String,
-    current: T,
-    options: List<T>,
-    onPick: (T) -> Unit,
-    labelFor: (T) -> String,
-) {
+private fun <T> EnumPicker(label: String, current: T, options: List<T>, onPick: (T) -> Unit, labelFor: (T) -> String) {
     var expanded by remember { mutableStateOf(false) }
     Box {
         AssistChip(
@@ -399,7 +380,10 @@ private fun <T> EnumPicker(
             options.forEach { option ->
                 DropdownMenuItem(
                     text = { Text(labelFor(option)) },
-                    onClick = { onPick(option); expanded = false },
+                    onClick = {
+                        onPick(option)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -418,35 +402,59 @@ private fun AddConditionButton(onAdd: (RuleCondition) -> Unit) {
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_desc)) },
-                onClick = { onAdd(RuleCondition.DescriptionContains(text = "")); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.DescriptionContains(text = ""))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_amount)) },
-                onClick = { onAdd(RuleCondition.AmountCompare(op = AmountOp.GTE, value = 0.0)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.AmountCompare(op = AmountOp.GTE, value = 0.0))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_type)) },
-                onClick = { onAdd(RuleCondition.TypeIs(type = TransactionType.EXPENSE)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.TypeIs(type = TransactionType.EXPENSE))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_payment_app)) },
-                onClick = { onAdd(RuleCondition.PaymentAppIs(app = PaymentApp.GPAY)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.PaymentAppIs(app = PaymentApp.GPAY))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_person_relation)) },
-                onClick = { onAdd(RuleCondition.HasPersonRelation(relation = PersonRelation.SPOUSE)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.HasPersonRelation(relation = PersonRelation.SPOUSE))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_source)) },
-                onClick = { onAdd(RuleCondition.SourceIs(kind = SourceKind.ACCOUNT, id = null)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.SourceIs(kind = SourceKind.ACCOUNT, id = null))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_destination)) },
-                onClick = { onAdd(RuleCondition.DestinationIs(kind = SourceKind.CARD, id = null)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.DestinationIs(kind = SourceKind.CARD, id = null))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_cond_kind_time)) },
-                onClick = { onAdd(RuleCondition.TimeOfDayBetween(fromMinuteOfDay = 9 * 60, toMinuteOfDay = 18 * 60)); expanded = false },
+                onClick = {
+                    onAdd(RuleCondition.TimeOfDayBetween(fromMinuteOfDay = 9 * 60, toMinuteOfDay = 18 * 60))
+                    expanded = false
+                },
             )
         }
     }
@@ -455,12 +463,7 @@ private fun AddConditionButton(onAdd: (RuleCondition) -> Unit) {
 // ---------------- actions ----------------
 
 @Composable
-private fun ActionRow(
-    action: RuleAction,
-    categories: List<Category>,
-    onChange: (RuleAction) -> Unit,
-    onRemove: () -> Unit,
-) {
+private fun ActionRow(action: RuleAction, categories: List<Category>, onChange: (RuleAction) -> Unit, onRemove: () -> Unit) {
     ListItem(
         modifier = Modifier.fillMaxWidth(),
         headlineContent = {
@@ -476,11 +479,7 @@ private fun ActionRow(
 }
 
 @Composable
-private fun ActionEditor(
-    action: RuleAction,
-    categories: List<Category>,
-    onChange: (RuleAction) -> Unit,
-) {
+private fun ActionEditor(action: RuleAction, categories: List<Category>, onChange: (RuleAction) -> Unit) {
     when (action) {
         is RuleAction.SetType -> EnumPicker(
             label = stringResource(R.string.rules_action_set_type_label),
@@ -572,31 +571,52 @@ private fun AddActionButton(onAdd: (RuleAction) -> Unit) {
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_set_type)) },
-                onClick = { onAdd(RuleAction.SetType(TransactionType.EXPENSE)); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.SetType(TransactionType.EXPENSE))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_set_category)) },
-                onClick = { onAdd(RuleAction.SetCategory(categoryId = "")); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.SetCategory(categoryId = ""))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_set_tax)) },
-                onClick = { onAdd(RuleAction.SetTaxSection(section = "")); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.SetTaxSection(section = ""))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_add_tag)) },
-                onClick = { onAdd(RuleAction.AddTag(tagId = "")); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.AddTag(tagId = ""))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_add_person)) },
-                onClick = { onAdd(RuleAction.AddPerson(personId = "")); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.AddPerson(personId = ""))
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_exclude_expense)) },
-                onClick = { onAdd(RuleAction.ExcludeFromExpenseTotal); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.ExcludeFromExpenseTotal)
+                    expanded = false
+                },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.rules_action_kind_prompt_spouse)) },
-                onClick = { onAdd(RuleAction.PromptSpouse); expanded = false },
+                onClick = {
+                    onAdd(RuleAction.PromptSpouse)
+                    expanded = false
+                },
             )
         }
     }
@@ -642,8 +662,13 @@ private fun AmountOp.label(): String = when (this) {
     AmountOp.LTE -> "≤"
 }
 
-private fun Double.toPlainStringOrEmpty(): String =
-    if (this == 0.0) "" else if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainStringOrEmpty(): String = if (this == 0.0) {
+    ""
+} else if (this == this.toLong().toDouble()) {
+    this.toLong().toString()
+} else {
+    this.toString()
+}
 
 /** User-created rules sort below the seeded ones (priorities 10..90). */
 private const val DEFAULT_USER_PRIORITY: Int = 100

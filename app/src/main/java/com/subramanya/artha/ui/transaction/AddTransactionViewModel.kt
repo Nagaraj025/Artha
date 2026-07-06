@@ -143,10 +143,7 @@ class AddTransactionViewModel(
      * copy it straight into the form fields the same way [applyAiPrefill] does for AI Quick
      * Entry, leaving source/destination account resolution to the user.
      */
-    fun applyPendingSmsPrefill(
-        pending: com.subramanya.artha.domain.model.PendingSmsTransaction,
-        suggestedCategoryName: String?,
-    ) {
+    fun applyPendingSmsPrefill(pending: com.subramanya.artha.domain.model.PendingSmsTransaction, suggestedCategoryName: String?) {
         _state.update { current ->
             current.copy(
                 tab = if (pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT) {
@@ -257,8 +254,7 @@ class AddTransactionViewModel(
         else -> TransactionTab.EXPENSE
     }
 
-    private fun Double.toPlainString(): String =
-        if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+    private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
     // ---------- field setters ----------
 
@@ -272,8 +268,11 @@ class AddTransactionViewModel(
                 subCategoryDisplay = null,
                 // Transfer + Invest both need a destination; everything else
                 // doesn't, so wipe the destination when leaving those tabs.
-                destination = if (tab == TransactionTab.TRANSFER || tab == TransactionTab.INVEST)
-                    it.destination else null,
+                destination = if (tab == TransactionTab.TRANSFER || tab == TransactionTab.INVEST) {
+                    it.destination
+                } else {
+                    null
+                },
                 showValidationErrors = false,
             )
         }
@@ -445,8 +444,11 @@ class AddTransactionViewModel(
         _state.update { it.copy(pendingSpousePrompt = null) }
         when (choice) {
             SpouseChoice.TRANSFER -> {
-                if (spousePerson != null) commitSave(snapshot, applySpouseTransferOverride(spousePerson))
-                else commitSave(snapshot)
+                if (spousePerson != null) {
+                    commitSave(snapshot, applySpouseTransferOverride(spousePerson))
+                } else {
+                    commitSave(snapshot)
+                }
             }
             SpouseChoice.EXPENSE -> commitSave(snapshot)
         }
@@ -577,10 +579,7 @@ class AddTransactionViewModel(
         return allCategories.value.filter { it.parentId == parentId && it.type == type }
     }
 
-    private data class SaveOverride(
-        val type: TransactionType,
-        val destination: FundsEndpoint?,
-    )
+    private data class SaveOverride(val type: TransactionType, val destination: FundsEndpoint?)
 
     private companion object {
         private const val DEFAULT_TAG_COLOR: Long = 0xFF6366F1

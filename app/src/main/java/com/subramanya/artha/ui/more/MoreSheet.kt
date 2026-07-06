@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,23 +58,24 @@ import com.subramanya.artha.ui.theme.Text1
 import com.subramanya.artha.ui.theme.Text3
 
 enum class MoreAction {
-    Categories, Tags, Settings, About,
-    Investments, Insurance, Rules,
-    People, Budgets, Goals, Subscriptions, Recurring,
+    Categories,
+    Tags,
+    Settings,
+    About,
+    Investments,
+    Insurance,
+    Rules,
+    People,
+    Budgets,
+    Goals,
+    Subscriptions,
+    Recurring,
     Reports,
 }
 
-private data class MoreRow(
-    val action: MoreAction,
-    val icon: ImageVector,
-    @StringRes val titleRes: Int,
-    @StringRes val subRes: Int,
-)
+private data class MoreRow(val action: MoreAction, val icon: ImageVector, @StringRes val titleRes: Int, @StringRes val subRes: Int)
 
-private data class MoreSection(
-    @StringRes val titleRes: Int,
-    val rows: List<MoreRow>,
-)
+private data class MoreSection(@StringRes val titleRes: Int, val rows: List<MoreRow>)
 
 /**
  * HANDOFF §3.5 — More sheet rendered as 5 grouped sections (Money,
@@ -125,10 +125,7 @@ private val MoreSections: List<MoreSection> = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MoreSheet(
-    onDismiss: () -> Unit,
-    onActionSelected: (MoreAction) -> Unit,
-) {
+fun MoreSheet(onDismiss: () -> Unit, onActionSelected: (MoreAction) -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -174,10 +171,7 @@ fun MoreSheet(
 }
 
 @Composable
-private fun MoreSectionCard(
-    rows: List<MoreRow>,
-    onClick: (MoreAction) -> Unit,
-) {
+private fun MoreSectionCard(rows: List<MoreRow>, onClick: (MoreAction) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -31,7 +31,7 @@ import com.subramanya.artha.utils.DateFormatter
 /**
  * Greeting top bar per the design's [DashHeader] component:
  *
- *   [अ] EYEBROW DATE              [search]
+ *   [अ] EYEBROW DATE [search]
  *       Namaste, {name}
  *
  * The brand mark replaces the old greeting icon; "Namaste, X" replaces the
@@ -39,11 +39,7 @@ import com.subramanya.artha.utils.DateFormatter
  * (HANDOFF §6.11 — no emoji anywhere in the app.)
  */
 @Composable
-fun ArthaTopBar(
-    userName: String? = null,
-    modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit = {},
-) {
+fun ArthaTopBar(userName: String? = null, modifier: Modifier = Modifier, onSearchClick: () -> Unit = {}) {
     val today = remember { DateFormatter.todayShort() }
     val greeting = if (userName.isNullOrBlank()) {
         stringResource(R.string.greeting_guest)
@@ -96,4 +92,3 @@ fun ArthaTopBar(
         }
     }
 }
-

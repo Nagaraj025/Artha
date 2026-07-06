@@ -115,10 +115,7 @@ import kotlinx.datetime.toLocalDateTime
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionSheet(
-    viewModel: AddTransactionViewModel,
-    onDismiss: () -> Unit,
-) {
+fun AddTransactionSheet(viewModel: AddTransactionViewModel, onDismiss: () -> Unit) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val funds by viewModel.fundsCatalogue.collectAsStateWithLifecycle()
     val categories by viewModel.allCategories.collectAsStateWithLifecycle()
@@ -433,10 +430,7 @@ private fun SheetBody(
  * tab-tinted active label (Text1 expense, Income sage, Indigo transfer).
  */
 @Composable
-private fun SegmentedTabs(
-    selected: TransactionTab,
-    onSelect: (TransactionTab) -> Unit,
-) {
+private fun SegmentedTabs(selected: TransactionTab, onSelect: (TransactionTab) -> Unit) {
     Surface(
         color = Surface2,
         shape = RoundedCornerShape(14.dp),
@@ -485,12 +479,7 @@ private fun SegmentedTabs(
  * tight letterspacing (-0.02em). No box, no underline — pure typography.
  */
 @Composable
-private fun AmountInput(
-    value: String,
-    onValueChange: (String) -> Unit,
-    showError: Boolean,
-    tab: TransactionTab,
-) {
+private fun AmountInput(value: String, onValueChange: (String) -> Unit, showError: Boolean, tab: TransactionTab) {
     val tint = when (tab) {
         TransactionTab.EXPENSE -> Text1
         TransactionTab.INCOME -> Income
@@ -582,13 +571,7 @@ private fun AmountInput(
  * "Save expense · ₹420" using IndianNumberFormat. Disabled state stays muted.
  */
 @Composable
-private fun TabTintedSaveButton(
-    tab: TransactionTab,
-    amount: Double?,
-    enabled: Boolean,
-    isEditing: Boolean,
-    onClick: () -> Unit,
-) {
+private fun TabTintedSaveButton(tab: TransactionTab, amount: Double?, enabled: Boolean, isEditing: Boolean, onClick: () -> Unit) {
     val (container, content) = when (tab) {
         TransactionTab.EXPENSE -> Teal700 to Text1
         TransactionTab.INCOME -> Income to Color(0xFF06281C)
@@ -660,11 +643,7 @@ private fun DateTimeRow(millis: Long, onChooseDate: () -> Unit, onChooseTime: ()
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FundsPickers(
-    state: AddTransactionUiState,
-    funds: List<FundsEndpoint>,
-    viewModel: AddTransactionViewModel,
-) {
+private fun FundsPickers(state: AddTransactionUiState, funds: List<FundsEndpoint>, viewModel: AddTransactionViewModel) {
     val sourceLabel = when (state.tab) {
         TransactionTab.EXPENSE, TransactionTab.TRANSFER, TransactionTab.INVEST -> R.string.txn_from_label
         TransactionTab.INCOME -> R.string.txn_to_label
@@ -689,7 +668,9 @@ private fun FundsPickers(
                     label = { Text(ep.displayName) },
                     leadingIcon = if (ep.kind == SourceKind.CARD) {
                         { Icon(Icons.Filled.CreditCard, contentDescription = null) }
-                    } else null,
+                    } else {
+                        null
+                    },
                 )
             }
         }
@@ -738,7 +719,9 @@ private fun FundsPickers(
                         label = { Text(ep.displayName) },
                         leadingIcon = if (ep.kind == SourceKind.CARD) {
                             { Icon(Icons.Filled.CreditCard, contentDescription = null) }
-                        } else null,
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -752,8 +735,10 @@ private fun FundsPickers(
             )
         }
         // Same-source-destination check
-        if (state.source != null && state.destination != null &&
-            state.source.kind == state.destination.kind && state.source.id == state.destination.id
+        if (state.source != null &&
+            state.destination != null &&
+            state.source.kind == state.destination.kind &&
+            state.source.id == state.destination.id
         ) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -855,7 +840,8 @@ private fun ReceiptPicker(uri: String?, onPicked: (String?) -> Unit) {
                 },
             ) {
                 Icon(Icons.Filled.Camera, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.txn_receipt_camera))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.txn_receipt_camera))
             }
             OutlinedButton(
                 onClick = {
@@ -865,7 +851,8 @@ private fun ReceiptPicker(uri: String?, onPicked: (String?) -> Unit) {
                 },
             ) {
                 Icon(Icons.Filled.Image, contentDescription = null)
-                Spacer(Modifier.width(6.dp)); Text(stringResource(R.string.txn_receipt_gallery))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.txn_receipt_gallery))
             }
             if (uri != null) {
                 TextButton(onClick = { onPicked(null) }) {
@@ -905,11 +892,7 @@ private fun DatePickerSheet(initialMillis: Long, onConfirm: (Long) -> Unit, onDi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TimePickerDialog(
-    initialMillis: Long,
-    onConfirm: (Int, Int) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun TimePickerDialog(initialMillis: Long, onConfirm: (Int, Int) -> Unit, onDismiss: () -> Unit) {
     val initial = remember(initialMillis) {
         Instant.fromEpochMilliseconds(initialMillis).toLocalDateTime(TimeZone.currentSystemDefault())
     }

@@ -21,7 +21,4 @@ data class Card(
     val createdAt: Long,
 )
 
-data class CardWithBalance(
-    val card: Card,
-    val currentOutstanding: Double,
-)
+data class CardWithBalance(val card: Card, val currentOutstanding: Double)

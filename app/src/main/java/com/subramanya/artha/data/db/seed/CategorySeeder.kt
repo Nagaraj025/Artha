@@ -27,15 +27,14 @@ internal class CategorySeederCallback : RoomDatabase.Callback() {
         }
     }
 
-    private fun CategoryEntity.toContentValues(): ContentValues =
-        ContentValues().apply {
-            put("id", id)
-            put("name", name)
-            put("parent_id", parentId)
-            put("type", type.name)
-            put("icon", icon)
-            put("color", color)
-            put("is_system", if (isSystem) 1 else 0)
-            put("display_order", displayOrder)
-        }
+    private fun CategoryEntity.toContentValues(): ContentValues = ContentValues().apply {
+        put("id", id)
+        put("name", name)
+        put("parent_id", parentId)
+        put("type", type.name)
+        put("icon", icon)
+        put("color", color)
+        put("is_system", if (isSystem) 1 else 0)
+        put("display_order", displayOrder)
+    }
 }

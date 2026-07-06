@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.subramanya.artha.data.entity.enums.SourceKind
+import com.subramanya.artha.data.entity.enums.TransactionType
 import com.subramanya.artha.data.repository.AccountRepository
 import com.subramanya.artha.data.repository.CardRepository
 import com.subramanya.artha.data.repository.CategoryRepository
@@ -12,7 +13,6 @@ import com.subramanya.artha.domain.model.Account
 import com.subramanya.artha.domain.model.Card
 import com.subramanya.artha.domain.model.Category
 import com.subramanya.artha.domain.model.Transaction
-import com.subramanya.artha.data.entity.enums.TransactionType
 import com.subramanya.artha.utils.DateFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -140,11 +140,7 @@ class TransactionsViewModel(
 
     // ---------- pure helpers ----------
 
-    private fun applyFilters(
-        all: List<Transaction>,
-        q: String,
-        f: TransactionsFilter,
-    ): List<Transaction> {
+    private fun applyFilters(all: List<Transaction>, q: String, f: TransactionsFilter): List<Transaction> {
         val range = f.range.toRange(now = clock(), tz = timeZone)
         val needle = q.trim().lowercase()
         return all.filter { txn ->
@@ -213,10 +209,7 @@ class TransactionsViewModel(
 
     /** Flatten day groups into a single keyed list: a header followed by its entries, each entry
      *  carrying its resolved category + first/last-in-day flags for the day-card rounding. */
-    private fun flattenRows(
-        groups: List<TransactionsGroup>,
-        categoriesById: Map<String, Category>,
-    ): List<LedgerListItem> = buildList {
+    private fun flattenRows(groups: List<TransactionsGroup>, categoriesById: Map<String, Category>): List<LedgerListItem> = buildList {
         groups.forEach { group ->
             val daySum = group.transactions.sumOf { signedDelta(it) }
             add(LedgerListItem.DayHeader(group.headerKey, group.headerDisplay, daySum))

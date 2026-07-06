@@ -15,10 +15,9 @@ object DatabaseProvider {
     @Volatile
     private var instance: AppDatabase? = null
 
-    fun get(context: Context): AppDatabase =
-        instance ?: synchronized(this) {
-            instance ?: build(context.applicationContext).also { instance = it }
-        }
+    fun get(context: Context): AppDatabase = instance ?: synchronized(this) {
+        instance ?: build(context.applicationContext).also { instance = it }
+    }
 
     private fun build(appContext: Context): AppDatabase {
         val builder =

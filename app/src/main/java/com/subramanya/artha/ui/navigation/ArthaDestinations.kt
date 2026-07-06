@@ -16,11 +16,7 @@ import com.subramanya.artha.R
  * is to OPEN the More sheet rather than to navigate — MainActivity routes that intent
  * accordingly.
  */
-enum class ArthaDestination(
-    val route: String,
-    @StringRes val labelRes: Int,
-    val icon: ImageVector,
-) {
+enum class ArthaDestination(val route: String, @StringRes val labelRes: Int, val icon: ImageVector) {
     Dashboard(route = "dashboard", labelRes = R.string.nav_dashboard, icon = Icons.Filled.Dashboard),
     Transactions(route = "transactions", labelRes = R.string.nav_transactions, icon = Icons.AutoMirrored.Filled.ReceiptLong),
     Accounts(route = "accounts", labelRes = R.string.nav_accounts, icon = Icons.Filled.AccountBalance),
@@ -33,7 +29,6 @@ enum class ArthaDestination(
         /** Destinations to show in the bottom nav, in display order. */
         val bottomNav: List<ArthaDestination> = entries.toList()
 
-        fun fromRoute(route: String?): ArthaDestination? =
-            entries.firstOrNull { it.route == route }
+        fun fromRoute(route: String?): ArthaDestination? = entries.firstOrNull { it.route == route }
     }
 }

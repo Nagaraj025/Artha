@@ -100,11 +100,7 @@ private val ArthaLightColors = lightColorScheme(
 )
 
 @Composable
-fun ArthaTheme(
-    themeMode: ThemeMode = ThemeMode.SYSTEM,
-    useDynamicColor: Boolean = false,
-    content: @Composable () -> Unit,
-) {
+fun ArthaTheme(themeMode: ThemeMode = ThemeMode.SYSTEM, useDynamicColor: Boolean = false, content: @Composable () -> Unit) {
     val darkTheme = when (themeMode) {
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
         ThemeMode.LIGHT -> false

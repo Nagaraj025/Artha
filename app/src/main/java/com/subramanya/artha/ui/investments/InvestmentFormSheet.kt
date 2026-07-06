@@ -66,10 +66,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InvestmentFormSheet(
-    editing: Investment?,
-    onDismiss: () -> Unit,
-) {
+fun InvestmentFormSheet(editing: Investment?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -128,7 +125,9 @@ fun InvestmentFormSheet(
         if (isDerived) parsedOpeningContribution != null else parsedCurrentValue != null
 
     val showUnitsAndNav = type in setOf(
-        InvestmentType.SIP, InvestmentType.MUTUAL_FUND, InvestmentType.EQUITY,
+        InvestmentType.SIP,
+        InvestmentType.MUTUAL_FUND,
+        InvestmentType.EQUITY,
         InvestmentType.GOLD_DIGITAL,
     )
     val showMaturity = type in setOf(InvestmentType.FD, InvestmentType.RD, InvestmentType.BONDS)
@@ -165,8 +164,11 @@ fun InvestmentFormSheet(
         ) {
             SheetTitle(
                 title = stringResource(
-                    if (editing == null) R.string.investment_form_add_title
-                    else R.string.investment_form_edit_title,
+                    if (editing == null) {
+                        R.string.investment_form_add_title
+                    } else {
+                        R.string.investment_form_edit_title
+                    },
                 ),
             )
 
@@ -440,8 +442,7 @@ fun InvestmentFormSheet(
 
 private fun nextDisplayOrder(): Int = (System.currentTimeMillis() / 1000L).toInt()
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 private val PALETTE: List<Long> = listOf(
     0xFF0F766EL,

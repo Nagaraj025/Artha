@@ -19,17 +19,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,8 +47,8 @@ import com.subramanya.artha.ui.theme.AccMagenta
 import com.subramanya.artha.ui.theme.AccSaffron
 import com.subramanya.artha.ui.theme.AccTeal
 import com.subramanya.artha.ui.theme.AccViolet
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.theme.IncomeSoft
@@ -80,10 +74,7 @@ import com.subramanya.artha.utils.IndianNumberFormat
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportsScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun ReportsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: ReportsViewModel = viewModel(
@@ -113,32 +104,31 @@ fun ReportsScreen(
                     onBack = onBack,
                 )
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                Spacer(Modifier.height(8.dp))
-                RangePicker(state.range, vm::onRangeChanged)
-                Spacer(Modifier.height(16.dp))
-                NetWorthHero(value = state.netWorth)
-                Spacer(Modifier.height(16.dp))
-                InOutNetStrip(income = state.totalIncome, expense = state.totalExpense)
+                    Spacer(Modifier.height(8.dp))
+                    RangePicker(state.range, vm::onRangeChanged)
+                    Spacer(Modifier.height(16.dp))
+                    NetWorthHero(value = state.netWorth)
+                    Spacer(Modifier.height(16.dp))
+                    InOutNetStrip(income = state.totalIncome, expense = state.totalExpense)
 
-                Spacer(Modifier.height(24.dp))
-                CategoryBarsSection(slices = state.spendingByCategory)
+                    Spacer(Modifier.height(24.dp))
+                    CategoryBarsSection(slices = state.spendingByCategory)
 
-                Spacer(Modifier.height(24.dp))
-                AppBarsSection(slices = state.spendingByPaymentApp)
+                    Spacer(Modifier.height(24.dp))
+                    AppBarsSection(slices = state.spendingByPaymentApp)
 
-                Spacer(Modifier.height(24.dp))
-                TopMerchantsSection(merchants = state.topMerchants)
+                    Spacer(Modifier.height(24.dp))
+                    TopMerchantsSection(merchants = state.topMerchants)
 
-                Spacer(Modifier.height(24.dp))
-                TaxSectionsBlock(rows = state.taxSections)
+                    Spacer(Modifier.height(24.dp))
+                    TaxSectionsBlock(rows = state.taxSections)
 
-                Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(32.dp))
                 }
             }
         }
     }
 }
-
 
 @Composable
 private fun RangePicker(current: ReportRange, onChange: (ReportRange) -> Unit) {
@@ -234,12 +224,7 @@ private fun InOutNetStrip(income: Double, expense: Double) {
 }
 
 @Composable
-private fun androidx.compose.foundation.layout.RowScope.StripCol(
-    label: String,
-    value: Double,
-    color: Color,
-    weight: Float,
-) {
+private fun androidx.compose.foundation.layout.RowScope.StripCol(label: String, value: Double, color: Color, weight: Float) {
     Column(
         modifier = Modifier
             .weight(weight)
@@ -292,7 +277,14 @@ private fun StripDivider() {
 // ─────────────────────────── Sub-sections ─────────────────────────────────────
 
 private val accentPalette: List<Color> = listOf(
-    AccTeal, AccIndigo, AccEmerald, AccSaffron, AccMagenta, AccViolet, Ochre, OchreSoft,
+    AccTeal,
+    AccIndigo,
+    AccEmerald,
+    AccSaffron,
+    AccMagenta,
+    AccViolet,
+    Ochre,
+    OchreSoft,
 )
 
 @Composable

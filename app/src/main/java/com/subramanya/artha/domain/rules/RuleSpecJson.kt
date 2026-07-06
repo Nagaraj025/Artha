@@ -35,74 +35,97 @@ object RuleSpecJson {
 
     private fun encodeCondition(c: RuleCondition): JSONObject = when (c) {
         is RuleCondition.DescriptionContains -> JSONObject().apply {
-            put("kind", "DescriptionContains"); put("text", c.text); put("ignoreCase", c.ignoreCase)
+            put("kind", "DescriptionContains")
+            put("text", c.text)
+            put("ignoreCase", c.ignoreCase)
         }
         is RuleCondition.AmountCompare -> JSONObject().apply {
-            put("kind", "AmountCompare"); put("op", c.op.name); put("value", c.value)
+            put("kind", "AmountCompare")
+            put("op", c.op.name)
+            put("value", c.value)
         }
         is RuleCondition.SourceIs -> JSONObject().apply {
-            put("kind", "SourceIs"); put("source_kind", c.kind.name); put("id", c.id)
+            put("kind", "SourceIs")
+            put("source_kind", c.kind.name)
+            put("id", c.id)
         }
         is RuleCondition.DestinationIs -> JSONObject().apply {
-            put("kind", "DestinationIs"); put("source_kind", c.kind.name); put("id", c.id)
+            put("kind", "DestinationIs")
+            put("source_kind", c.kind.name)
+            put("id", c.id)
         }
         is RuleCondition.PaymentAppIs -> JSONObject().apply {
-            put("kind", "PaymentAppIs"); put("app", c.app.name)
+            put("kind", "PaymentAppIs")
+            put("app", c.app.name)
         }
         is RuleCondition.TypeIs -> JSONObject().apply {
-            put("kind", "TypeIs"); put("type", c.type.name)
+            put("kind", "TypeIs")
+            put("type", c.type.name)
         }
         is RuleCondition.HasPersonRelation -> JSONObject().apply {
-            put("kind", "HasPersonRelation"); put("relation", c.relation.name)
+            put("kind", "HasPersonRelation")
+            put("relation", c.relation.name)
         }
         is RuleCondition.TimeOfDayBetween -> JSONObject().apply {
-            put("kind", "TimeOfDayBetween"); put("from", c.fromMinuteOfDay); put("to", c.toMinuteOfDay)
+            put("kind", "TimeOfDayBetween")
+            put("from", c.fromMinuteOfDay)
+            put("to", c.toMinuteOfDay)
         }
     }
 
     private fun encodeAction(a: RuleAction): JSONObject = when (a) {
-        is RuleAction.SetType -> JSONObject().apply { put("kind", "SetType"); put("type", a.type.name) }
-        is RuleAction.SetCategory -> JSONObject().apply {
-            put("kind", "SetCategory"); put("category_id", a.categoryId); put("sub_category_id", a.subCategoryId)
+        is RuleAction.SetType -> JSONObject().apply {
+            put("kind", "SetType")
+            put("type", a.type.name)
         }
-        is RuleAction.SetTaxSection -> JSONObject().apply { put("kind", "SetTaxSection"); put("section", a.section) }
-        is RuleAction.AddTag -> JSONObject().apply { put("kind", "AddTag"); put("tag_id", a.tagId) }
-        is RuleAction.AddPerson -> JSONObject().apply { put("kind", "AddPerson"); put("person_id", a.personId) }
+        is RuleAction.SetCategory -> JSONObject().apply {
+            put("kind", "SetCategory")
+            put("category_id", a.categoryId)
+            put("sub_category_id", a.subCategoryId)
+        }
+        is RuleAction.SetTaxSection -> JSONObject().apply {
+            put("kind", "SetTaxSection")
+            put("section", a.section)
+        }
+        is RuleAction.AddTag -> JSONObject().apply {
+            put("kind", "AddTag")
+            put("tag_id", a.tagId)
+        }
+        is RuleAction.AddPerson -> JSONObject().apply {
+            put("kind", "AddPerson")
+            put("person_id", a.personId)
+        }
         RuleAction.ExcludeFromExpenseTotal -> JSONObject().apply { put("kind", "ExcludeFromExpenseTotal") }
         RuleAction.PromptSpouse -> JSONObject().apply { put("kind", "PromptSpouse") }
     }
 
     // ---- decode ----
 
-    fun decodeConditions(raw: String): RuleConditions {
-        return runCatching {
-            val root = JSONObject(raw)
-            val logic = runCatching { ConditionLogic.valueOf(root.optString("logic", "ALL")) }
-                .getOrDefault(ConditionLogic.ALL)
-            val items = (root.optJSONArray("items") ?: JSONArray()).let { arr ->
-                buildList {
-                    for (i in 0 until arr.length()) {
-                        decodeCondition(arr.getJSONObject(i))?.let { add(it) }
-                    }
+    fun decodeConditions(raw: String): RuleConditions = runCatching {
+        val root = JSONObject(raw)
+        val logic = runCatching { ConditionLogic.valueOf(root.optString("logic", "ALL")) }
+            .getOrDefault(ConditionLogic.ALL)
+        val items = (root.optJSONArray("items") ?: JSONArray()).let { arr ->
+            buildList {
+                for (i in 0 until arr.length()) {
+                    decodeCondition(arr.getJSONObject(i))?.let { add(it) }
                 }
             }
-            RuleConditions(logic, items)
-        }.getOrDefault(RuleConditions())
-    }
+        }
+        RuleConditions(logic, items)
+    }.getOrDefault(RuleConditions())
 
-    fun decodeActions(raw: String): RuleActions {
-        return runCatching {
-            val root = JSONObject(raw)
-            val items = (root.optJSONArray("items") ?: JSONArray()).let { arr ->
-                buildList {
-                    for (i in 0 until arr.length()) {
-                        decodeAction(arr.getJSONObject(i))?.let { add(it) }
-                    }
+    fun decodeActions(raw: String): RuleActions = runCatching {
+        val root = JSONObject(raw)
+        val items = (root.optJSONArray("items") ?: JSONArray()).let { arr ->
+            buildList {
+                for (i in 0 until arr.length()) {
+                    decodeAction(arr.getJSONObject(i))?.let { add(it) }
                 }
             }
-            RuleActions(items)
-        }.getOrDefault(RuleActions())
-    }
+        }
+        RuleActions(items)
+    }.getOrDefault(RuleActions())
 
     private fun decodeCondition(o: JSONObject): RuleCondition? = runCatching {
         when (o.optString("kind")) {

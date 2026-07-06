@@ -6,15 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,30 +20,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Subscriptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,7 +59,6 @@ import com.subramanya.artha.data.entity.enums.SubscriptionFrequency
 import com.subramanya.artha.data.entity.enums.SubscriptionStatus
 import com.subramanya.artha.domain.model.Subscription
 import com.subramanya.artha.ui.common.EmptyState
-import com.subramanya.artha.ui.theme.ArthaAmountStyles
 import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.InstrumentSerif
@@ -81,7 +68,6 @@ import com.subramanya.artha.ui.theme.Surface1
 import com.subramanya.artha.ui.theme.Surface2
 import com.subramanya.artha.ui.theme.Surface4
 import com.subramanya.artha.ui.theme.Teal300
-import com.subramanya.artha.ui.theme.Teal500
 import com.subramanya.artha.ui.theme.Teal700
 import com.subramanya.artha.ui.theme.Text1
 import com.subramanya.artha.ui.theme.Text2
@@ -93,10 +79,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubscriptionsScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SubscriptionsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val all by app.subscriptionRepository.observeAll().collectAsStateWithLifecycle(initialValue = emptyList())
@@ -166,7 +149,12 @@ fun SubscriptionsScreen(
     if (mode != null) {
         SubscriptionFormSheet(
             editing = (mode as? FormMode.Edit)?.subscription,
-            onSave = { resolved -> scope.launch { app.subscriptionRepository.upsert(resolved); formMode = null } },
+            onSave = { resolved ->
+                scope.launch {
+                    app.subscriptionRepository.upsert(resolved)
+                    formMode = null
+                }
+            },
             onDismiss = { formMode = null },
         )
     }
@@ -179,7 +167,12 @@ fun SubscriptionsScreen(
             text = stringResource(R.string.subscriptions_delete_confirm_body),
             confirmLabel = stringResource(R.string.subscriptions_delete_confirm_yes),
             confirmDestructive = true,
-            onConfirm = { scope.launch { app.subscriptionRepository.delete(toDelete); pendingDelete = null } },
+            onConfirm = {
+                scope.launch {
+                    app.subscriptionRepository.delete(toDelete)
+                    pendingDelete = null
+                }
+            },
             cancelLabel = stringResource(R.string.common_cancel),
             onCancel = { pendingDelete = null },
         )
@@ -327,11 +320,7 @@ private fun SubscriptionFrequency.label(): String = when (this) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SubscriptionFormSheet(
-    editing: Subscription?,
-    onSave: (Subscription) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun SubscriptionFormSheet(editing: Subscription?, onSave: (Subscription) -> Unit, onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var name by remember(editing) { mutableStateOf(editing?.name.orEmpty()) }
     var provider by remember(editing) { mutableStateOf(editing?.provider.orEmpty()) }
@@ -478,5 +467,4 @@ private fun SubscriptionFormSheet(
     }
 }
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()

@@ -79,10 +79,7 @@ fun PersonPicker(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun AddPersonDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, PersonRelation) -> Unit,
-) {
+private fun AddPersonDialog(onDismiss: () -> Unit, onConfirm: (String, PersonRelation) -> Unit) {
     var name by remember { mutableStateOf("") }
     var relation by remember { mutableStateOf(PersonRelation.FRIEND) }
 
@@ -132,14 +129,13 @@ private fun AddPersonDialog(
 }
 
 @Composable
-private fun PersonRelation.displayName(): String =
-    when (this) {
-        PersonRelation.SPOUSE -> stringResource(R.string.person_relation_spouse)
-        PersonRelation.PARENT -> stringResource(R.string.person_relation_parent)
-        PersonRelation.SIBLING -> stringResource(R.string.person_relation_sibling)
-        PersonRelation.CHILD -> stringResource(R.string.person_relation_child)
-        PersonRelation.FRIEND -> stringResource(R.string.person_relation_friend)
-        PersonRelation.COLLEAGUE -> stringResource(R.string.person_relation_colleague)
-        PersonRelation.BUSINESS -> stringResource(R.string.person_relation_business)
-        PersonRelation.OTHER -> stringResource(R.string.person_relation_other)
-    }
+private fun PersonRelation.displayName(): String = when (this) {
+    PersonRelation.SPOUSE -> stringResource(R.string.person_relation_spouse)
+    PersonRelation.PARENT -> stringResource(R.string.person_relation_parent)
+    PersonRelation.SIBLING -> stringResource(R.string.person_relation_sibling)
+    PersonRelation.CHILD -> stringResource(R.string.person_relation_child)
+    PersonRelation.FRIEND -> stringResource(R.string.person_relation_friend)
+    PersonRelation.COLLEAGUE -> stringResource(R.string.person_relation_colleague)
+    PersonRelation.BUSINESS -> stringResource(R.string.person_relation_business)
+    PersonRelation.OTHER -> stringResource(R.string.person_relation_other)
+}

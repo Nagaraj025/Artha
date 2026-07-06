@@ -19,10 +19,10 @@ import com.subramanya.artha.domain.model.Investment
 import com.subramanya.artha.domain.model.Person
 import com.subramanya.artha.domain.model.Tag
 import com.subramanya.artha.domain.model.Transaction
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -54,11 +54,7 @@ data class SearchResults(
         categories.size + tags.size + investments.size + insurances.size
 }
 
-data class SearchUiState(
-    val query: String = "",
-    val results: SearchResults = SearchResults(),
-    val isEmpty: Boolean = true,
-)
+data class SearchUiState(val query: String = "", val results: SearchResults = SearchResults(), val isEmpty: Boolean = true)
 
 /**
  * Global search across the user's entire ledger. Lights up everything that
@@ -215,11 +211,9 @@ private fun Person.matches(needle: String): Boolean {
     return false
 }
 
-private fun Category.matches(needle: String): Boolean =
-    name.lowercase().contains(needle)
+private fun Category.matches(needle: String): Boolean = name.lowercase().contains(needle)
 
-private fun Tag.matches(needle: String): Boolean =
-    name.lowercase().contains(needle)
+private fun Tag.matches(needle: String): Boolean = name.lowercase().contains(needle)
 
 private fun Investment.matches(needle: String): Boolean {
     if (name.lowercase().contains(needle)) return true

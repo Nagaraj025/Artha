@@ -13,17 +13,14 @@ import kotlinx.coroutines.flow.map
 
 class TransactionRepository(private val transactionDao: TransactionDao) {
 
-    fun observeAll(): Flow<List<Transaction>> =
-        hydrate(transactionDao.observeAll())
+    fun observeAll(): Flow<List<Transaction>> = hydrate(transactionDao.observeAll())
 
     fun observeBetween(startMillis: Long, endMillis: Long): Flow<List<Transaction>> =
         hydrate(transactionDao.observeBetween(startMillis, endMillis))
 
-    fun observeForAccountOrCard(id: String): Flow<List<Transaction>> =
-        hydrate(transactionDao.observeForSourceOrDestination(id))
+    fun observeForAccountOrCard(id: String): Flow<List<Transaction>> = hydrate(transactionDao.observeForSourceOrDestination(id))
 
-    fun observeById(id: String): Flow<Transaction?> =
-        transactionDao.observeById(id).map { it?.toDomain() }
+    fun observeById(id: String): Flow<Transaction?> = transactionDao.observeById(id).map { it?.toDomain() }
 
     /**
      * Joins the entity stream with whole-table snapshots of the cross-ref tables so
@@ -34,23 +31,22 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
      * cross-ref tables are tiny (one row per (txn, person) edge), so the cost is
      * negligible compared to the bug it prevents.
      */
-    private fun hydrate(source: Flow<List<TransactionEntity>>): Flow<List<Transaction>> =
-        combine(
-            source,
-            transactionDao.observeAllPeopleLinks(),
-            transactionDao.observeAllTagLinks(),
-        ) { entities, peopleLinks, tagLinks ->
-            val peopleByTxn: Map<String, List<String>> = peopleLinks
-                .groupBy(TransactionPersonCrossRef::transactionId, TransactionPersonCrossRef::personId)
-            val tagsByTxn: Map<String, List<String>> = tagLinks
-                .groupBy(TransactionTagCrossRef::transactionId, TransactionTagCrossRef::tagId)
-            entities.map { entity ->
-                entity.toDomain(
-                    peopleIds = peopleByTxn[entity.id].orEmpty(),
-                    tagIds = tagsByTxn[entity.id].orEmpty(),
-                )
-            }
+    private fun hydrate(source: Flow<List<TransactionEntity>>): Flow<List<Transaction>> = combine(
+        source,
+        transactionDao.observeAllPeopleLinks(),
+        transactionDao.observeAllTagLinks(),
+    ) { entities, peopleLinks, tagLinks ->
+        val peopleByTxn: Map<String, List<String>> = peopleLinks
+            .groupBy(TransactionPersonCrossRef::transactionId, TransactionPersonCrossRef::personId)
+        val tagsByTxn: Map<String, List<String>> = tagLinks
+            .groupBy(TransactionTagCrossRef::transactionId, TransactionTagCrossRef::tagId)
+        entities.map { entity ->
+            entity.toDomain(
+                peopleIds = peopleByTxn[entity.id].orEmpty(),
+                tagIds = tagsByTxn[entity.id].orEmpty(),
+            )
         }
+    }
 
     /** Hydrates peopleIds and tagIds from the cross-ref tables (single-row fetch). */
     suspend fun getById(id: String): Transaction? {
@@ -72,8 +68,7 @@ class TransactionRepository(private val transactionDao: TransactionDao) {
         )
     }
 
-    suspend fun delete(transaction: Transaction) =
-        transactionDao.deleteTransaction(transaction.toEntity())
+    suspend fun delete(transaction: Transaction) = transactionDao.deleteTransaction(transaction.toEntity())
 
     suspend fun deleteByIds(ids: List<String>) = transactionDao.deleteByIds(ids)
 }

@@ -5,10 +5,7 @@ import com.subramanya.artha.data.entity.enums.PaymentApp
 import com.subramanya.artha.data.entity.enums.TransactionType
 
 /** What the user wants to parse — any combination of these may be present. */
-data class AiQuickEntryInput(
-    val text: String = "",
-    val photo: Bitmap? = null,
-)
+data class AiQuickEntryInput(val text: String = "", val photo: Bitmap? = null)
 
 /** Per-field confidence so the UI can flag low-confidence ones in red. */
 enum class Confidence { LOW, MEDIUM, HIGH }
@@ -44,8 +41,10 @@ sealed interface AiQuickEntryResult {
 /** Reason a [AiQuickEntryParser.validateKey] call failed, so the UI can phrase the toast. */
 sealed interface KeyValidationResult {
     data object Ok : KeyValidationResult
+
     /** Key was rejected outright (401/403 / "API key not valid" / similar). */
     data class Invalid(val message: String) : KeyValidationResult
+
     /** Network or transient failure — let the user retry rather than blocking save. */
     data class NetworkError(val message: String) : KeyValidationResult
 }

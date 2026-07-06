@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.map
 
 class TagRepository(private val tagDao: TagDao) {
 
-    fun observeAll(): Flow<List<Tag>> =
-        tagDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Tag>> = tagDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     suspend fun getById(id: String): Tag? = tagDao.getById(id)?.toDomain()
 

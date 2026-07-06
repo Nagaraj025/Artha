@@ -153,10 +153,9 @@ fun AddAccountStep(
 }
 
 @Composable
-private fun AccountType.displayLabel(): String =
-    when (this) {
-        AccountType.SAVINGS -> stringResource(R.string.onboarding_account_type_savings)
-        AccountType.CURRENT -> stringResource(R.string.onboarding_account_type_current)
-        AccountType.CASH -> stringResource(R.string.onboarding_account_type_cash)
-        AccountType.WALLET -> stringResource(R.string.onboarding_account_type_wallet)
-    }
+private fun AccountType.displayLabel(): String = when (this) {
+    AccountType.SAVINGS -> stringResource(R.string.onboarding_account_type_savings)
+    AccountType.CURRENT -> stringResource(R.string.onboarding_account_type_current)
+    AccountType.CASH -> stringResource(R.string.onboarding_account_type_cash)
+    AccountType.WALLET -> stringResource(R.string.onboarding_account_type_wallet)
+}

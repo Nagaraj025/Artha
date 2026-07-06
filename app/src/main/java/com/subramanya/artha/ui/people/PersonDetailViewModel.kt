@@ -58,10 +58,12 @@ class PersonDetailViewModel(
             when (t.type) {
                 TransactionType.EXPENSE,
                 TransactionType.LOAN_GIVEN,
-                TransactionType.GIFT_SENT -> owesYou += t.amount
+                TransactionType.GIFT_SENT,
+                -> owesYou += t.amount
                 TransactionType.INCOME,
                 TransactionType.LOAN_RECEIVED,
-                TransactionType.GIFT_RECEIVED -> youOwe += t.amount
+                TransactionType.GIFT_RECEIVED,
+                -> youOwe += t.amount
                 else -> Unit
             }
         }

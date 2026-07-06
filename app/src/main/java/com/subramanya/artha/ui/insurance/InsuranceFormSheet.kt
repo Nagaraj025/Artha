@@ -73,10 +73,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsuranceFormSheet(
-    editing: Insurance?,
-    onDismiss: () -> Unit,
-) {
+fun InsuranceFormSheet(editing: Insurance?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -152,8 +149,11 @@ fun InsuranceFormSheet(
         ) {
             SheetTitle(
                 title = stringResource(
-                    if (editing == null) R.string.insurance_form_add_title
-                    else R.string.insurance_form_edit_title,
+                    if (editing == null) {
+                        R.string.insurance_form_add_title
+                    } else {
+                        R.string.insurance_form_edit_title
+                    },
                 ),
             )
 
@@ -422,21 +422,30 @@ fun InsuranceFormSheet(
     if (pickingStart) {
         DatePickerSheet(
             initialEpoch = startDate,
-            onConfirm = { startDate = it; pickingStart = false },
+            onConfirm = {
+                startDate = it
+                pickingStart = false
+            },
             onDismiss = { pickingStart = false },
         )
     }
     if (pickingDue) {
         DatePickerSheet(
             initialEpoch = nextDueDate ?: System.currentTimeMillis(),
-            onConfirm = { nextDueDate = it; pickingDue = false },
+            onConfirm = {
+                nextDueDate = it
+                pickingDue = false
+            },
             onDismiss = { pickingDue = false },
         )
     }
     if (pickingEnd) {
         DatePickerSheet(
             initialEpoch = endDate ?: System.currentTimeMillis(),
-            onConfirm = { endDate = it; pickingEnd = false },
+            onConfirm = {
+                endDate = it
+                pickingEnd = false
+            },
             onDismiss = { pickingEnd = false },
         )
     }
@@ -444,11 +453,7 @@ fun InsuranceFormSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DatePickerSheet(
-    initialEpoch: Long,
-    onConfirm: (Long) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun DatePickerSheet(initialEpoch: Long, onConfirm: (Long) -> Unit, onDismiss: () -> Unit) {
     val pickerState = rememberDatePickerState(initialSelectedDateMillis = initialEpoch)
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -475,8 +480,7 @@ private fun defaultTaxSectionFor(type: InsuranceType): String? = when (type) {
     else -> null
 }
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 private val PALETTE: List<Long> = listOf(
     0xFF0F766EL,

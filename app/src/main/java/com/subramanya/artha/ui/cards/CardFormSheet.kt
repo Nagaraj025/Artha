@@ -58,10 +58,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardFormSheet(
-    editing: Card?,
-    onDismiss: () -> Unit,
-) {
+fun CardFormSheet(editing: Card?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -301,8 +298,7 @@ fun CardFormSheet(
 
 private fun nextDisplayOrder(): Int = (System.currentTimeMillis() / 1000L).toInt()
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 private val PALETTE: List<Long> = listOf(
     0xFF1F2937L, // matte slate

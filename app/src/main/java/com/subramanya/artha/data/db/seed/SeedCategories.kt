@@ -29,7 +29,9 @@ internal object SeedCategories {
     private val EXPENSE_PARENTS: List<ParentSpec> =
         listOf(
             ParentSpec(
-                "cat_food_drink", "Food & Drink", "restaurant",
+                "cat_food_drink",
+                "Food & Drink",
+                "restaurant",
                 listOf(
                     "groceries" to "Groceries",
                     "restaurants" to "Restaurants",
@@ -40,7 +42,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_transport", "Transport", "directions_car",
+                "cat_transport",
+                "Transport",
+                "directions_car",
                 listOf(
                     "fuel" to "Fuel",
                     "public_transit" to "Public Transit",
@@ -52,7 +56,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_bills_utilities", "Bills & Utilities", "receipt_long",
+                "cat_bills_utilities",
+                "Bills & Utilities",
+                "receipt_long",
                 listOf(
                     "mobile" to "Mobile",
                     "internet" to "Internet",
@@ -64,7 +70,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_shopping", "Shopping", "shopping_bag",
+                "cat_shopping",
+                "Shopping",
+                "shopping_bag",
                 listOf(
                     "clothing" to "Clothing",
                     "electronics" to "Electronics",
@@ -75,7 +83,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_health", "Health", "medical_services",
+                "cat_health",
+                "Health",
+                "medical_services",
                 listOf(
                     "doctor" to "Doctor",
                     "pharmacy" to "Pharmacy",
@@ -87,7 +97,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_entertainment", "Entertainment", "movie",
+                "cat_entertainment",
+                "Entertainment",
+                "movie",
                 listOf(
                     "movies" to "Movies",
                     "events_concerts" to "Events & Concerts",
@@ -97,7 +109,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_travel", "Travel", "flight",
+                "cat_travel",
+                "Travel",
+                "flight",
                 listOf(
                     "flights" to "Flights",
                     "trains" to "Trains",
@@ -109,7 +123,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_home", "Home", "home",
+                "cat_home",
+                "Home",
+                "home",
                 listOf(
                     "rent" to "Rent",
                     "home_maintenance" to "Home Maintenance",
@@ -120,7 +136,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_family", "Family", "family_restroom",
+                "cat_family",
+                "Family",
+                "family_restroom",
                 listOf(
                     "money_to_parents" to "Money to Parents",
                     "money_to_spouse" to "Money to Spouse",
@@ -130,7 +148,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_friends", "Friends", "group",
+                "cat_friends",
+                "Friends",
+                "group",
                 listOf(
                     "outings" to "Outings",
                     "friend_gifts" to "Gifts",
@@ -138,7 +158,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_religious_spiritual", "Religious & Spiritual", "self_improvement",
+                "cat_religious_spiritual",
+                "Religious & Spiritual",
+                "self_improvement",
                 listOf(
                     "temple_donations" to "Temple Donations",
                     "sevas_pujas" to "Sevas & Pujas",
@@ -149,7 +171,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_festivals", "Festivals", "celebration",
+                "cat_festivals",
+                "Festivals",
+                "celebration",
                 listOf(
                     "diwali" to "Diwali",
                     "holi" to "Holi",
@@ -162,7 +186,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_education", "Education", "school",
+                "cat_education",
+                "Education",
+                "school",
                 listOf(
                     "courses" to "Courses",
                     "education_books" to "Books",
@@ -172,7 +198,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_personal_care", "Personal Care", "spa",
+                "cat_personal_care",
+                "Personal Care",
+                "spa",
                 listOf(
                     "salon_barber" to "Salon/Barber",
                     "spa" to "Spa",
@@ -181,7 +209,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_charity_donations", "Charity & Donations", "volunteer_activism",
+                "cat_charity_donations",
+                "Charity & Donations",
+                "volunteer_activism",
                 listOf(
                     "ngo" to "NGO",
                     "crowdfunding" to "Crowdfunding",
@@ -190,7 +220,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_fees_charges", "Fees & Charges", "request_quote",
+                "cat_fees_charges",
+                "Fees & Charges",
+                "request_quote",
                 listOf(
                     "bank_fees" to "Bank Fees",
                     "card_fees" to "Card Fees",
@@ -200,7 +232,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_taxes", "Taxes", "account_balance",
+                "cat_taxes",
+                "Taxes",
+                "account_balance",
                 listOf(
                     "income_tax" to "Income Tax",
                     "advance_tax" to "Advance Tax",
@@ -209,7 +243,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_loan_emi", "Loan EMI", "credit_score",
+                "cat_loan_emi",
+                "Loan EMI",
+                "credit_score",
                 listOf(
                     "home_loan" to "Home Loan",
                     "personal_loan" to "Personal Loan",
@@ -219,7 +255,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_insurance_premium", "Insurance Premium", "shield",
+                "cat_insurance_premium",
+                "Insurance Premium",
+                "shield",
                 listOf(
                     "health_premium" to "Health",
                     "vehicle_premium" to "Vehicle",
@@ -229,7 +267,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_pets", "Pets", "pets",
+                "cat_pets",
+                "Pets",
+                "pets",
                 listOf(
                     "pet_food" to "Food",
                     "vet" to "Vet",
@@ -238,7 +278,9 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_miscellaneous", "Miscellaneous", "more_horiz",
+                "cat_miscellaneous",
+                "Miscellaneous",
+                "more_horiz",
                 listOf("other" to "Other"),
             ),
         )
@@ -246,7 +288,9 @@ internal object SeedCategories {
     private val INCOME_PARENTS: List<ParentSpec> =
         listOf(
             ParentSpec(
-                "cat_salary", "Salary", "payments",
+                "cat_salary",
+                "Salary",
+                "payments",
                 listOf(
                     "base" to "Base",
                     "bonus" to "Bonus",
@@ -256,7 +300,9 @@ internal object SeedCategories {
             ),
             ParentSpec("cat_freelance", "Freelance / Business", "work", emptyList()),
             ParentSpec(
-                "cat_interest", "Interest", "savings",
+                "cat_interest",
+                "Interest",
+                "savings",
                 listOf(
                     "savings_acct" to "Savings Account",
                     "fd_interest" to "FD",
@@ -267,7 +313,9 @@ internal object SeedCategories {
             ParentSpec("cat_dividends", "Dividends", "trending_up", emptyList()),
             ParentSpec("cat_rental_income", "Rental Income", "apartment", emptyList()),
             ParentSpec(
-                "cat_capital_gains", "Capital Gains", "show_chart",
+                "cat_capital_gains",
+                "Capital Gains",
+                "show_chart",
                 listOf(
                     "mf_gains" to "Mutual Funds",
                     "stock_gains" to "Stocks",
@@ -275,14 +323,18 @@ internal object SeedCategories {
                 ),
             ),
             ParentSpec(
-                "cat_refunds", "Refunds", "undo",
+                "cat_refunds",
+                "Refunds",
+                "undo",
                 listOf(
                     "purchase_refund" to "Purchase Refund",
                     "tax_refund" to "Tax Refund",
                 ),
             ),
             ParentSpec(
-                "cat_cashback_rewards", "Cashback & Rewards", "redeem",
+                "cat_cashback_rewards",
+                "Cashback & Rewards",
+                "redeem",
                 listOf(
                     "card_cashback" to "Credit Card Cashback",
                     "upi_rewards" to "UPI Rewards",

@@ -11,13 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Sell
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,26 +24,9 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import com.subramanya.artha.ui.theme.EyebrowStyle
-import com.subramanya.artha.ui.theme.InstrumentSerif
-import com.subramanya.artha.ui.theme.Surface1
-import com.subramanya.artha.ui.theme.Teal300
-import com.subramanya.artha.ui.theme.Teal700
-import com.subramanya.artha.ui.theme.Text1
-import com.subramanya.artha.ui.theme.Text2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,14 +47,14 @@ import com.subramanya.artha.ArthaApplication
 import com.subramanya.artha.R
 import com.subramanya.artha.domain.model.Tag
 import com.subramanya.artha.ui.common.EmptyState
+import com.subramanya.artha.ui.theme.Surface1
+import com.subramanya.artha.ui.theme.Teal700
+import com.subramanya.artha.ui.theme.Text1
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagsScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun TagsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: TagsViewModel = viewModel(factory = TagsViewModelFactory(app.tagRepository))
@@ -120,20 +102,20 @@ fun TagsScreen(
                 } else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(state.tags, key = { it.id }) { tag ->
-                        TagRow(
-                            tag = tag,
-                            onEdit = { formMode = TagFormMode.Edit(tag) },
-                            onDelete = {
-                                scope.launch {
-                                    val count = vm.usageCount(tag.id)
-                                    if (count > 0) {
-                                        blockedMessage = context.getString(R.string.tags_in_use_toast, count)
-                                    } else {
-                                        pendingDelete = tag
+                            TagRow(
+                                tag = tag,
+                                onEdit = { formMode = TagFormMode.Edit(tag) },
+                                onDelete = {
+                                    scope.launch {
+                                        val count = vm.usageCount(tag.id)
+                                        if (count > 0) {
+                                            blockedMessage = context.getString(R.string.tags_in_use_toast, count)
+                                        } else {
+                                            pendingDelete = tag
+                                        }
                                     }
-                                }
-                            },
-                        )
+                                },
+                            )
                         }
                     }
                 }
@@ -161,7 +143,10 @@ fun TagsScreen(
             text = stringResource(R.string.tags_delete_confirm_body),
             confirmLabel = stringResource(R.string.tags_delete_confirm_yes),
             confirmDestructive = true,
-            onConfirm = { vm.delete(toDelete); pendingDelete = null },
+            onConfirm = {
+                vm.delete(toDelete)
+                pendingDelete = null
+            },
             cancelLabel = stringResource(R.string.common_cancel),
             onCancel = { pendingDelete = null },
         )
@@ -195,7 +180,10 @@ private fun TagRow(tag: Tag, onEdit: () -> Unit, onDelete: () -> Unit) {
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.tags_action_edit)) },
-                        onClick = { menuOpen = false; onEdit() },
+                        onClick = {
+                            menuOpen = false
+                            onEdit()
+                        },
                     )
                     DropdownMenuItem(
                         text = {
@@ -204,7 +192,10 @@ private fun TagRow(tag: Tag, onEdit: () -> Unit, onDelete: () -> Unit) {
                                 color = com.subramanya.artha.ui.theme.Danger,
                             )
                         },
-                        onClick = { menuOpen = false; onDelete() },
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
                         leadingIcon = {
                             Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger)
                         },

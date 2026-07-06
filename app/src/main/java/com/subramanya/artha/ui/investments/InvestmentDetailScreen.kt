@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
@@ -42,11 +41,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -284,11 +281,7 @@ fun InvestmentDetailScreen(
  * caller; "Add contribution" is always available.
  */
 @Composable
-private fun ActionRow(
-    showPostInterest: Boolean,
-    onPostInterest: () -> Unit,
-    onAddContribution: () -> Unit,
-) {
+private fun ActionRow(showPostInterest: Boolean, onPostInterest: () -> Unit, onAddContribution: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -317,10 +310,7 @@ private fun ActionRow(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PostInterestDialog(
-    onConfirm: (Double, Long) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun PostInterestDialog(onConfirm: (Double, Long) -> Unit, onDismiss: () -> Unit) {
     var amountText by remember { mutableStateOf("") }
     var dateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -399,14 +389,7 @@ private fun PostInterestDialog(
 // ---------------- pieces ----------------
 
 @Composable
-private fun HeroBlock(
-    investment: Investment,
-    value: Double,
-    invested: Double,
-    interest: Double,
-    gain: Double,
-    pctGain: Double,
-) {
+private fun HeroBlock(investment: Investment, value: Double, invested: Double, interest: Double, gain: Double, pctGain: Double) {
     val positive = gain >= 0.0
     val gainColor =
         if (positive) MaterialTheme.colorScheme.primary else com.subramanya.artha.ui.theme.Danger
@@ -475,8 +458,11 @@ private fun HeroBlock(
                 ValuationMode.MARKET -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = if (positive) Icons.AutoMirrored.Filled.TrendingUp
-                            else Icons.AutoMirrored.Filled.TrendingDown,
+                            imageVector = if (positive) {
+                                Icons.AutoMirrored.Filled.TrendingUp
+                            } else {
+                                Icons.AutoMirrored.Filled.TrendingDown
+                            },
                             contentDescription = null,
                             tint = gainColor,
                         )

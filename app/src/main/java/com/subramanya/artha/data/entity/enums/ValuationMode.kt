@@ -10,6 +10,7 @@ enum class ValuationMode { DERIVED, MARKET }
 /** Sensible default mode for a freshly-created investment of this type. */
 fun InvestmentType.defaultValuationMode(): ValuationMode = when (this) {
     InvestmentType.FD, InvestmentType.RD, InvestmentType.PPF,
-    InvestmentType.EPF, InvestmentType.BONDS -> ValuationMode.DERIVED
+    InvestmentType.EPF, InvestmentType.BONDS,
+    -> ValuationMode.DERIVED
     else -> ValuationMode.MARKET
 }

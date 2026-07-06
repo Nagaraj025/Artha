@@ -10,12 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
-class BudgetRepository(
-    private val budgetDao: BudgetDao,
-    private val transactionRepository: TransactionRepository,
-) {
-    fun observeAll(): Flow<List<Budget>> =
-        budgetDao.observeAll().map { list -> list.map { it.toDomain() } }
+class BudgetRepository(private val budgetDao: BudgetDao, private val transactionRepository: TransactionRepository) {
+    fun observeAll(): Flow<List<Budget>> = budgetDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     fun observeActiveWithProgress(): Flow<List<BudgetWithProgress>> =
         combine(budgetDao.observeActive(), transactionRepository.observeAll()) { budgets, txns ->

@@ -145,25 +145,23 @@ class BalanceCalculatorTest {
     private fun cardExpense(cardId: String, amount: Double): TransactionEntity =
         txn(TransactionType.EXPENSE, SourceKind.CARD, cardId, amount)
 
-    private fun transfer(from: String, to: String, amount: Double): TransactionEntity =
-        txn(
-            type = TransactionType.TRANSFER,
-            sourceKind = SourceKind.ACCOUNT,
-            sourceId = from,
-            amount = amount,
-            destinationKind = SourceKind.ACCOUNT,
-            destinationId = to,
-        )
+    private fun transfer(from: String, to: String, amount: Double): TransactionEntity = txn(
+        type = TransactionType.TRANSFER,
+        sourceKind = SourceKind.ACCOUNT,
+        sourceId = from,
+        amount = amount,
+        destinationKind = SourceKind.ACCOUNT,
+        destinationId = to,
+    )
 
-    private fun cardPayment(fromAccount: String, toCard: String, amount: Double): TransactionEntity =
-        txn(
-            type = TransactionType.CARD_PAYMENT,
-            sourceKind = SourceKind.ACCOUNT,
-            sourceId = fromAccount,
-            amount = amount,
-            destinationKind = SourceKind.CARD,
-            destinationId = toCard,
-        )
+    private fun cardPayment(fromAccount: String, toCard: String, amount: Double): TransactionEntity = txn(
+        type = TransactionType.CARD_PAYMENT,
+        sourceKind = SourceKind.ACCOUNT,
+        sourceId = fromAccount,
+        amount = amount,
+        destinationKind = SourceKind.CARD,
+        destinationId = toCard,
+    )
 
     private fun txn(
         type: TransactionType,
@@ -172,34 +170,33 @@ class BalanceCalculatorTest {
         amount: Double,
         destinationKind: SourceKind? = null,
         destinationId: String? = null,
-    ): TransactionEntity =
-        TransactionEntity(
-            id = "txn-${idSeq++}",
-            type = type,
-            amount = amount,
-            currency = "INR",
-            date = 0L,
-            description = "test",
-            categoryId = null,
-            subCategoryId = null,
-            sourceType = sourceKind,
-            sourceId = sourceId,
-            destinationType = destinationKind,
-            destinationId = destinationId,
-            paymentApp = PaymentApp.OTHER,
-            place = null,
-            latitude = null,
-            longitude = null,
-            receiptUri = null,
-            notes = null,
-            taxSection = null,
-            recurringRuleId = null,
-            isSplit = false,
-            splitGroupId = null,
-            source = TransactionSource.MANUAL,
-            createdAt = 0L,
-            updatedAt = 0L,
-        )
+    ): TransactionEntity = TransactionEntity(
+        id = "txn-${idSeq++}",
+        type = type,
+        amount = amount,
+        currency = "INR",
+        date = 0L,
+        description = "test",
+        categoryId = null,
+        subCategoryId = null,
+        sourceType = sourceKind,
+        sourceId = sourceId,
+        destinationType = destinationKind,
+        destinationId = destinationId,
+        paymentApp = PaymentApp.OTHER,
+        place = null,
+        latitude = null,
+        longitude = null,
+        receiptUri = null,
+        notes = null,
+        taxSection = null,
+        recurringRuleId = null,
+        isSplit = false,
+        splitGroupId = null,
+        source = TransactionSource.MANUAL,
+        createdAt = 0L,
+        updatedAt = 0L,
+    )
 
     private companion object {
         private const val EPS: Double = 1e-9

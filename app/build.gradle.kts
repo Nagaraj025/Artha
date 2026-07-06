@@ -11,10 +11,11 @@ plugins {
 // in Settings → AI Quick Entry, which validates it against Gemini before storing
 // it in DataStore. No hardcoded fallback, no local.properties dependency.
 @Suppress("unused")
-val localProps = Properties().apply {
-    val f = rootProject.file("local.properties")
-    if (f.exists()) f.inputStream().use { load(it) }
-}
+val localProps =
+    Properties().apply {
+        val f = rootProject.file("local.properties")
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
 
 android {
     namespace = "com.subramanya.artha"

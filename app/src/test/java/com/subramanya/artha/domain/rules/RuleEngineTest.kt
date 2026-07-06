@@ -110,8 +110,12 @@ class RuleEngineTest {
 
     @Test fun `HasPersonRelation matches when transaction has a person with that relation`() {
         val spouse = Person(
-            id = "p-spouse", name = "Spouse", relation = PersonRelation.SPOUSE,
-            contact = null, avatarUri = null, createdAt = 0,
+            id = "p-spouse",
+            name = "Spouse",
+            relation = PersonRelation.SPOUSE,
+            contact = null,
+            avatarUri = null,
+            createdAt = 0,
         )
         val txn = expense().copy(peopleIds = listOf("p-spouse"))
         val rule = rule(
@@ -215,36 +219,35 @@ class RuleEngineTest {
 
     // ---------- helpers ----------
 
-    private fun expense(amount: Double = 100.0, description: String = "test"): Transaction =
-        Transaction(
-            id = "txn-1",
-            type = TransactionType.EXPENSE,
-            amount = amount,
-            currency = "INR",
-            date = 0L,
-            description = description,
-            categoryId = null,
-            subCategoryId = null,
-            sourceType = SourceKind.ACCOUNT,
-            sourceId = "acct-a",
-            destinationType = null,
-            destinationId = null,
-            paymentApp = PaymentApp.OTHER,
-            place = null,
-            latitude = null,
-            longitude = null,
-            peopleIds = emptyList(),
-            tagIds = emptyList(),
-            receiptUri = null,
-            notes = null,
-            taxSection = null,
-            recurringRuleId = null,
-            isSplit = false,
-            splitGroupId = null,
-            source = TransactionSource.MANUAL,
-            createdAt = 0,
-            updatedAt = 0,
-        )
+    private fun expense(amount: Double = 100.0, description: String = "test"): Transaction = Transaction(
+        id = "txn-1",
+        type = TransactionType.EXPENSE,
+        amount = amount,
+        currency = "INR",
+        date = 0L,
+        description = description,
+        categoryId = null,
+        subCategoryId = null,
+        sourceType = SourceKind.ACCOUNT,
+        sourceId = "acct-a",
+        destinationType = null,
+        destinationId = null,
+        paymentApp = PaymentApp.OTHER,
+        place = null,
+        latitude = null,
+        longitude = null,
+        peopleIds = emptyList(),
+        tagIds = emptyList(),
+        receiptUri = null,
+        notes = null,
+        taxSection = null,
+        recurringRuleId = null,
+        isSplit = false,
+        splitGroupId = null,
+        source = TransactionSource.MANUAL,
+        createdAt = 0,
+        updatedAt = 0,
+    )
 
     private fun rule(
         name: String,

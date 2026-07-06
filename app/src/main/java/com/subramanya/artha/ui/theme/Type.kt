@@ -17,64 +17,104 @@ import androidx.compose.ui.unit.sp
  */
 val ArthaTypography = Typography(
     displayLarge = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Light,
-        fontSize = 57.sp, lineHeight = 64.sp, letterSpacing = (-0.02).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Light,
+        fontSize = 57.sp,
+        lineHeight = 64.sp,
+        letterSpacing = (-0.02).em,
     ),
     displayMedium = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Light,
-        fontSize = 45.sp, lineHeight = 52.sp, letterSpacing = (-0.02).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Light,
+        fontSize = 45.sp,
+        lineHeight = 52.sp,
+        letterSpacing = (-0.02).em,
     ),
     displaySmall = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Normal,
-        fontSize = 36.sp, lineHeight = 44.sp, letterSpacing = (-0.01).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 36.sp,
+        lineHeight = 44.sp,
+        letterSpacing = (-0.01).em,
     ),
     headlineLarge = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 32.sp, lineHeight = 40.sp, letterSpacing = (-0.01).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 32.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.01).em,
     ),
     headlineMedium = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 26.sp, lineHeight = 32.sp, letterSpacing = (-0.01).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 26.sp,
+        lineHeight = 32.sp,
+        letterSpacing = (-0.01).em,
     ),
     headlineSmall = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp, lineHeight = 28.sp, letterSpacing = (-0.01).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = (-0.01).em,
     ),
     titleLarge = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp, lineHeight = 26.sp, letterSpacing = (-0.01).em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = (-0.01).em,
     ),
     titleMedium = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp, lineHeight = 22.sp,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
     ),
     titleSmall = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp, lineHeight = 20.sp,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
     ),
     bodyLarge = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Normal,
-        fontSize = 15.sp, lineHeight = 22.sp,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+        lineHeight = 22.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Normal,
-        fontSize = 14.sp, lineHeight = 20.sp,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
     ),
     bodySmall = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.Normal,
-        fontSize = 12.sp, lineHeight = 16.sp,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
     ),
     labelLarge = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 13.sp, lineHeight = 18.sp, letterSpacing = 0.04.em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.04.em,
     ),
     labelMedium = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 11.sp, lineHeight = 14.sp, letterSpacing = 0.06.em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.06.em,
     ),
     labelSmall = TextStyle(
-        fontFamily = PlusJakartaSans, fontWeight = FontWeight.SemiBold,
-        fontSize = 10.sp, lineHeight = 14.sp, letterSpacing = 0.12.em,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 10.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.12.em,
     ),
 )
 
@@ -93,7 +133,8 @@ object ArthaAmountStyles {
     val hero: TextStyle = TextStyle(
         fontFamily = InstrumentSerif,
         fontWeight = FontWeight.Normal,
-        fontSize = 56.sp, lineHeight = 60.sp,
+        fontSize = 56.sp,
+        lineHeight = 60.sp,
         letterSpacing = (-0.02).em,
         fontFeatureSettings = TABULAR,
     )
@@ -101,7 +142,8 @@ object ArthaAmountStyles {
     val display: TextStyle = TextStyle(
         fontFamily = InstrumentSerif,
         fontWeight = FontWeight.Normal,
-        fontSize = 32.sp, lineHeight = 38.sp,
+        fontSize = 32.sp,
+        lineHeight = 38.sp,
         letterSpacing = (-0.01).em,
         fontFeatureSettings = TABULAR,
     )
@@ -109,7 +151,8 @@ object ArthaAmountStyles {
     val title: TextStyle = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 22.sp, lineHeight = 28.sp,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
         letterSpacing = (-0.01).em,
         fontFeatureSettings = TABULAR,
     )
@@ -117,14 +160,16 @@ object ArthaAmountStyles {
     val body: TextStyle = TextStyle(
         fontFamily = PlusJakartaSans,
         fontWeight = FontWeight.Medium,
-        fontSize = 15.sp, lineHeight = 20.sp,
+        fontSize = 15.sp,
+        lineHeight = 20.sp,
         fontFeatureSettings = TABULAR,
     )
 
     val mono: TextStyle = TextStyle(
         fontFamily = IbmPlexMono,
         fontWeight = FontWeight.Normal,
-        fontSize = 11.sp, lineHeight = 14.sp,
+        fontSize = 11.sp,
+        lineHeight = 14.sp,
         letterSpacing = (-0.01).em,
         fontFeatureSettings = TABULAR,
     )
@@ -134,7 +179,7 @@ object ArthaAmountStyles {
 val EyebrowStyle: TextStyle = TextStyle(
     fontFamily = PlusJakartaSans,
     fontWeight = FontWeight.SemiBold,
-    fontSize = 10.sp, lineHeight = 14.sp,
+    fontSize = 10.sp,
+    lineHeight = 14.sp,
     letterSpacing = 0.18.em,
 )
-

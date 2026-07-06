@@ -19,8 +19,7 @@ class GoalRepository(
     private val accountRepository: AccountRepository,
     private val investmentRepository: InvestmentRepository,
 ) {
-    fun observeAll(): Flow<List<Goal>> =
-        goalDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Goal>> = goalDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     /** Joins each goal with its computed current amount (sum of linked-account
      *  balances + linked-investment current values) and days-remaining. */

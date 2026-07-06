@@ -24,10 +24,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
  * height reasonable and rely on Vico's defaults for tick formatting.
  */
 @Composable
-fun BalanceLineChart(
-    values: List<Double>,
-    modifier: Modifier = Modifier,
-) {
+fun BalanceLineChart(values: List<Double>, modifier: Modifier = Modifier) {
     val modelProducer = remember { CartesianChartModelProducer() }
     LaunchedEffect(values) {
         if (values.isEmpty()) return@LaunchedEffect

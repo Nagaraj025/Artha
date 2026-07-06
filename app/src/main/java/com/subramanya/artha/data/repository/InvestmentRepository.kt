@@ -25,17 +25,13 @@ class InvestmentRepository(
     private val scope: CoroutineScope,
 ) {
 
-    fun observeAll(): Flow<List<Investment>> =
-        investmentDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Investment>> = investmentDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeActive(): Flow<List<Investment>> =
-        investmentDao.observeActive().map { list -> list.map { it.toDomain() } }
+    fun observeActive(): Flow<List<Investment>> = investmentDao.observeActive().map { list -> list.map { it.toDomain() } }
 
-    fun observeArchived(): Flow<List<Investment>> =
-        investmentDao.observeArchived().map { list -> list.map { it.toDomain() } }
+    fun observeArchived(): Flow<List<Investment>> = investmentDao.observeArchived().map { list -> list.map { it.toDomain() } }
 
-    fun observeById(id: String): Flow<Investment?> =
-        investmentDao.observeById(id).map { it?.toDomain() }
+    fun observeById(id: String): Flow<Investment?> = investmentDao.observeById(id).map { it?.toDomain() }
 
     private val activeWithMetrics: Flow<List<InvestmentWithMetrics>> =
         combine(investmentDao.observeActive(), transactionDao.observeAll()) { investments, txns ->
@@ -83,17 +79,13 @@ class InvestmentRepository(
      * (so the transaction log is scanned once, not once per investment). Mirrors
      * [BalanceCalculator.computeInvestmentValue]'s MARKET/DERIVED branches.
      */
-    private fun valueFor(entity: InvestmentEntity, totals: BalanceCalculator.InvestmentTotals): Double =
-        when (entity.valuationMode) {
-            ValuationMode.MARKET -> entity.currentValue
-            ValuationMode.DERIVED -> totals.invested + totals.interest
-        }
+    private fun valueFor(entity: InvestmentEntity, totals: BalanceCalculator.InvestmentTotals): Double = when (entity.valuationMode) {
+        ValuationMode.MARKET -> entity.currentValue
+        ValuationMode.DERIVED -> totals.invested + totals.interest
+    }
 
     /** Full metric bundle for one entity, from its pre-computed [totals]. */
-    private fun metricsFor(
-        entity: InvestmentEntity,
-        totals: BalanceCalculator.InvestmentTotals,
-    ): InvestmentWithMetrics {
+    private fun metricsFor(entity: InvestmentEntity, totals: BalanceCalculator.InvestmentTotals): InvestmentWithMetrics {
         val invested = totals.invested
         val value = valueFor(entity, totals)
         val gain = value - invested
@@ -107,28 +99,23 @@ class InvestmentRepository(
         )
     }
 
-    fun observeInvested(id: String): Flow<Double> =
-        combine(investmentDao.observeById(id), transactionDao.observeAll()) { entity, txns ->
-            BalanceCalculator.computeInvestmentInvested(id, txns, entity?.openingContribution ?: 0.0)
-        }.flowOn(Dispatchers.Default).distinctUntilChanged()
+    fun observeInvested(id: String): Flow<Double> = combine(investmentDao.observeById(id), transactionDao.observeAll()) { entity, txns ->
+        BalanceCalculator.computeInvestmentInvested(id, txns, entity?.openingContribution ?: 0.0)
+    }.flowOn(Dispatchers.Default).distinctUntilChanged()
 
     suspend fun getById(id: String): Investment? = investmentDao.getById(id)?.toDomain()
-    suspend fun findByLinkedInsurance(insuranceId: String): Investment? =
-        investmentDao.findByLinkedInsurance(insuranceId)?.toDomain()
+    suspend fun findByLinkedInsurance(insuranceId: String): Investment? = investmentDao.findByLinkedInsurance(insuranceId)?.toDomain()
 
     suspend fun upsert(investment: Investment) = investmentDao.upsert(investment.toEntity())
     suspend fun update(investment: Investment) = investmentDao.update(investment.toEntity())
 
-    suspend fun archive(investment: Investment) =
-        investmentDao.update(investment.toEntity().copy(isArchived = true))
+    suspend fun archive(investment: Investment) = investmentDao.update(investment.toEntity().copy(isArchived = true))
 
-    suspend fun restore(investment: Investment) =
-        investmentDao.update(investment.toEntity().copy(isArchived = false))
+    suspend fun restore(investment: Investment) = investmentDao.update(investment.toEntity().copy(isArchived = false))
 
     /** True if any transaction references this investment (source or destination) — a hard delete
      *  would orphan them, so callers must archive instead. */
-    suspend fun hasReferencingTransactions(id: String): Boolean =
-        transactionDao.countReferencing(id) > 0
+    suspend fun hasReferencingTransactions(id: String): Boolean = transactionDao.countReferencing(id) > 0
 
     suspend fun delete(investment: Investment) = investmentDao.delete(investment.toEntity())
 }

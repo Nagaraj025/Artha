@@ -17,13 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.subramanya.artha.R
 import com.subramanya.artha.domain.model.Tag
 import com.subramanya.artha.ui.common.ArthaSheetHandle
@@ -34,6 +33,7 @@ import com.subramanya.artha.ui.common.SavePrimaryButton
 import com.subramanya.artha.ui.common.SheetTitle
 import com.subramanya.artha.ui.common.SheetWindowInsets
 import com.subramanya.artha.ui.theme.Surface3
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
@@ -42,11 +42,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagFormSheet(
-    editing: Tag?,
-    onSave: (Tag) -> Unit,
-    onDismiss: () -> Unit,
-) {
+fun TagFormSheet(editing: Tag?, onSave: (Tag) -> Unit, onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var name by remember(editing) { mutableStateOf(editing?.name.orEmpty()) }
     var color by remember(editing) { mutableStateOf(editing?.color ?: PALETTE.first()) }

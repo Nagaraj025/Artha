@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,36 +24,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import com.subramanya.artha.ui.theme.EyebrowStyle
-import com.subramanya.artha.ui.theme.InstrumentSerif
-import com.subramanya.artha.ui.theme.Line1
-import com.subramanya.artha.ui.theme.Surface1
-import com.subramanya.artha.ui.theme.Teal300
-import com.subramanya.artha.ui.theme.Teal500
-import com.subramanya.artha.ui.theme.Text1
-import com.subramanya.artha.ui.theme.Text2
-import com.subramanya.artha.ui.theme.Text3
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,15 +57,14 @@ import com.subramanya.artha.BuildConfig
 import com.subramanya.artha.R
 import com.subramanya.artha.data.preferences.SpouseTransactionDefault
 import com.subramanya.artha.data.preferences.ThemeMode
-import androidx.compose.foundation.clickable
+import com.subramanya.artha.ui.theme.EyebrowStyle
+import com.subramanya.artha.ui.theme.Surface1
+import com.subramanya.artha.ui.theme.Teal500
+import com.subramanya.artha.ui.theme.Text3
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun SettingsScreen(
-    onBack: () -> Unit,
-    onOpenAbout: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SettingsScreen(onBack: () -> Unit, onOpenAbout: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: SettingsViewModel = viewModel(
@@ -117,222 +99,222 @@ fun SettingsScreen(
                 onBack = onBack,
             )
             SectionHeader(stringResource(R.string.settings_section_profile))
-                ProfileSection(
-                    name = state.userName,
-                    onNameChanged = vm::onNameChanged,
-                )
+            ProfileSection(
+                name = state.userName,
+                onNameChanged = vm::onNameChanged,
+            )
 
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_dashboard))
-                DashboardSectionsBlock(
-                    showMonthly = state.dashboardShowMonthly,
-                    showAccounts = state.dashboardShowAccounts,
-                    showCards = state.dashboardShowCards,
-                    showRecent = state.dashboardShowRecent,
-                    onMonthlyChanged = vm::onDashboardShowMonthlyChanged,
-                    onAccountsChanged = vm::onDashboardShowAccountsChanged,
-                    onCardsChanged = vm::onDashboardShowCardsChanged,
-                    onRecentChanged = vm::onDashboardShowRecentChanged,
-                )
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_dashboard))
+            DashboardSectionsBlock(
+                showMonthly = state.dashboardShowMonthly,
+                showAccounts = state.dashboardShowAccounts,
+                showCards = state.dashboardShowCards,
+                showRecent = state.dashboardShowRecent,
+                onMonthlyChanged = vm::onDashboardShowMonthlyChanged,
+                onAccountsChanged = vm::onDashboardShowAccountsChanged,
+                onCardsChanged = vm::onDashboardShowCardsChanged,
+                onRecentChanged = vm::onDashboardShowRecentChanged,
+            )
 
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_appearance))
-                AppearanceSection(
-                    themeMode = state.themeMode,
-                    useDynamicColor = state.useDynamicColor,
-                    onThemeChanged = vm::onThemeChanged,
-                    onDynamicColorChanged = vm::onDynamicColorChanged,
-                )
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_appearance))
+            AppearanceSection(
+                themeMode = state.themeMode,
+                useDynamicColor = state.useDynamicColor,
+                onThemeChanged = vm::onThemeChanged,
+                onDynamicColorChanged = vm::onDynamicColorChanged,
+            )
 
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_behavior))
-                BehaviorSection(
-                    spouseDefault = state.spouseDefault,
-                    onChange = vm::onSpouseDefaultChanged,
-                    onResetSpouse = {
-                        vm.resetSpousePrompt()
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_behavior))
+            BehaviorSection(
+                spouseDefault = state.spouseDefault,
+                onChange = vm::onSpouseDefaultChanged,
+                onResetSpouse = {
+                    vm.resetSpousePrompt()
+                    Toast.makeText(
+                        context,
+                        R.string.settings_behavior_spouse_reset_done,
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                },
+            )
+
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_security))
+            val smsPermissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestMultiplePermissions(),
+            ) { grants ->
+                val smsGranted = grants[Manifest.permission.RECEIVE_SMS] == true
+                val notifGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    grants[Manifest.permission.POST_NOTIFICATIONS] == true
+                } else {
+                    true
+                }
+                if (smsGranted && notifGranted) {
+                    vm.onSmsAutoImportChanged(true)
+                } else {
+                    Toast.makeText(context, R.string.settings_security_sms_permission_denied, Toast.LENGTH_LONG).show()
+                }
+            }
+            SecuritySection(
+                biometric = state.biometricLockEnabled,
+                smsImport = state.smsAutoImportEnabled,
+                onBiometricChanged = { enabled ->
+                    // Don't let the user enable the lock on a device that can't actually
+                    // prompt (no enrolled biometric / no secure lock screen) — that would be
+                    // a false sense of security since the gate silently skips when incapable.
+                    if (enabled && !com.subramanya.artha.ui.lock.canPrompt(context)) {
                         Toast.makeText(
                             context,
-                            R.string.settings_behavior_spouse_reset_done,
-                            Toast.LENGTH_SHORT,
+                            R.string.settings_security_biometric_unavailable,
+                            Toast.LENGTH_LONG,
                         ).show()
-                    },
-                )
-
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_security))
-                val smsPermissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestMultiplePermissions(),
-                ) { grants ->
-                    val smsGranted = grants[Manifest.permission.RECEIVE_SMS] == true
-                    val notifGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        grants[Manifest.permission.POST_NOTIFICATIONS] == true
                     } else {
-                        true
+                        vm.onBiometricLockChanged(enabled)
                     }
-                    if (smsGranted && notifGranted) {
-                        vm.onSmsAutoImportChanged(true)
-                    } else {
-                        Toast.makeText(context, R.string.settings_security_sms_permission_denied, Toast.LENGTH_LONG).show()
-                    }
-                }
-                SecuritySection(
-                    biometric = state.biometricLockEnabled,
-                    smsImport = state.smsAutoImportEnabled,
-                    onBiometricChanged = { enabled ->
-                        // Don't let the user enable the lock on a device that can't actually
-                        // prompt (no enrolled biometric / no secure lock screen) — that would be
-                        // a false sense of security since the gate silently skips when incapable.
-                        if (enabled && !com.subramanya.artha.ui.lock.canPrompt(context)) {
-                            Toast.makeText(
-                                context,
-                                R.string.settings_security_biometric_unavailable,
-                                Toast.LENGTH_LONG,
-                            ).show()
-                        } else {
-                            vm.onBiometricLockChanged(enabled)
-                        }
-                    },
-                    onSmsImportChanged = { enabled ->
-                        // Requesting permission on enable mirrors onBiometricChanged's pre-check
-                        // pattern: gate the ViewModel call behind a capability/consent check so we
-                        // never flip the DataStore flag on without the runtime grant backing it.
-                        if (enabled) {
-                            val permissions = buildList {
-                                add(Manifest.permission.RECEIVE_SMS)
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    add(Manifest.permission.POST_NOTIFICATIONS)
-                                }
+                },
+                onSmsImportChanged = { enabled ->
+                    // Requesting permission on enable mirrors onBiometricChanged's pre-check
+                    // pattern: gate the ViewModel call behind a capability/consent check so we
+                    // never flip the DataStore flag on without the runtime grant backing it.
+                    if (enabled) {
+                        val permissions = buildList {
+                            add(Manifest.permission.RECEIVE_SMS)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                add(Manifest.permission.POST_NOTIFICATIONS)
                             }
-                            smsPermissionLauncher.launch(permissions.toTypedArray())
-                        } else {
-                            vm.onSmsAutoImportChanged(false)
                         }
-                    },
-                )
+                        smsPermissionLauncher.launch(permissions.toTypedArray())
+                    } else {
+                        vm.onSmsAutoImportChanged(false)
+                    }
+                },
+            )
 
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_ai))
-                var showKeyDialog by remember { mutableStateOf(false) }
-                AiQuickEntrySection(
-                    enabled = state.aiQuickEntryEnabled,
-                    onEnabledChanged = vm::onAiQuickEntryEnabledChanged,
-                    hasKey = state.hasAiKey,
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_ai))
+            var showKeyDialog by remember { mutableStateOf(false) }
+            AiQuickEntrySection(
+                enabled = state.aiQuickEntryEnabled,
+                onEnabledChanged = vm::onAiQuickEntryEnabledChanged,
+                hasKey = state.hasAiKey,
+                inFlight = state.aiKeySaveInFlight,
+                onAddOrChange = { showKeyDialog = true },
+                onClear = vm::clearAiKey,
+            )
+            if (showKeyDialog) {
+                AiKeyDialog(
                     inFlight = state.aiKeySaveInFlight,
-                    onAddOrChange = { showKeyDialog = true },
-                    onClear = vm::clearAiKey,
+                    onConfirm = { vm.saveAiKey(it) },
+                    onDismiss = { showKeyDialog = false },
                 )
-                if (showKeyDialog) {
-                    AiKeyDialog(
-                        inFlight = state.aiKeySaveInFlight,
-                        onConfirm = { vm.saveAiKey(it) },
-                        onDismiss = { showKeyDialog = false },
-                    )
-                }
-                // Toast + auto-dismiss dialog when the save flow lands a verdict.
-                LaunchedEffect(state.aiKeyStatus) {
-                    when (val status = state.aiKeyStatus) {
-                        AiKeyStatus.Idle -> Unit
-                        AiKeyStatus.Saved -> {
-                            Toast.makeText(context, R.string.settings_ai_key_saved, Toast.LENGTH_SHORT).show()
-                            showKeyDialog = false
-                            vm.acknowledgeAiKeyStatus()
-                        }
-                        AiKeyStatus.Cleared -> {
-                            Toast.makeText(context, R.string.settings_ai_key_cleared, Toast.LENGTH_SHORT).show()
-                            vm.acknowledgeAiKeyStatus()
-                        }
-                        is AiKeyStatus.Invalid -> {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.settings_ai_key_invalid_fmt, status.message),
-                                Toast.LENGTH_LONG,
-                            ).show()
-                            vm.acknowledgeAiKeyStatus()
-                        }
-                        is AiKeyStatus.NetworkError -> {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.settings_ai_key_network_fmt, status.message),
-                                Toast.LENGTH_LONG,
-                            ).show()
-                            vm.acknowledgeAiKeyStatus()
-                        }
+            }
+            // Toast + auto-dismiss dialog when the save flow lands a verdict.
+            LaunchedEffect(state.aiKeyStatus) {
+                when (val status = state.aiKeyStatus) {
+                    AiKeyStatus.Idle -> Unit
+                    AiKeyStatus.Saved -> {
+                        Toast.makeText(context, R.string.settings_ai_key_saved, Toast.LENGTH_SHORT).show()
+                        showKeyDialog = false
+                        vm.acknowledgeAiKeyStatus()
+                    }
+                    AiKeyStatus.Cleared -> {
+                        Toast.makeText(context, R.string.settings_ai_key_cleared, Toast.LENGTH_SHORT).show()
+                        vm.acknowledgeAiKeyStatus()
+                    }
+                    is AiKeyStatus.Invalid -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.settings_ai_key_invalid_fmt, status.message),
+                            Toast.LENGTH_LONG,
+                        ).show()
+                        vm.acknowledgeAiKeyStatus()
+                    }
+                    is AiKeyStatus.NetworkError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.settings_ai_key_network_fmt, status.message),
+                            Toast.LENGTH_LONG,
+                        ).show()
+                        vm.acknowledgeAiKeyStatus()
                     }
                 }
+            }
 
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_data))
-                var passwordDialog by remember { mutableStateOf(false) }
-                var restoreConfirm by remember { mutableStateOf(false) }
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_data))
+            var passwordDialog by remember { mutableStateOf(false) }
+            var restoreConfirm by remember { mutableStateOf(false) }
 
-                // ACTION_OPEN_DOCUMENT picker. We accept any type because Storage Access
-                // Framework can mislabel .json/.artha; the VM sniffs the real format.
-                val restorePicker = rememberLauncherForActivityResult(
-                    ActivityResultContracts.OpenDocument(),
-                ) { uri -> if (uri != null) vm.prepareRestore(context, uri) }
+            // ACTION_OPEN_DOCUMENT picker. We accept any type because Storage Access
+            // Framework can mislabel .json/.artha; the VM sniffs the real format.
+            val restorePicker = rememberLauncherForActivityResult(
+                ActivityResultContracts.OpenDocument(),
+            ) { uri -> if (uri != null) vm.prepareRestore(context, uri) }
 
-                DataSection(
-                    onExport = { vm.exportData(context) },
-                    onEncryptedExport = { passwordDialog = true },
-                    onRestore = { restoreConfirm = true },
-                    onReset = vm::requestReset,
+            DataSection(
+                onExport = { vm.exportData(context) },
+                onEncryptedExport = { passwordDialog = true },
+                onRestore = { restoreConfirm = true },
+                onReset = vm::requestReset,
+            )
+            if (passwordDialog) {
+                EncryptedExportPasswordDialog(
+                    onConfirm = { pwd ->
+                        vm.exportDataEncrypted(context, pwd.toCharArray())
+                        passwordDialog = false
+                    },
+                    onDismiss = { passwordDialog = false },
                 )
-                if (passwordDialog) {
-                    EncryptedExportPasswordDialog(
-                        onConfirm = { pwd ->
-                            vm.exportDataEncrypted(context, pwd.toCharArray())
-                            passwordDialog = false
-                        },
-                        onDismiss = { passwordDialog = false },
-                    )
-                }
-                if (restoreConfirm) {
-                    com.subramanya.artha.ui.common.ArthaAlertDialog(
-                        onDismissRequest = { restoreConfirm = false },
-                        title = stringResource(R.string.settings_data_restore_confirm_title),
-                        text = stringResource(R.string.settings_data_restore_confirm_body),
-                        confirmLabel = stringResource(R.string.settings_data_restore_confirm_yes),
-                        confirmDestructive = true,
-                        onConfirm = {
-                            restoreConfirm = false
-                            restorePicker.launch(arrayOf("*/*"))
-                        },
-                        cancelLabel = stringResource(R.string.common_cancel),
-                        onCancel = { restoreConfirm = false },
-                    )
-                }
-                // Encrypted backup picked -> ask for its password.
-                state.pendingEncryptedRestoreUri?.let { uri ->
-                    RestorePasswordDialog(
-                        onConfirm = { pwd -> vm.importDataEncrypted(context, uri, pwd.toCharArray()) },
-                        onDismiss = vm::cancelEncryptedRestore,
-                    )
-                }
-                // Surface restore outcome once, then acknowledge so it doesn't re-fire.
-                LaunchedEffect(state.restoreResult) {
-                    val msg = when (state.restoreResult) {
-                        RestoreResult.Idle -> null
-                        RestoreResult.Success -> R.string.settings_data_restore_success
-                        RestoreResult.WrongPassword -> R.string.settings_data_restore_wrong_password
-                        RestoreResult.InvalidFile -> R.string.settings_data_restore_invalid_file
-                    }
-                    if (msg != null) {
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-                        vm.acknowledgeRestore()
-                    }
-                }
-
-                HorizontalDivider()
-                SectionHeader(stringResource(R.string.settings_section_about))
-                ListItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onOpenAbout),
-                    headlineContent = { Text(stringResource(R.string.about_title)) },
-                    supportingContent = { Text(BuildConfig.VERSION_NAME) },
-                    trailingContent = { Icon(Icons.Filled.ChevronRight, contentDescription = null) },
+            }
+            if (restoreConfirm) {
+                com.subramanya.artha.ui.common.ArthaAlertDialog(
+                    onDismissRequest = { restoreConfirm = false },
+                    title = stringResource(R.string.settings_data_restore_confirm_title),
+                    text = stringResource(R.string.settings_data_restore_confirm_body),
+                    confirmLabel = stringResource(R.string.settings_data_restore_confirm_yes),
+                    confirmDestructive = true,
+                    onConfirm = {
+                        restoreConfirm = false
+                        restorePicker.launch(arrayOf("*/*"))
+                    },
+                    cancelLabel = stringResource(R.string.common_cancel),
+                    onCancel = { restoreConfirm = false },
                 )
+            }
+            // Encrypted backup picked -> ask for its password.
+            state.pendingEncryptedRestoreUri?.let { uri ->
+                RestorePasswordDialog(
+                    onConfirm = { pwd -> vm.importDataEncrypted(context, uri, pwd.toCharArray()) },
+                    onDismiss = vm::cancelEncryptedRestore,
+                )
+            }
+            // Surface restore outcome once, then acknowledge so it doesn't re-fire.
+            LaunchedEffect(state.restoreResult) {
+                val msg = when (state.restoreResult) {
+                    RestoreResult.Idle -> null
+                    RestoreResult.Success -> R.string.settings_data_restore_success
+                    RestoreResult.WrongPassword -> R.string.settings_data_restore_wrong_password
+                    RestoreResult.InvalidFile -> R.string.settings_data_restore_invalid_file
+                }
+                if (msg != null) {
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                    vm.acknowledgeRestore()
+                }
+            }
+
+            HorizontalDivider()
+            SectionHeader(stringResource(R.string.settings_section_about))
+            ListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onOpenAbout),
+                headlineContent = { Text(stringResource(R.string.about_title)) },
+                supportingContent = { Text(BuildConfig.VERSION_NAME) },
+                trailingContent = { Icon(Icons.Filled.ChevronRight, contentDescription = null) },
+            )
 
             Spacer(Modifier.height(32.dp))
         }
@@ -367,7 +349,6 @@ fun SettingsScreen(
             onCancel = vm::dismissFinalReset,
         )
     }
-
 }
 
 // ---------------- sections ----------------
@@ -447,12 +428,7 @@ private fun AppearanceSection(
 }
 
 @Composable
-private fun ThemeChip(
-    current: ThemeMode,
-    target: ThemeMode,
-    labelRes: Int,
-    onSelect: (ThemeMode) -> Unit,
-) {
+private fun ThemeChip(current: ThemeMode, target: ThemeMode, labelRes: Int, onSelect: (ThemeMode) -> Unit) {
     FilterChip(
         selected = current == target,
         onClick = { onSelect(target) },
@@ -554,12 +530,7 @@ private fun SecuritySection(
 }
 
 @Composable
-private fun DataSection(
-    onExport: () -> Unit,
-    onEncryptedExport: () -> Unit,
-    onRestore: () -> Unit,
-    onReset: () -> Unit,
-) {
+private fun DataSection(onExport: () -> Unit, onEncryptedExport: () -> Unit, onRestore: () -> Unit, onReset: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         ListItem(
             modifier = Modifier
@@ -630,14 +601,20 @@ private fun AiQuickEntrySection(
                 .clickable(enabled = !inFlight, onClick = onAddOrChange),
             headlineContent = {
                 Text(
-                    if (hasKey) stringResource(R.string.settings_ai_key_change)
-                    else stringResource(R.string.settings_ai_key_add),
+                    if (hasKey) {
+                        stringResource(R.string.settings_ai_key_change)
+                    } else {
+                        stringResource(R.string.settings_ai_key_add)
+                    },
                 )
             },
             supportingContent = {
                 Text(
-                    if (hasKey) stringResource(R.string.settings_ai_key_present_subtitle)
-                    else stringResource(R.string.settings_ai_key_absent_subtitle),
+                    if (hasKey) {
+                        stringResource(R.string.settings_ai_key_present_subtitle)
+                    } else {
+                        stringResource(R.string.settings_ai_key_absent_subtitle)
+                    },
                 )
             },
             trailingContent = { Icon(Icons.Filled.ChevronRight, contentDescription = null) },
@@ -667,11 +644,7 @@ private fun AiQuickEntrySection(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AiKeyDialog(
-    inFlight: Boolean,
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun AiKeyDialog(inFlight: Boolean, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     var key by remember { mutableStateOf("") }
     var reveal by remember { mutableStateOf(false) }
     AlertDialog(
@@ -698,8 +671,11 @@ private fun AiKeyDialog(
                     trailingIcon = {
                         TextButton(onClick = { reveal = !reveal }) {
                             Text(
-                                if (reveal) stringResource(R.string.settings_ai_key_dialog_hide)
-                                else stringResource(R.string.settings_ai_key_dialog_show),
+                                if (reveal) {
+                                    stringResource(R.string.settings_ai_key_dialog_hide)
+                                } else {
+                                    stringResource(R.string.settings_ai_key_dialog_show)
+                                },
                             )
                         }
                     },
@@ -731,10 +707,7 @@ private fun AiKeyDialog(
 }
 
 @Composable
-private fun EncryptedExportPasswordDialog(
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun EncryptedExportPasswordDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
     val match = password.isNotBlank() && password == confirm
@@ -786,10 +759,7 @@ private fun EncryptedExportPasswordDialog(
  * wrong one is reported (no data loss) rather than needing prevention.
  */
 @Composable
-private fun RestorePasswordDialog(
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun RestorePasswordDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     var password by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,

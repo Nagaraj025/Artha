@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedFilterChip
@@ -74,8 +73,8 @@ import com.subramanya.artha.domain.model.Category
 import com.subramanya.artha.domain.model.Transaction
 import com.subramanya.artha.ui.common.MonoMeta
 import com.subramanya.artha.ui.theme.ArthaAmountStyles
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.theme.IncomeSoft
@@ -91,10 +90,7 @@ import com.subramanya.artha.utils.TimeRange
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun TransactionsScreen(
-    modifier: Modifier = Modifier,
-    onOpenTransaction: (String) -> Unit = {},
-) {
+fun TransactionsScreen(modifier: Modifier = Modifier, onOpenTransaction: (String) -> Unit = {}) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
 
@@ -178,8 +174,11 @@ fun TransactionsScreen(
                                             selected = item.txn.id in state.selectedIds,
                                             selectionMode = state.isSelectionMode,
                                             onTap = {
-                                                if (state.isSelectionMode) vm.toggleSelected(item.txn.id)
-                                                else onOpenTransaction(item.txn.id)
+                                                if (state.isSelectionMode) {
+                                                    vm.toggleSelected(item.txn.id)
+                                                } else {
+                                                    onOpenTransaction(item.txn.id)
+                                                }
                                             },
                                             onLongPress = { vm.toggleSelected(item.txn.id) },
                                         )
@@ -285,10 +284,15 @@ private fun LedgerHeader(
                 TransactionSort.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option.displayLabel()) },
-                        onClick = { onSortChanged(option); onSortMenuToggle(false) },
+                        onClick = {
+                            onSortChanged(option)
+                            onSortMenuToggle(false)
+                        },
                         leadingIcon = if (sort == option) {
                             { Icon(Icons.Filled.FilterList, contentDescription = null) }
-                        } else null,
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -335,8 +339,11 @@ private fun TotalCell(label: String, value: Double, color: Color, dot: Color?, s
             Text(label, style = EyebrowStyle, color = Text3)
         }
         Spacer(Modifier.height(4.dp))
-        val rendered = if (sign && value >= 0) "+" + IndianNumberFormat.formatCompact(value)
-                       else IndianNumberFormat.formatCompact(value)
+        val rendered = if (sign && value >= 0) {
+            "+" + IndianNumberFormat.formatCompact(value)
+        } else {
+            IndianNumberFormat.formatCompact(value)
+        }
         Text(
             text = rendered,
             color = color,
@@ -442,7 +449,10 @@ private fun RangeFilterChip(current: TimeRange, onPick: (TimeRange) -> Unit) {
             TimeRange.entries.forEach { range ->
                 DropdownMenuItem(
                     text = { Text(rangeLabel(range)) },
-                    onClick = { onPick(range); expanded = false },
+                    onClick = {
+                        onPick(range)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -478,12 +488,18 @@ private fun TypeFilterChip(current: TransactionType?, onPick: (TransactionType?)
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.transactions_filter_any)) },
-                onClick = { onPick(null); expanded = false },
+                onClick = {
+                    onPick(null)
+                    expanded = false
+                },
             )
             TransactionType.entries.forEach { type ->
                 DropdownMenuItem(
                     text = { Text(type.displayLabel()) },
-                    onClick = { onPick(type); expanded = false },
+                    onClick = {
+                        onPick(type)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -504,12 +520,18 @@ private fun AccountFilterChip(accounts: List<Account>, currentId: String?, onPic
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.transactions_filter_any)) },
-                onClick = { onPick(null); expanded = false },
+                onClick = {
+                    onPick(null)
+                    expanded = false
+                },
             )
             accounts.forEach { acct ->
                 DropdownMenuItem(
                     text = { Text(acct.name) },
-                    onClick = { onPick(acct.id); expanded = false },
+                    onClick = {
+                        onPick(acct.id)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -530,12 +552,18 @@ private fun CardFilterChip(cards: List<Card>, currentId: String?, onPick: (Strin
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.transactions_filter_any)) },
-                onClick = { onPick(null); expanded = false },
+                onClick = {
+                    onPick(null)
+                    expanded = false
+                },
             )
             cards.forEach { card ->
                 DropdownMenuItem(
                     text = { Text(card.name) },
-                    onClick = { onPick(card.id); expanded = false },
+                    onClick = {
+                        onPick(card.id)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -557,12 +585,18 @@ private fun CategoryFilterChip(categories: List<Category>, currentId: String?, o
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.transactions_filter_any)) },
-                onClick = { onPick(null); expanded = false },
+                onClick = {
+                    onPick(null)
+                    expanded = false
+                },
             )
             parents.forEach { cat ->
                 DropdownMenuItem(
                     text = { Text(cat.name) },
-                    onClick = { onPick(cat.id); expanded = false },
+                    onClick = {
+                        onPick(cat.id)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -599,8 +633,11 @@ private fun TransactionRow(
     onTap: () -> Unit,
     onLongPress: () -> Unit,
 ) {
-    val container = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                    else Color.Transparent
+    val container = if (selected) {
+        MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        Color.Transparent
+    }
     val isIncome = txn.type.isIncomeLike()
     // Prefer the category-specific icon (Restaurant for food, DirectionsCar for
     // transport, etc.) so the row is scannable by shape; fall back to the type
@@ -702,8 +739,12 @@ private fun iconForType(type: TransactionType) = when (type) {
 }
 
 private fun TransactionType.isIncomeLike() = this in setOf(
-    TransactionType.INCOME, TransactionType.REFUND, TransactionType.CASHBACK,
-    TransactionType.INTEREST, TransactionType.LOAN_RECEIVED, TransactionType.GIFT_RECEIVED,
+    TransactionType.INCOME,
+    TransactionType.REFUND,
+    TransactionType.CASHBACK,
+    TransactionType.INTEREST,
+    TransactionType.LOAN_RECEIVED,
+    TransactionType.GIFT_RECEIVED,
 )
 
 private fun signedAmount(txn: Transaction): String {

@@ -23,11 +23,8 @@ private val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs,
 )
 
-private fun gFont(
-    name: String,
-    weight: FontWeight = FontWeight.Normal,
-    style: FontStyle = FontStyle.Normal,
-) = Font(googleFont = GoogleFont(name), fontProvider = provider, weight = weight, style = style)
+private fun gFont(name: String, weight: FontWeight = FontWeight.Normal, style: FontStyle = FontStyle.Normal) =
+    Font(googleFont = GoogleFont(name), fontProvider = provider, weight = weight, style = style)
 
 val PlusJakartaSans: FontFamily = FontFamily(
     gFont("Plus Jakarta Sans", FontWeight.Light),

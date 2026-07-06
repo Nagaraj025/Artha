@@ -1,7 +1,6 @@
 package com.subramanya.artha.data.mapper
 
 import com.subramanya.artha.data.entity.PendingSmsTransactionEntity
-import com.subramanya.artha.domain.model.PendingSmsTransaction
 import com.subramanya.artha.domain.model.SmsDirection
 import org.junit.Assert.assertEquals
 import org.junit.Test

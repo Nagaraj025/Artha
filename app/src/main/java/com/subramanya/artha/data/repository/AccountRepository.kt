@@ -23,22 +23,21 @@ class AccountRepository(
     private val scope: CoroutineScope,
 ) {
 
-    fun observeAll(): Flow<List<Account>> =
-        accountDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Account>> = accountDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeActive(): Flow<List<Account>> =
-        accountDao.observeActive().map { list -> list.map { it.toDomain() } }
+    fun observeActive(): Flow<List<Account>> = accountDao.observeActive().map { list -> list.map { it.toDomain() } }
 
-    fun observeArchived(): Flow<List<Account>> =
-        accountDao.observeArchived().map { list -> list.map { it.toDomain() } }
+    fun observeArchived(): Flow<List<Account>> = accountDao.observeArchived().map { list -> list.map { it.toDomain() } }
 
-    fun observeById(id: String): Flow<Account?> =
-        accountDao.observeById(id).map { it?.toDomain() }
+    fun observeById(id: String): Flow<Account?> = accountDao.observeById(id).map { it?.toDomain() }
 
     fun observeCurrentBalance(accountId: String): Flow<Double> =
         combine(accountDao.observeById(accountId), transactionDao.observeAll()) { account, txns ->
-            if (account == null) 0.0
-            else BalanceCalculator.computeAccountBalance(account.openingBalance, accountId, txns)
+            if (account == null) {
+                0.0
+            } else {
+                BalanceCalculator.computeAccountBalance(account.openingBalance, accountId, txns)
+            }
         }.flowOn(Dispatchers.Default).distinctUntilChanged()
 
     // Shared across all consumers (dashboard, reports, goals) so the single-pass balance compute
@@ -67,21 +66,17 @@ class AccountRepository(
 
     suspend fun upsert(account: Account) = accountDao.upsert(account.toEntity())
 
-    suspend fun upsertAll(accounts: List<Account>) =
-        accountDao.upsertAll(accounts.map(Account::toEntity))
+    suspend fun upsertAll(accounts: List<Account>) = accountDao.upsertAll(accounts.map(Account::toEntity))
 
     suspend fun update(account: Account) = accountDao.update(account.toEntity())
 
-    suspend fun archive(account: Account) =
-        accountDao.update(account.toEntity().copy(isArchived = true))
+    suspend fun archive(account: Account) = accountDao.update(account.toEntity().copy(isArchived = true))
 
-    suspend fun restore(account: Account) =
-        accountDao.update(account.toEntity().copy(isArchived = false))
+    suspend fun restore(account: Account) = accountDao.update(account.toEntity().copy(isArchived = false))
 
     /** True if any transaction references this account (source or destination) — a hard delete
      *  would orphan them, so callers must archive instead. */
-    suspend fun hasReferencingTransactions(id: String): Boolean =
-        transactionDao.countReferencing(id) > 0
+    suspend fun hasReferencingTransactions(id: String): Boolean = transactionDao.countReferencing(id) > 0
 
     suspend fun delete(account: Account) = accountDao.delete(account.toEntity())
 }

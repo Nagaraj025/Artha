@@ -80,7 +80,9 @@ class CardDetailViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CardDetailUiState())
 
-    fun requestArchive() { if (state.value.card != null) showArchiveConfirm.update { true } }
+    fun requestArchive() {
+        if (state.value.card != null) showArchiveConfirm.update { true }
+    }
     fun dismissArchiveConfirm() = showArchiveConfirm.update { false }
     fun confirmArchive(onArchived: () -> Unit) {
         val current = state.value.card ?: return
@@ -99,7 +101,9 @@ class CardDetailViewModel(
         }
     }
 
-    fun requestDelete() { if (state.value.card != null) showDeleteConfirm.update { true } }
+    fun requestDelete() {
+        if (state.value.card != null) showDeleteConfirm.update { true }
+    }
     fun dismissDeleteConfirm() = showDeleteConfirm.update { false }
     fun confirmDelete(onDeleted: () -> Unit) {
         val current = state.value.card ?: return
@@ -121,10 +125,7 @@ class CardDetailViewModel(
      * Mirrors the account chart approach: reuse [BalanceCalculator.computeCardOutstanding]
      * so the chart cannot drift from canonical balance rules.
      */
-    private fun chartPointsLast30Days(
-        cardId: String,
-        entities: List<com.subramanya.artha.data.entity.TransactionEntity>,
-    ): List<Double> {
+    private fun chartPointsLast30Days(cardId: String, entities: List<com.subramanya.artha.data.entity.TransactionEntity>): List<Double> {
         val today = Instant.fromEpochMilliseconds(clock()).toLocalDateTime(timeZone).date
         val out = ArrayList<Double>(CHART_DAYS)
         for (daysAgo in (CHART_DAYS - 1) downTo 0) {

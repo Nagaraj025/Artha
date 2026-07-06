@@ -58,10 +58,7 @@ import java.util.UUID
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountFormSheet(
-    editing: Account?,
-    onDismiss: () -> Unit,
-) {
+fun AccountFormSheet(editing: Account?, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val scope = rememberCoroutineScope()
@@ -117,8 +114,11 @@ fun AccountFormSheet(
                     onValueChange = { name = it },
                     placeholder = "HDFC Savings",
                     isError = showErrors && name.isBlank(),
-                    supportingText = if (showErrors && name.isBlank())
-                        stringResource(R.string.account_form_validation_name) else null,
+                    supportingText = if (showErrors && name.isBlank()) {
+                        stringResource(R.string.account_form_validation_name)
+                    } else {
+                        null
+                    },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words,
                         imeAction = ImeAction.Next,
@@ -154,8 +154,11 @@ fun AccountFormSheet(
                     onValueChange = { v -> last4 = v.filter { it.isDigit() }.take(4) },
                     placeholder = "7421",
                     isError = showErrors && !last4Valid,
-                    supportingText = if (showErrors && !last4Valid)
-                        stringResource(R.string.account_form_validation_last4) else null,
+                    supportingText = if (showErrors && !last4Valid) {
+                        stringResource(R.string.account_form_validation_last4)
+                    } else {
+                        null
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Next,
@@ -174,8 +177,11 @@ fun AccountFormSheet(
                     placeholder = "0",
                     suffix = "₹",
                     isError = showErrors && parsedBalance == null,
-                    supportingText = if (showErrors && parsedBalance == null)
-                        stringResource(R.string.account_form_validation_balance) else null,
+                    supportingText = if (showErrors && parsedBalance == null) {
+                        stringResource(R.string.account_form_validation_balance)
+                    } else {
+                        null
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done,
@@ -227,8 +233,7 @@ fun AccountFormSheet(
 
 private fun nextDisplayOrder(): Int = (System.currentTimeMillis() / 1000L).toInt()
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
 
 private val PALETTE: List<Long> = listOf(
     0xFF0F766EL, // acc-teal

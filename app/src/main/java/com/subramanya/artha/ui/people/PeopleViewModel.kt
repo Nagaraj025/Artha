@@ -17,24 +17,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /** A person plus their net balance (positive = they owe the user, negative = user owes them). */
-data class PersonWithNet(
-    val person: Person,
-    val netBalance: Double,
-)
+data class PersonWithNet(val person: Person, val netBalance: Double)
 
-data class PeopleUiState(
-    val people: List<PersonWithNet> = emptyList(),
-)
+data class PeopleUiState(val people: List<PersonWithNet> = emptyList())
 
 /**
  * People list state. Net balances are computed in a SINGLE pass over the transaction log
  * (O(txns + people)) off the main thread — the screen previously recomputed every person's
  * balance with an O(people × txns) scan inside the composable on every recomposition.
  */
-class PeopleViewModel(
-    private val personRepository: PersonRepository,
-    transactionRepository: TransactionRepository,
-) : ViewModel() {
+class PeopleViewModel(private val personRepository: PersonRepository, transactionRepository: TransactionRepository) : ViewModel() {
 
     val state: StateFlow<PeopleUiState> = combine(
         personRepository.observeAll(),
@@ -78,10 +70,8 @@ class PeopleViewModel(
     }
 }
 
-class PeopleViewModelFactory(
-    private val personRepository: PersonRepository,
-    private val transactionRepository: TransactionRepository,
-) : ViewModelProvider.Factory {
+class PeopleViewModelFactory(private val personRepository: PersonRepository, private val transactionRepository: TransactionRepository) :
+    ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(PeopleViewModel::class.java)) {

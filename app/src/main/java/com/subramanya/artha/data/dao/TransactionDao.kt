@@ -88,11 +88,7 @@ interface TransactionDao {
     suspend fun clearTagLinks(transactionId: String)
 
     @Transaction
-    suspend fun saveWithLinks(
-        transaction: TransactionEntity,
-        peopleIds: List<String>,
-        tagIds: List<String>,
-    ) {
+    suspend fun saveWithLinks(transaction: TransactionEntity, peopleIds: List<String>, tagIds: List<String>) {
         insertTransaction(transaction)
         clearPeopleLinks(transaction.id)
         clearTagLinks(transaction.id)

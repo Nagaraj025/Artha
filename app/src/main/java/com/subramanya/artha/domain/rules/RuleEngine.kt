@@ -1,6 +1,5 @@
 package com.subramanya.artha.domain.rules
 
-import com.subramanya.artha.data.entity.enums.PersonRelation
 import com.subramanya.artha.data.entity.enums.TransactionType
 import com.subramanya.artha.domain.model.Person
 import com.subramanya.artha.domain.model.Transaction
@@ -96,10 +95,12 @@ object RuleEngine {
     /** The cashflow direction a type implies for the affected account/card. */
     private fun directionClass(type: TransactionType): Direction = when (type) {
         TransactionType.EXPENSE, TransactionType.LOAN_GIVEN, TransactionType.GIFT_SENT,
-        TransactionType.INVESTMENT_BUY -> Direction.OUT
+        TransactionType.INVESTMENT_BUY,
+        -> Direction.OUT
         TransactionType.INCOME, TransactionType.REFUND, TransactionType.CASHBACK,
         TransactionType.INTEREST, TransactionType.LOAN_RECEIVED, TransactionType.GIFT_RECEIVED,
-        TransactionType.INVESTMENT_SELL -> Direction.IN
+        TransactionType.INVESTMENT_SELL,
+        -> Direction.IN
         TransactionType.TRANSFER, TransactionType.CARD_PAYMENT -> Direction.TWO_LEG
         TransactionType.ADJUSTMENT -> Direction.NEUTRAL
     }
@@ -117,12 +118,7 @@ object RuleEngine {
 
     // ---------- condition matcher ----------
 
-    private fun matches(
-        conditions: RuleConditions,
-        txn: Transaction,
-        knownPeople: List<Person>,
-        timeZone: TimeZone,
-    ): Boolean {
+    private fun matches(conditions: RuleConditions, txn: Transaction, knownPeople: List<Person>, timeZone: TimeZone): Boolean {
         if (conditions.items.isEmpty()) return true
         val results = conditions.items.map { evaluate(it, txn, knownPeople, timeZone) }
         return when (conditions.logic) {
@@ -131,48 +127,47 @@ object RuleEngine {
         }
     }
 
-    private fun evaluate(
-        condition: RuleCondition,
-        txn: Transaction,
-        knownPeople: List<Person>,
-        timeZone: TimeZone,
-    ): Boolean = when (condition) {
-        is RuleCondition.DescriptionContains -> {
-            if (condition.ignoreCase) txn.description.contains(condition.text, ignoreCase = true)
-            else txn.description.contains(condition.text)
-        }
-        is RuleCondition.AmountCompare -> when (condition.op) {
-            AmountOp.EQ -> txn.amount == condition.value
-            AmountOp.GT -> txn.amount > condition.value
-            AmountOp.LT -> txn.amount < condition.value
-            AmountOp.GTE -> txn.amount >= condition.value
-            AmountOp.LTE -> txn.amount <= condition.value
-        }
-        is RuleCondition.SourceIs -> {
-            val kindMatch = txn.sourceType == condition.kind
-            val idMatch = condition.id == null || txn.sourceId == condition.id
-            kindMatch && idMatch
-        }
-        is RuleCondition.DestinationIs -> {
-            val kindMatch = txn.destinationType == condition.kind
-            val idMatch = condition.id == null || txn.destinationId == condition.id
-            kindMatch && idMatch
-        }
-        is RuleCondition.PaymentAppIs -> txn.paymentApp == condition.app
-        is RuleCondition.TypeIs -> txn.type == condition.type
-        is RuleCondition.HasPersonRelation -> {
-            val tagged = knownPeople.filter { it.id in txn.peopleIds }
-            tagged.any { it.relation == condition.relation }
-        }
-        is RuleCondition.TimeOfDayBetween -> {
-            val local = Instant.fromEpochMilliseconds(txn.date).toLocalDateTime(timeZone)
-            val minuteOfDay = local.hour * 60 + local.minute
-            if (condition.fromMinuteOfDay <= condition.toMinuteOfDay) {
-                minuteOfDay in condition.fromMinuteOfDay..condition.toMinuteOfDay
-            } else {
-                // Wraps over midnight.
-                minuteOfDay >= condition.fromMinuteOfDay || minuteOfDay <= condition.toMinuteOfDay
+    private fun evaluate(condition: RuleCondition, txn: Transaction, knownPeople: List<Person>, timeZone: TimeZone): Boolean =
+        when (condition) {
+            is RuleCondition.DescriptionContains -> {
+                if (condition.ignoreCase) {
+                    txn.description.contains(condition.text, ignoreCase = true)
+                } else {
+                    txn.description.contains(condition.text)
+                }
+            }
+            is RuleCondition.AmountCompare -> when (condition.op) {
+                AmountOp.EQ -> txn.amount == condition.value
+                AmountOp.GT -> txn.amount > condition.value
+                AmountOp.LT -> txn.amount < condition.value
+                AmountOp.GTE -> txn.amount >= condition.value
+                AmountOp.LTE -> txn.amount <= condition.value
+            }
+            is RuleCondition.SourceIs -> {
+                val kindMatch = txn.sourceType == condition.kind
+                val idMatch = condition.id == null || txn.sourceId == condition.id
+                kindMatch && idMatch
+            }
+            is RuleCondition.DestinationIs -> {
+                val kindMatch = txn.destinationType == condition.kind
+                val idMatch = condition.id == null || txn.destinationId == condition.id
+                kindMatch && idMatch
+            }
+            is RuleCondition.PaymentAppIs -> txn.paymentApp == condition.app
+            is RuleCondition.TypeIs -> txn.type == condition.type
+            is RuleCondition.HasPersonRelation -> {
+                val tagged = knownPeople.filter { it.id in txn.peopleIds }
+                tagged.any { it.relation == condition.relation }
+            }
+            is RuleCondition.TimeOfDayBetween -> {
+                val local = Instant.fromEpochMilliseconds(txn.date).toLocalDateTime(timeZone)
+                val minuteOfDay = local.hour * 60 + local.minute
+                if (condition.fromMinuteOfDay <= condition.toMinuteOfDay) {
+                    minuteOfDay in condition.fromMinuteOfDay..condition.toMinuteOfDay
+                } else {
+                    // Wraps over midnight.
+                    minuteOfDay >= condition.fromMinuteOfDay || minuteOfDay <= condition.toMinuteOfDay
+                }
             }
         }
-    }
 }

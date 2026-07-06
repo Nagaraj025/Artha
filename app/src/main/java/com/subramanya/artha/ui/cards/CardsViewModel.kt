@@ -16,9 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CardsViewModel(
-    private val cardRepository: CardRepository,
-) : ViewModel() {
+class CardsViewModel(private val cardRepository: CardRepository) : ViewModel() {
 
     private val view = MutableStateFlow(CardsView.ACTIVE)
     private val reorderMode = MutableStateFlow(false)
@@ -84,9 +82,7 @@ class CardsViewModel(
     }
 }
 
-class CardsViewModelFactory(
-    private val cardRepository: CardRepository,
-) : ViewModelProvider.Factory {
+class CardsViewModelFactory(private val cardRepository: CardRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(CardsViewModel::class.java)) {

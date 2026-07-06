@@ -20,18 +20,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -40,8 +42,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,23 +64,13 @@ import com.subramanya.artha.data.entity.enums.InvestmentType
 import com.subramanya.artha.data.entity.enums.ValuationMode
 import com.subramanya.artha.domain.model.Investment
 import com.subramanya.artha.domain.model.InvestmentWithMetrics
-import com.subramanya.artha.ui.common.EditorialSubScreenHeader
 import com.subramanya.artha.ui.common.EmptyState
 import com.subramanya.artha.ui.theme.ArthaAmountStyles
 import com.subramanya.artha.utils.IndianNumberFormat
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Savings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InvestmentsScreen(
-    onBack: () -> Unit,
-    onOpenInvestment: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun InvestmentsScreen(onBack: () -> Unit, onOpenInvestment: (String) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: InvestmentsViewModel = viewModel(
@@ -236,8 +226,11 @@ private fun HeroCard(invested: Double, currentValue: Double) {
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = if (positive) Icons.AutoMirrored.Filled.TrendingUp
-                    else Icons.AutoMirrored.Filled.TrendingDown,
+                    imageVector = if (positive) {
+                        Icons.AutoMirrored.Filled.TrendingUp
+                    } else {
+                        Icons.AutoMirrored.Filled.TrendingDown
+                    },
                     contentDescription = null,
                     tint = gainColor,
                 )
@@ -346,11 +339,7 @@ private fun AllocationBar(rows: List<com.subramanya.artha.domain.model.Investmen
 // ---------------- view toggle ----------------
 
 @Composable
-private fun ViewToggleRow(
-    current: InvestmentsView,
-    onShowAll: () -> Unit,
-    onShowByType: () -> Unit,
-) {
+private fun ViewToggleRow(current: InvestmentsView, onShowAll: () -> Unit, onShowByType: () -> Unit) {
     // horizontalScroll keeps chips on one line on narrow phones (Categories/Transactions
     // already do the same).
     Row(
@@ -386,13 +375,7 @@ private fun TypeHeader(type: InvestmentType) {
 // ---------------- row ----------------
 
 @Composable
-private fun InvestmentRow(
-    row: InvestmentWithMetrics,
-    onTap: () -> Unit,
-    onEdit: () -> Unit,
-    onArchive: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun InvestmentRow(row: InvestmentWithMetrics, onTap: () -> Unit, onEdit: () -> Unit, onArchive: () -> Unit, onDelete: () -> Unit) {
     var menuOpen by remember { mutableStateOf(false) }
     val positive = row.absoluteGain >= 0.0
     val gainColor =
@@ -472,12 +455,18 @@ private fun InvestmentRow(
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.account_detail_action_edit)) },
-                            onClick = { menuOpen = false; onEdit() },
+                            onClick = {
+                                menuOpen = false
+                                onEdit()
+                            },
                             leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.account_detail_action_archive)) },
-                            onClick = { menuOpen = false; onArchive() },
+                            onClick = {
+                                menuOpen = false
+                                onArchive()
+                            },
                             leadingIcon = { Icon(Icons.Filled.Archive, contentDescription = null) },
                         )
                         DropdownMenuItem(
@@ -487,7 +476,10 @@ private fun InvestmentRow(
                                     color = com.subramanya.artha.ui.theme.Danger,
                                 )
                             },
-                            onClick = { menuOpen = false; onDelete() },
+                            onClick = {
+                                menuOpen = false
+                                onDelete()
+                            },
                             leadingIcon = {
                                 Icon(
                                     Icons.Filled.Delete,

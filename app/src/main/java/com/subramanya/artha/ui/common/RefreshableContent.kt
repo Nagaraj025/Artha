@@ -19,11 +19,7 @@ import kotlinx.coroutines.delay
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RefreshableContent(
-    feedbackMillis: Long = 400L,
-    modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
+fun RefreshableContent(feedbackMillis: Long = 400L, modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
     var isRefreshing by remember { mutableStateOf(false) }
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {

@@ -19,12 +19,7 @@ import androidx.compose.ui.unit.dp
  * Dashboard sections and the Transactions list.
  */
 @Composable
-fun EmptyState(
-    icon: ImageVector,
-    title: String,
-    body: String? = null,
-    modifier: Modifier = Modifier,
-) {
+fun EmptyState(icon: ImageVector, title: String, body: String? = null, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -76,8 +75,8 @@ import com.subramanya.artha.domain.model.Investment
 import com.subramanya.artha.domain.model.Person
 import com.subramanya.artha.domain.model.Tag
 import com.subramanya.artha.domain.model.Transaction
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.theme.InstrumentSerif
@@ -414,13 +413,7 @@ private fun SectionHeader(title: String, count: Int) {
 
 /** Generic entity row: 36dp Surface4 icon tile + title + subtitle + optional trailing. */
 @Composable
-private fun EntityRow(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    trailing: String? = null,
-) {
+private fun EntityRow(icon: ImageVector, title: String, subtitle: String, onClick: () -> Unit, trailing: String? = null) {
     Surface(
         color = Surface2,
         shape = RoundedCornerShape(14.dp),
@@ -491,8 +484,12 @@ private fun EntityRow(
 @Composable
 private fun TransactionResultRow(txn: Transaction, onClick: () -> Unit) {
     val incomey = txn.type in setOf(
-        TransactionType.INCOME, TransactionType.REFUND, TransactionType.CASHBACK,
-        TransactionType.INTEREST, TransactionType.LOAN_RECEIVED, TransactionType.GIFT_RECEIVED,
+        TransactionType.INCOME,
+        TransactionType.REFUND,
+        TransactionType.CASHBACK,
+        TransactionType.INTEREST,
+        TransactionType.LOAN_RECEIVED,
+        TransactionType.GIFT_RECEIVED,
     )
     val amountColor = if (incomey) Income else Expense
     val signed = (if (incomey) "" else "–") + "₹" + IndianNumberFormat.format(txn.amount).removePrefix("–₹").removePrefix("₹")
@@ -619,15 +616,21 @@ private fun NoResults(query: String) {
 
 @Suppress("unused")
 private val keepCategoryRef = Category::class
+
 @Suppress("unused")
 private val keepTagRef = Tag::class
+
 @Suppress("unused")
 private val keepInvRef = Investment::class
+
 @Suppress("unused")
 private val keepInsRef = Insurance::class
+
 @Suppress("unused")
 private val keepPersonRef = Person::class
+
 @Suppress("unused")
 private val keepAccountRef = Account::class
+
 @Suppress("unused")
 private val keepCardRef = Card::class

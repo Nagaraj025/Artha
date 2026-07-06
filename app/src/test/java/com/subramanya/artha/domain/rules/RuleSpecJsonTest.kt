@@ -61,7 +61,8 @@ class RuleSpecJsonTest {
             {"kind":"DescriptionContains","text":"foo","ignoreCase":true},
             {"kind":"InventedKindThatDoesNotExist","whatever":1},
             {"kind":"TypeIs","type":"EXPENSE"}
-        ]}""".trimIndent()
+        ]}
+        """.trimIndent()
         val decoded = RuleSpecJson.decodeConditions(mixed)
         assertEquals(ConditionLogic.ALL, decoded.logic)
         assertEquals(2, decoded.items.size)

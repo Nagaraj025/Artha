@@ -11,21 +11,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,21 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.height
-import com.subramanya.artha.ui.theme.EyebrowStyle
-import com.subramanya.artha.ui.theme.InstrumentSerif
-import com.subramanya.artha.ui.theme.Surface1
-import com.subramanya.artha.ui.theme.Teal300
-import com.subramanya.artha.ui.theme.Teal700
-import com.subramanya.artha.ui.theme.Text1
-import com.subramanya.artha.ui.theme.Text2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,14 +59,15 @@ import com.subramanya.artha.R
 import com.subramanya.artha.data.entity.enums.CategoryType
 import com.subramanya.artha.domain.model.Category
 import com.subramanya.artha.ui.common.EmptyState
+import com.subramanya.artha.ui.theme.Surface1
+import com.subramanya.artha.ui.theme.Teal700
+import com.subramanya.artha.ui.theme.Text1
+import com.subramanya.artha.ui.theme.Text2
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriesScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun CategoriesScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: CategoriesViewModel = viewModel(factory = CategoriesViewModelFactory(app.categoryRepository))
@@ -89,6 +76,7 @@ fun CategoriesScreen(
 
     var formMode: FormMode? by remember { mutableStateOf(null) }
     var pendingDelete: Category? by remember { mutableStateOf(null) }
+
     /** A pending toast for "blocked delete" cases (in-use or system). */
     var blockedDeleteMessage: String? by remember { mutableStateOf(null) }
 
@@ -147,10 +135,12 @@ fun CategoriesScreen(
                                     onDelete = {
                                         scope.launch {
                                             when {
-                                                parent.isSystem -> blockedDeleteMessage =
-                                                    context.getString(R.string.categories_system_delete_toast)
-                                                vm.usageCount(parent.id) > 0 -> blockedDeleteMessage =
-                                                    context.getString(R.string.categories_in_use_toast, vm.usageCount(parent.id))
+                                                parent.isSystem ->
+                                                    blockedDeleteMessage =
+                                                        context.getString(R.string.categories_system_delete_toast)
+                                                vm.usageCount(parent.id) > 0 ->
+                                                    blockedDeleteMessage =
+                                                        context.getString(R.string.categories_in_use_toast, vm.usageCount(parent.id))
                                                 else -> pendingDelete = parent
                                             }
                                         }
@@ -165,10 +155,12 @@ fun CategoriesScreen(
                                         onDelete = {
                                             scope.launch {
                                                 when {
-                                                    child.isSystem -> blockedDeleteMessage =
-                                                        context.getString(R.string.categories_system_delete_toast)
-                                                    vm.usageCount(child.id) > 0 -> blockedDeleteMessage =
-                                                        context.getString(R.string.categories_in_use_toast, vm.usageCount(child.id))
+                                                    child.isSystem ->
+                                                        blockedDeleteMessage =
+                                                            context.getString(R.string.categories_system_delete_toast)
+                                                    vm.usageCount(child.id) > 0 ->
+                                                        blockedDeleteMessage =
+                                                            context.getString(R.string.categories_in_use_toast, vm.usageCount(child.id))
                                                     else -> pendingDelete = child
                                                 }
                                             }
@@ -317,7 +309,10 @@ private fun ParentRow(
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.categories_action_edit)) },
-                        onClick = { menuOpen = false; onEdit() },
+                        onClick = {
+                            menuOpen = false
+                            onEdit()
+                        },
                     )
                     DropdownMenuItem(
                         text = {
@@ -326,7 +321,10 @@ private fun ParentRow(
                                 color = com.subramanya.artha.ui.theme.Danger,
                             )
                         },
-                        onClick = { menuOpen = false; onDelete() },
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
                         leadingIcon = {
                             Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger)
                         },
@@ -372,7 +370,10 @@ private fun ChildRow(child: Category, onEdit: () -> Unit, onDelete: () -> Unit) 
                     DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.categories_action_edit)) },
-                            onClick = { menuOpen = false; onEdit() },
+                            onClick = {
+                                menuOpen = false
+                                onEdit()
+                            },
                         )
                         DropdownMenuItem(
                             text = {
@@ -381,7 +382,10 @@ private fun ChildRow(child: Category, onEdit: () -> Unit, onDelete: () -> Unit) 
                                     color = com.subramanya.artha.ui.theme.Danger,
                                 )
                             },
-                            onClick = { menuOpen = false; onDelete() },
+                            onClick = {
+                                menuOpen = false
+                                onDelete()
+                            },
                             leadingIcon = {
                                 Icon(Icons.Filled.Delete, contentDescription = null, tint = com.subramanya.artha.ui.theme.Danger)
                             },

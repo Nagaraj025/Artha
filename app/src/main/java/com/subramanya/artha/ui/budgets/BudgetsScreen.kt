@@ -7,15 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,28 +21,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -72,7 +60,6 @@ import com.subramanya.artha.data.entity.enums.BudgetScope
 import com.subramanya.artha.domain.model.Budget
 import com.subramanya.artha.domain.model.BudgetWithProgress
 import com.subramanya.artha.ui.common.EmptyState
-import com.subramanya.artha.ui.theme.ArthaAmountStyles
 import com.subramanya.artha.ui.theme.Expense
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
@@ -90,10 +77,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetsScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun BudgetsScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val items by app.budgetRepository.observeActiveWithProgress()
@@ -152,7 +136,10 @@ fun BudgetsScreen(
         BudgetFormSheet(
             editing = (mode as? FormMode.Edit)?.budget,
             onSave = { resolved ->
-                scope.launch { app.budgetRepository.upsert(resolved); formMode = null }
+                scope.launch {
+                    app.budgetRepository.upsert(resolved)
+                    formMode = null
+                }
             },
             onDismiss = { formMode = null },
         )
@@ -167,7 +154,10 @@ fun BudgetsScreen(
             confirmLabel = stringResource(R.string.budgets_delete_confirm_yes),
             confirmDestructive = true,
             onConfirm = {
-                scope.launch { app.budgetRepository.delete(toDelete); pendingDelete = null }
+                scope.launch {
+                    app.budgetRepository.delete(toDelete)
+                    pendingDelete = null
+                }
             },
             cancelLabel = stringResource(R.string.common_cancel),
             onCancel = { pendingDelete = null },
@@ -187,11 +177,7 @@ private sealed interface FormMode {
  * an additional diagonally-striped extension shows the overage amount.
  */
 @Composable
-private fun BudgetRow(
-    row: BudgetWithProgress,
-    onTap: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun BudgetRow(row: BudgetWithProgress, onTap: () -> Unit, onDelete: () -> Unit) {
     val cap = row.budget.amount
     val spent = row.spent
     val ratio = if (cap <= 0.0) 0f else (spent / cap).toFloat()
@@ -301,11 +287,7 @@ private fun BudgetRow(
  * explicitly without resorting to a tiled BrushPaint hack.
  */
 @Composable
-private fun StripeOverflowBar(
-    fraction: Float,
-    baseColor: Color,
-    overflowColor: Color,
-) {
+private fun StripeOverflowBar(fraction: Float, baseColor: Color, overflowColor: Color) {
     val barHeightDp = 10.dp
     val cornerDp = 999.dp
     val capped = fraction.coerceAtLeast(0f)
@@ -371,11 +353,7 @@ private fun BudgetPeriod.label(): String = when (this) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BudgetFormSheet(
-    editing: Budget?,
-    onSave: (Budget) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun BudgetFormSheet(editing: Budget?, onSave: (Budget) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val categories by app.categoryRepository.observeAll()
@@ -524,5 +502,4 @@ private fun BudgetFormSheet(
     }
 }
 
-private fun Double.toPlainString(): String =
-    if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()
+private fun Double.toPlainString(): String = if (this == this.toLong().toDouble()) this.toLong().toString() else this.toString()

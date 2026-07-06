@@ -23,9 +23,7 @@ data class AiQuickEntryUiState(
     val errorMessage: String? = null,
 )
 
-class AiQuickEntryViewModel(
-    private val parser: AiQuickEntryParser,
-) : ViewModel() {
+class AiQuickEntryViewModel(private val parser: AiQuickEntryParser) : ViewModel() {
 
     private val _state = MutableStateFlow(AiQuickEntryUiState())
     val state: StateFlow<AiQuickEntryUiState> = _state.asStateFlow()
@@ -56,9 +54,7 @@ class AiQuickEntryViewModel(
     }
 }
 
-class AiQuickEntryViewModelFactory(
-    private val parser: AiQuickEntryParser,
-) : ViewModelProvider.Factory {
+class AiQuickEntryViewModelFactory(private val parser: AiQuickEntryParser) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(AiQuickEntryViewModel::class.java)) {

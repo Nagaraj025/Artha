@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.map
 
 class PendingTransactionRepository(private val dao: PendingTransactionDao) {
 
-    fun observeAll(): Flow<List<PendingSmsTransaction>> =
-        dao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<PendingSmsTransaction>> = dao.observeAll().map { list -> list.map { it.toDomain() } }
 
     fun observeCount(): Flow<Int> = dao.observeCount()
 

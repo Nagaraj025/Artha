@@ -21,12 +21,7 @@ data class AccountDraft(
 }
 
 /** Persisted (in-memory only) drafts already committed via "Add another". */
-data class PendingAccount(
-    val name: String,
-    val type: AccountType,
-    val institution: String?,
-    val openingBalance: Double,
-)
+data class PendingAccount(val name: String, val type: AccountType, val institution: String?, val openingBalance: Double)
 
 data class OnboardingUiState(
     val name: String = "",

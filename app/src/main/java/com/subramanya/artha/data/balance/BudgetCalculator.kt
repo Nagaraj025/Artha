@@ -53,32 +53,25 @@ object BudgetCalculator {
     }
 
     /** Sum of EXPENSE transactions in [bounds] that match the budget's scope. */
-    fun spentIn(
-        budget: Budget,
-        bounds: BudgetPeriodBounds,
-        transactions: List<Transaction>,
-    ): Double = transactions.asSequence()
+    fun spentIn(budget: Budget, bounds: BudgetPeriodBounds, transactions: List<Transaction>): Double = transactions.asSequence()
         .filter { it.type == TransactionType.EXPENSE }
         .filter { it.date in bounds.startMillis until bounds.endMillis }
         .filter { txn ->
             when (budget.scope) {
                 BudgetScope.OVERALL -> true
-                BudgetScope.CATEGORY -> budget.categoryId != null &&
-                    (txn.categoryId == budget.categoryId || txn.subCategoryId == budget.categoryId)
+                BudgetScope.CATEGORY ->
+                    budget.categoryId != null &&
+                        (txn.categoryId == budget.categoryId || txn.subCategoryId == budget.categoryId)
             }
         }
         .sumOf { it.amount }
 
-    private fun bounds(
-        startDate: LocalDate,
-        endExclusive: LocalDate,
-        today: LocalDate,
-        timeZone: TimeZone,
-    ): BudgetPeriodBounds = BudgetPeriodBounds(
-        startMillis = startDate.atStartOfDayIn(timeZone).toEpochMilliseconds(),
-        endMillis = endExclusive.atStartOfDayIn(timeZone).toEpochMilliseconds(),
-        daysRemaining = today.daysUntil(endExclusive).coerceAtLeast(0),
-    )
+    private fun bounds(startDate: LocalDate, endExclusive: LocalDate, today: LocalDate, timeZone: TimeZone): BudgetPeriodBounds =
+        BudgetPeriodBounds(
+            startMillis = startDate.atStartOfDayIn(timeZone).toEpochMilliseconds(),
+            endMillis = endExclusive.atStartOfDayIn(timeZone).toEpochMilliseconds(),
+            daysRemaining = today.daysUntil(endExclusive).coerceAtLeast(0),
+        )
 
     private val kotlinx.datetime.DayOfWeek.isoDayNumber: Int
         get() = when (this) {

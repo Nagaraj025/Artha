@@ -17,28 +17,19 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 
-class CardRepository(
-    private val cardDao: CardDao,
-    private val transactionDao: TransactionDao,
-    private val scope: CoroutineScope,
-) {
+class CardRepository(private val cardDao: CardDao, private val transactionDao: TransactionDao, private val scope: CoroutineScope) {
 
-    fun observeAll(): Flow<List<Card>> =
-        cardDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Card>> = cardDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeActive(): Flow<List<Card>> =
-        cardDao.observeActive().map { list -> list.map { it.toDomain() } }
+    fun observeActive(): Flow<List<Card>> = cardDao.observeActive().map { list -> list.map { it.toDomain() } }
 
-    fun observeArchived(): Flow<List<Card>> =
-        cardDao.observeArchived().map { list -> list.map { it.toDomain() } }
+    fun observeArchived(): Flow<List<Card>> = cardDao.observeArchived().map { list -> list.map { it.toDomain() } }
 
-    fun observeById(id: String): Flow<Card?> =
-        cardDao.observeById(id).map { it?.toDomain() }
+    fun observeById(id: String): Flow<Card?> = cardDao.observeById(id).map { it?.toDomain() }
 
-    fun observeCurrentOutstanding(cardId: String): Flow<Double> =
-        transactionDao.observeAll().map { txns ->
-            BalanceCalculator.computeCardOutstanding(cardId, txns)
-        }.flowOn(Dispatchers.Default).distinctUntilChanged()
+    fun observeCurrentOutstanding(cardId: String): Flow<Double> = transactionDao.observeAll().map { txns ->
+        BalanceCalculator.computeCardOutstanding(cardId, txns)
+    }.flowOn(Dispatchers.Default).distinctUntilChanged()
 
     // Shared across consumers (dashboard, reports) so the single-pass compute runs once per change.
     private val activeWithBalances: Flow<List<CardWithBalance>> =
@@ -69,8 +60,7 @@ class CardRepository(
 
     /** True if any transaction references this card (source or destination) — a hard delete
      *  would orphan them, so callers must archive instead. */
-    suspend fun hasReferencingTransactions(id: String): Boolean =
-        transactionDao.countReferencing(id) > 0
+    suspend fun hasReferencingTransactions(id: String): Boolean = transactionDao.countReferencing(id) > 0
 
     suspend fun delete(card: Card) = cardDao.delete(card.toEntity())
 }

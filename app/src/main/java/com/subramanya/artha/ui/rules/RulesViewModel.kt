@@ -11,13 +11,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class RulesUiState(
-    val rules: List<TransactionRule> = emptyList(),
-)
+data class RulesUiState(val rules: List<TransactionRule> = emptyList())
 
-class RulesViewModel(
-    private val ruleRepository: TransactionRuleRepository,
-) : ViewModel() {
+class RulesViewModel(private val ruleRepository: TransactionRuleRepository) : ViewModel() {
 
     val state: StateFlow<RulesUiState> =
         ruleRepository.observeAll()
@@ -33,9 +29,7 @@ class RulesViewModel(
     }
 }
 
-class RulesViewModelFactory(
-    private val ruleRepository: TransactionRuleRepository,
-) : ViewModelProvider.Factory {
+class RulesViewModelFactory(private val ruleRepository: TransactionRuleRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass.isAssignableFrom(RulesViewModel::class.java)) {

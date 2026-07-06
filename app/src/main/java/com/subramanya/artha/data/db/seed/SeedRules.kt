@@ -195,20 +195,15 @@ internal object SeedRules {
         return rows
     }
 
-    private fun rule(
-        id: String,
-        name: String,
-        priority: Int,
-        conditions: RuleConditions,
-        actions: RuleActions,
-    ): TransactionRuleEntity = TransactionRuleEntity(
-        id = id,
-        name = name,
-        conditionsJson = RuleSpecJson.encodeConditions(conditions),
-        actionsJson = RuleSpecJson.encodeActions(actions),
-        priority = priority,
-        isActive = true,
-        isSystem = true,
-        createdAt = NOW,
-    )
+    private fun rule(id: String, name: String, priority: Int, conditions: RuleConditions, actions: RuleActions): TransactionRuleEntity =
+        TransactionRuleEntity(
+            id = id,
+            name = name,
+            conditionsJson = RuleSpecJson.encodeConditions(conditions),
+            actionsJson = RuleSpecJson.encodeActions(actions),
+            priority = priority,
+            isActive = true,
+            isSystem = true,
+            createdAt = NOW,
+        )
 }

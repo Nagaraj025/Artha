@@ -30,15 +30,14 @@ internal class RuleSeederCallback : RoomDatabase.Callback() {
         }
     }
 
-    private fun TransactionRuleEntity.toContentValues(): ContentValues =
-        ContentValues().apply {
-            put("id", id)
-            put("name", name)
-            put("conditions_json", conditionsJson)
-            put("actions_json", actionsJson)
-            put("priority", priority)
-            put("is_active", if (isActive) 1 else 0)
-            put("is_system", if (isSystem) 1 else 0)
-            put("created_at", createdAt)
-        }
+    private fun TransactionRuleEntity.toContentValues(): ContentValues = ContentValues().apply {
+        put("id", id)
+        put("name", name)
+        put("conditions_json", conditionsJson)
+        put("actions_json", actionsJson)
+        put("priority", priority)
+        put("is_active", if (isActive) 1 else 0)
+        put("is_system", if (isSystem) 1 else 0)
+        put("created_at", createdAt)
+    }
 }

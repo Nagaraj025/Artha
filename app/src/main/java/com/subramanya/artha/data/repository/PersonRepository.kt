@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.map
 
 class PersonRepository(private val personDao: PersonDao) {
 
-    fun observeAll(): Flow<List<Person>> =
-        personDao.observeAll().map { list -> list.map { it.toDomain() } }
+    fun observeAll(): Flow<List<Person>> = personDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     suspend fun getById(id: String): Person? = personDao.getById(id)?.toDomain()
 

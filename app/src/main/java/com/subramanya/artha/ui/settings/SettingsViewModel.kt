@@ -1,10 +1,10 @@
 package com.subramanya.artha.ui.settings
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import android.net.Uri
 import com.subramanya.artha.ai.AiQuickEntryParser
 import com.subramanya.artha.ai.KeyValidationResult
 import com.subramanya.artha.data.backup.BackupCodec
@@ -66,8 +66,10 @@ data class SettingsUiState(
 sealed interface RestoreResult {
     data object Idle : RestoreResult
     data object Success : RestoreResult
+
     /** Wrong password / not an Artha encrypted backup. */
     data object WrongPassword : RestoreResult
+
     /** File couldn't be read or parsed. The DB was NOT touched (parse precedes wipe). */
     data object InvalidFile : RestoreResult
 }
@@ -117,7 +119,11 @@ class SettingsViewModel(
     ) { lock, sms -> SecurityPrefs(lock, sms) }
 
     private val dialogFlags = combine(
-        firstResetDialog, finalResetDialog, wipeImportConfirm, pendingExport, dashboardPrefs,
+        firstResetDialog,
+        finalResetDialog,
+        wipeImportConfirm,
+        pendingExport,
+        dashboardPrefs,
     ) { first, final, wipe, export, vis ->
         DialogsAndVisibility(first, final, wipe, export, vis, importing = false, security = SecurityPrefs(false, false))
     }.combine(importingBundled) { bag, importing ->
@@ -185,11 +191,7 @@ class SettingsViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
-    private data class RestoreBag(
-        val isRestoring: Boolean,
-        val result: RestoreResult,
-        val pendingEncryptedUri: Uri?,
-    )
+    private data class RestoreBag(val isRestoring: Boolean, val result: RestoreResult, val pendingEncryptedUri: Uri?)
 
     private data class AiBag(
         val hasKey: Boolean,

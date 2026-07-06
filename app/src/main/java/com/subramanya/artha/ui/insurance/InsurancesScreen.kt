@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Delete
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,9 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,9 +57,8 @@ import com.subramanya.artha.R
 import com.subramanya.artha.data.entity.enums.InsuranceType
 import com.subramanya.artha.domain.model.Insurance
 import com.subramanya.artha.ui.common.EmptyState
-import com.subramanya.artha.ui.theme.ArthaAmountStyles
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
+import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.InstrumentSerif
 import com.subramanya.artha.ui.theme.Line1
@@ -83,11 +77,7 @@ import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InsurancesScreen(
-    onBack: () -> Unit,
-    onOpenInsurance: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun InsurancesScreen(onBack: () -> Unit, onOpenInsurance: (String) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: InsurancesViewModel = viewModel(
@@ -226,7 +216,9 @@ private fun HeroCard(annualTotal: Double, count: Int, dueSoonCount: Int) {
             val subtitle = stringResource(R.string.insurance_hero_subtitle, count)
             val withDue = if (dueSoonCount > 0) {
                 subtitle + " · " + stringResource(R.string.insurance_hero_due_soon, dueSoonCount)
-            } else subtitle
+            } else {
+                subtitle
+            }
             Text(
                 text = withDue,
                 style = TextStyle(
@@ -306,13 +298,7 @@ private fun TypeHeader(type: InsuranceType) {
 // ---------------- row ----------------
 
 @Composable
-private fun InsuranceRow(
-    insurance: Insurance,
-    onTap: () -> Unit,
-    onEdit: () -> Unit,
-    onArchive: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun InsuranceRow(insurance: Insurance, onTap: () -> Unit, onEdit: () -> Unit, onArchive: () -> Unit, onDelete: () -> Unit) {
     var menuOpen by remember { mutableStateOf(false) }
     val due = insurance.nextPremiumDate
     val daysUntil = due?.let {
@@ -349,10 +335,12 @@ private fun InsuranceRow(
                 Spacer(Modifier.height(2.dp))
                 val parts = buildList {
                     add(insurance.provider)
-                    add(stringResource(
-                        R.string.insurance_row_premium_fmt,
-                        IndianNumberFormat.format(insurance.premiumAmount),
-                    ))
+                    add(
+                        stringResource(
+                            R.string.insurance_row_premium_fmt,
+                            IndianNumberFormat.format(insurance.premiumAmount),
+                        ),
+                    )
                     due?.let {
                         val label = when {
                             daysUntil == null -> ""
@@ -409,12 +397,18 @@ private fun InsuranceRow(
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.account_detail_action_edit)) },
-                        onClick = { menuOpen = false; onEdit() },
+                        onClick = {
+                            menuOpen = false
+                            onEdit()
+                        },
                         leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.account_detail_action_archive)) },
-                        onClick = { menuOpen = false; onArchive() },
+                        onClick = {
+                            menuOpen = false
+                            onArchive()
+                        },
                         leadingIcon = { Icon(Icons.Filled.Archive, contentDescription = null) },
                     )
                     DropdownMenuItem(
@@ -424,7 +418,10 @@ private fun InsuranceRow(
                                 color = Expense,
                             )
                         },
-                        onClick = { menuOpen = false; onDelete() },
+                        onClick = {
+                            menuOpen = false
+                            onDelete()
+                        },
                         leadingIcon = {
                             Icon(
                                 Icons.Filled.Delete,

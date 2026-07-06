@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,27 +20,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,8 +55,6 @@ import com.subramanya.artha.R
 import com.subramanya.artha.data.entity.enums.PersonRelation
 import com.subramanya.artha.domain.model.Person
 import com.subramanya.artha.ui.common.EmptyState
-import com.subramanya.artha.ui.theme.ArthaAmountStyles
-import com.subramanya.artha.ui.theme.EyebrowStyle
 import com.subramanya.artha.ui.theme.Expense
 import com.subramanya.artha.ui.theme.IbmPlexMono
 import com.subramanya.artha.ui.theme.Income
@@ -73,23 +62,17 @@ import com.subramanya.artha.ui.theme.InstrumentSerif
 import com.subramanya.artha.ui.theme.Line1
 import com.subramanya.artha.ui.theme.Surface1
 import com.subramanya.artha.ui.theme.Surface2
-import com.subramanya.artha.ui.theme.Surface4
 import com.subramanya.artha.ui.theme.Teal300
 import com.subramanya.artha.ui.theme.Teal700
 import com.subramanya.artha.ui.theme.Teal900
 import com.subramanya.artha.ui.theme.Text1
-import com.subramanya.artha.ui.theme.Text2
 import com.subramanya.artha.ui.theme.Text3
 import com.subramanya.artha.utils.IndianNumberFormat
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PeopleScreen(
-    onBack: () -> Unit,
-    onOpenPerson: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
-) {
+fun PeopleScreen(onBack: () -> Unit, onOpenPerson: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: PeopleViewModel = viewModel(
@@ -191,12 +174,7 @@ private sealed interface PersonFormMode {
 }
 
 @Composable
-private fun PersonRow(
-    person: Person,
-    netBalance: Double,
-    onTap: () -> Unit,
-    onDelete: () -> Unit,
-) {
+private fun PersonRow(person: Person, netBalance: Double, onTap: () -> Unit, onDelete: () -> Unit) {
     val positive = netBalance >= 0.0
     val amountColor = when {
         netBalance == 0.0 -> Text3
@@ -302,11 +280,7 @@ private fun PersonRelation.label(): String = when (this) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PersonFormSheet(
-    editing: Person?,
-    onSave: (Person) -> Unit,
-    onDismiss: () -> Unit,
-) {
+internal fun PersonFormSheet(editing: Person?, onSave: (Person) -> Unit, onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var name by remember(editing) { mutableStateOf(editing?.name.orEmpty()) }
     var relation by remember(editing) { mutableStateOf(editing?.relation ?: PersonRelation.FRIEND) }

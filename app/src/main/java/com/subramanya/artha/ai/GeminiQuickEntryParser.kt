@@ -16,10 +16,8 @@ import org.json.JSONObject
  * restarting the app. An empty key short-circuits to [AiQuickEntryResult.NoApiKey]
  * so the UI shows a friendly hint instead of crashing.
  */
-class GeminiQuickEntryParser(
-    private val keyProvider: suspend () -> String,
-    private val modelName: String = "gemini-1.5-flash-latest",
-) : AiQuickEntryParser {
+class GeminiQuickEntryParser(private val keyProvider: suspend () -> String, private val modelName: String = "gemini-1.5-flash-latest") :
+    AiQuickEntryParser {
 
     /** Build a model on demand — keeps the parser stateless w.r.t. the live key. */
     private fun modelFor(key: String): GenerativeModel? =

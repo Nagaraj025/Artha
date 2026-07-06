@@ -65,23 +65,25 @@ class InvestmentValuationTest {
 
     // ---------- helpers ----------
 
-    private fun buy(from: String, to: String, amount: Double, idx: Int? = null): TransactionEntity =
-        txn(
-            type = TransactionType.INVESTMENT_BUY,
-            sourceKind = SourceKind.ACCOUNT, sourceId = from,
-            amount = amount,
-            destinationKind = SourceKind.INVESTMENT, destinationId = to,
-            idOverride = idx?.let { "txn-buy-$it" },
-        )
+    private fun buy(from: String, to: String, amount: Double, idx: Int? = null): TransactionEntity = txn(
+        type = TransactionType.INVESTMENT_BUY,
+        sourceKind = SourceKind.ACCOUNT,
+        sourceId = from,
+        amount = amount,
+        destinationKind = SourceKind.INVESTMENT,
+        destinationId = to,
+        idOverride = idx?.let { "txn-buy-$it" },
+    )
 
     /** An INTEREST credit posted INTO an investment (source = EXTERNAL, the bank/scheme). */
-    private fun interest(to: String, amount: Double): TransactionEntity =
-        txn(
-            type = TransactionType.INTEREST,
-            sourceKind = SourceKind.EXTERNAL, sourceId = "external",
-            amount = amount,
-            destinationKind = SourceKind.INVESTMENT, destinationId = to,
-        )
+    private fun interest(to: String, amount: Double): TransactionEntity = txn(
+        type = TransactionType.INTEREST,
+        sourceKind = SourceKind.EXTERNAL,
+        sourceId = "external",
+        amount = amount,
+        destinationKind = SourceKind.INVESTMENT,
+        destinationId = to,
+    )
 
     private fun txn(
         type: TransactionType,
@@ -91,34 +93,33 @@ class InvestmentValuationTest {
         destinationKind: SourceKind? = null,
         destinationId: String? = null,
         idOverride: String? = null,
-    ): TransactionEntity =
-        TransactionEntity(
-            id = idOverride ?: "txn-${idSeq++}",
-            type = type,
-            amount = amount,
-            currency = "INR",
-            date = 0L,
-            description = "test",
-            categoryId = null,
-            subCategoryId = null,
-            sourceType = sourceKind,
-            sourceId = sourceId,
-            destinationType = destinationKind,
-            destinationId = destinationId,
-            paymentApp = PaymentApp.OTHER,
-            place = null,
-            latitude = null,
-            longitude = null,
-            receiptUri = null,
-            notes = null,
-            taxSection = null,
-            recurringRuleId = null,
-            isSplit = false,
-            splitGroupId = null,
-            source = TransactionSource.MANUAL,
-            createdAt = 0L,
-            updatedAt = 0L,
-        )
+    ): TransactionEntity = TransactionEntity(
+        id = idOverride ?: "txn-${idSeq++}",
+        type = type,
+        amount = amount,
+        currency = "INR",
+        date = 0L,
+        description = "test",
+        categoryId = null,
+        subCategoryId = null,
+        sourceType = sourceKind,
+        sourceId = sourceId,
+        destinationType = destinationKind,
+        destinationId = destinationId,
+        paymentApp = PaymentApp.OTHER,
+        place = null,
+        latitude = null,
+        longitude = null,
+        receiptUri = null,
+        notes = null,
+        taxSection = null,
+        recurringRuleId = null,
+        isSplit = false,
+        splitGroupId = null,
+        source = TransactionSource.MANUAL,
+        createdAt = 0L,
+        updatedAt = 0L,
+    )
 
     private companion object {
         private const val EPS: Double = 1e-9

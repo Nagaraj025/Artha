@@ -121,7 +121,10 @@ class BackupRepository(private val db: AppDatabase) {
                 remaining.forEach { dao.upsert(it) }
                 return
             }
-            ready.forEach { dao.upsert(it); inserted.add(it.id) }
+            ready.forEach {
+                dao.upsert(it)
+                inserted.add(it.id)
+            }
             remaining = remaining.filterNot { it.id in inserted }
         }
     }

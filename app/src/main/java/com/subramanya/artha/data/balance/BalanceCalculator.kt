@@ -86,10 +86,7 @@ object BalanceCalculator {
      * account. [openingBalanceById] supplies each account's opening balance and also defines
      * which accounts to compute (transactions referencing other ids are ignored).
      */
-    fun computeAccountBalances(
-        openingBalanceById: Map<String, Double>,
-        transactions: List<TransactionEntity>,
-    ): Map<String, Double> {
+    fun computeAccountBalances(openingBalanceById: Map<String, Double>, transactions: List<TransactionEntity>): Map<String, Double> {
         val balances = HashMap(openingBalanceById)
         for (txn in transactions) {
             if (txn.sourceType == SourceKind.ACCOUNT) {
@@ -120,10 +117,7 @@ object BalanceCalculator {
      * card (pinned by BalanceBatchTest), O(transactions + cards). [cardIds] defines which cards
      * to compute; each starts at 0.0.
      */
-    fun computeCardOutstandings(
-        cardIds: Collection<String>,
-        transactions: List<TransactionEntity>,
-    ): Map<String, Double> {
+    fun computeCardOutstandings(cardIds: Collection<String>, transactions: List<TransactionEntity>): Map<String, Double> {
         val outstanding = HashMap<String, Double>(cardIds.size)
         for (id in cardIds) outstanding[id] = 0.0
         for (txn in transactions) {
@@ -188,11 +182,7 @@ object BalanceCalculator {
         }
     }
 
-    fun computeAccountBalance(
-        openingBalance: Double,
-        accountId: String,
-        transactions: List<TransactionEntity>,
-    ): Double {
+    fun computeAccountBalance(openingBalance: Double, accountId: String, transactions: List<TransactionEntity>): Double {
         var balance = openingBalance
         for (txn in transactions) {
             // money leaving this account (source side)
@@ -230,11 +220,7 @@ object BalanceCalculator {
      * Returns can be negative if the user has sold more than they bought (rare;
      * indicates partial profit-taking past the original principal).
      */
-    fun computeInvestmentInvested(
-        investmentId: String,
-        transactions: List<TransactionEntity>,
-        openingContribution: Double = 0.0,
-    ): Double {
+    fun computeInvestmentInvested(investmentId: String, transactions: List<TransactionEntity>, openingContribution: Double = 0.0): Double {
         var invested = openingContribution
         for (txn in transactions) {
             when (txn.type) {
@@ -255,10 +241,7 @@ object BalanceCalculator {
     }
 
     /** Interest credited INTO this investment (compounding deposits). */
-    fun computeInvestmentInterest(
-        investmentId: String,
-        transactions: List<TransactionEntity>,
-    ): Double {
+    fun computeInvestmentInterest(investmentId: String, transactions: List<TransactionEntity>): Double {
         var interest = 0.0
         for (txn in transactions) {
             if (txn.type == TransactionType.INTEREST &&
@@ -291,10 +274,7 @@ object BalanceCalculator {
                 computeInvestmentInterest(investmentId, transactions)
     }
 
-    fun computeCardOutstanding(
-        cardId: String,
-        transactions: List<TransactionEntity>,
-    ): Double {
+    fun computeCardOutstanding(cardId: String, transactions: List<TransactionEntity>): Double {
         var outstanding = 0.0
         for (txn in transactions) {
             // charges and credits applied directly to the card (source side)

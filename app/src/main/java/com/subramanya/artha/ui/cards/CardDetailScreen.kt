@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.CreditCard
@@ -25,21 +24,16 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Unarchive
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,7 +54,6 @@ import com.subramanya.artha.ArthaApplication
 import com.subramanya.artha.R
 import com.subramanya.artha.data.entity.enums.SourceKind
 import com.subramanya.artha.data.entity.enums.TransactionType
-import com.subramanya.artha.domain.model.Card as DomainCard
 import com.subramanya.artha.domain.model.Transaction
 import com.subramanya.artha.ui.accounts.BalanceLineChart
 import com.subramanya.artha.ui.common.EmptyState
@@ -70,15 +63,11 @@ import com.subramanya.artha.ui.transaction.AddTransactionViewModel
 import com.subramanya.artha.ui.transaction.AddTransactionViewModelFactory
 import com.subramanya.artha.ui.transaction.FundsEndpoint
 import com.subramanya.artha.utils.IndianNumberFormat
+import com.subramanya.artha.domain.model.Card as DomainCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDetailScreen(
-    cardId: String,
-    onBack: () -> Unit,
-    onOpenTransaction: (String) -> Unit = {},
-    modifier: Modifier = Modifier,
-) {
+fun CardDetailScreen(cardId: String, onBack: () -> Unit, onOpenTransaction: (String) -> Unit = {}, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: CardDetailViewModel = viewModel(
@@ -329,10 +318,11 @@ private fun Hero(card: DomainCard, state: CardDetailUiState) {
                 state.utilizationFraction?.let { fraction ->
                     com.subramanya.artha.ui.common.LinearMeter(
                         fraction = fraction,
-                        fillColor = if (fraction > 0.3f)
+                        fillColor = if (fraction > 0.3f) {
                             com.subramanya.artha.ui.theme.Ochre
-                        else
-                            com.subramanya.artha.ui.theme.Teal500,
+                        } else {
+                            com.subramanya.artha.ui.theme.Teal500
+                        },
                     )
                     Text(
                         text = stringResource(R.string.cards_utilization_label, (fraction * 100).toInt()),

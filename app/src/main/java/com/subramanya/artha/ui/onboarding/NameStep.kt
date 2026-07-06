@@ -20,11 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.subramanya.artha.R
 
 @Composable
-fun NameStep(
-    name: String,
-    onNameChanged: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun NameStep(name: String, onNameChanged: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()

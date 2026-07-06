@@ -1,6 +1,7 @@
 package com.subramanya.artha.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.Atm
@@ -39,7 +40,6 @@ import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.filled.Work
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
