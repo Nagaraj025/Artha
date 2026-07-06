@@ -51,7 +51,12 @@ fun ReviewScreen() {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
     val vm: ReviewViewModel = viewModel(
-        factory = ReviewViewModelFactory(app.pendingTransactionRepository, app.categoryRepository),
+        factory = ReviewViewModelFactory(
+            app.pendingTransactionRepository,
+            app.categoryRepository,
+            app.accountRepository,
+            app.cardRepository,
+        ),
     )
     val state by vm.state.collectAsState()
 
@@ -74,7 +79,7 @@ fun ReviewScreen() {
         )
         pendingPrefill?.let { item ->
             LaunchedEffect(item) {
-                txnVm.applyPendingSmsPrefill(item.pending, item.suggestedCategoryName)
+                txnVm.applyPendingSmsPrefill(item.pending, item.suggestedCategoryName, item.matchedFunds)
             }
         }
 

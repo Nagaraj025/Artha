@@ -163,18 +163,21 @@ class AddTransactionViewModel(
      * leak the previous item's source/tags/notes/category into the next item's sheet if the
      * user dismissed without saving.
      */
-    fun applyPendingSmsPrefill(pending: com.subramanya.artha.domain.model.PendingSmsTransaction, suggestedCategoryName: String?) {
+    fun applyPendingSmsPrefill(
+        pending: com.subramanya.artha.domain.model.PendingSmsTransaction,
+        suggestedCategoryName: String?,
+        matchedFunds: FundsEndpoint? = null,
+    ) {
+        val isDebit = pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT
         _state.value = AddTransactionUiState(
-            tab = if (pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT) {
-                TransactionTab.EXPENSE
-            } else {
-                TransactionTab.INCOME
-            },
+            tab = if (isDebit) TransactionTab.EXPENSE else TransactionTab.INCOME,
             amountText = pending.amount.toString(),
             description = pending.merchant ?: pending.sender,
             dateTimeMillis = pending.receivedAt,
             categoryId = pending.suggestedCategoryId,
             categoryDisplay = suggestedCategoryName,
+            source = if (isDebit) matchedFunds else null,
+            destination = if (isDebit) null else matchedFunds,
         )
     }
 
