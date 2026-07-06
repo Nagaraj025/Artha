@@ -207,4 +207,24 @@ class BankSmsParserTest {
         requireNotNull(result)
         assertEquals("RAJESH KUMAR", result.merchant)
     }
+
+    @Test
+    fun `extracts the card hint from 'ending with' phrasing`() {
+        val body = "Rs.339.00 spent on your SBI Credit Card ending with 0440 at Blinkit " +
+            "on 06-07-26 via UPI (Ref No. 655317701697). Trxn. not done by you?"
+        val result = BankSmsParser.parse("SBICRD", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals(339.0, result.amount, 0.001)
+        assertEquals("0440", result.accountHint)
+        assertEquals("Blinkit", result.merchant)
+    }
+
+    @Test
+    fun `extracts the account hint from 'ending in' phrasing`() {
+        val body = "Rs.1200.00 debited from your Account ending in 5678 on 06-07-26."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("5678", result.accountHint)
+    }
 }
