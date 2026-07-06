@@ -32,12 +32,14 @@ object BankSmsParser {
     private val CREDIT_KEYWORDS = listOf("credited", "credit", "received")
     private val AMOUNT_REGEX = Regex("""(?:Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)""", RegexOption.IGNORE_CASE)
 
-    // {0,20} (not {0,10}) so long connector phrasings bridge the anchor word to the digits, e.g.
-    // "Card ending with 0440" / "Account ending in 5678" (13-char gap). Safe because the account
-    // digits appear first in these messages and find() takes the leftmost match, so a later date
-    // ("06-07-26", no 3-6 consecutive-digit run reachable) or ref number (>20 chars away) can't win.
+    // The gap between the anchor ("a/c"/"account"/"card"/…) and the masked digits bridges ONLY
+    // genuine account-number phrasing tokens — "ending", "with"/"in", "no."/"no", mask chars
+    // (x/X/*) and whitespace — never arbitrary text. This captures real references like
+    // "Card ending with 0440" / "A/c XX1234" while rejecting a later unrelated number when NO
+    // masked account is present: e.g. "account debited for Rs.500…", "account. IMPS Ref no 123456"
+    // and "Card. Avl Lmt Rs.45000" all fail at the anchor (next token isn't a bridge word) → null.
     private val ACCOUNT_REGEX = Regex(
-        """(?:a/c|acct|account|card)[^\d]{0,20}(?:no\.?)?\s*[xX*]*(\d{3,6})""",
+        """(?:a/c|acct|account|card)(?:\s+ending)?(?:\s+(?:with|in))?\s*(?:no\.?)?\s*[xX*]*(\d{3,6})""",
         RegexOption.IGNORE_CASE,
     )
 

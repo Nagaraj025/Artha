@@ -227,4 +227,33 @@ class BankSmsParserTest {
         requireNotNull(result)
         assertEquals("5678", result.accountHint)
     }
+
+    @Test
+    fun `does not misread the transaction amount as account hint when no account number is present`() {
+        val body = "Your account debited for Rs.500 towards SIP mandate."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals(500.0, result.amount, 0.001)
+        assertNull(result.accountHint)
+    }
+
+    @Test
+    fun `does not misread an IMPS reference number as account hint`() {
+        val body = "Rs.5000 credited to your account. IMPS Ref no 123456 from RAMESH."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.CREDIT, result.direction)
+        assertNull(result.accountHint)
+    }
+
+    @Test
+    fun `does not misread the available limit as account hint`() {
+        val body = "Rs.500 spent on Card. Avl Lmt Rs.45000."
+        val result = BankSmsParser.parse("SBICRD", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals(500.0, result.amount, 0.001)
+        assertNull(result.accountHint)
+    }
 }
