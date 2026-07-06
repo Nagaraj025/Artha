@@ -13,6 +13,7 @@ import com.subramanya.artha.data.repository.CategoryRepository
 import com.subramanya.artha.data.repository.GoalRepository
 import com.subramanya.artha.data.repository.InsuranceRepository
 import com.subramanya.artha.data.repository.InvestmentRepository
+import com.subramanya.artha.data.repository.PendingTransactionRepository
 import com.subramanya.artha.data.repository.PersonRepository
 import com.subramanya.artha.data.repository.RecurringRuleRepository
 import com.subramanya.artha.data.repository.SubscriptionRepository
@@ -82,6 +83,9 @@ class ArthaApplication : Application() {
     }
     val recurringRuleRepository: RecurringRuleRepository by lazy {
         RecurringRuleRepository(database.recurringRuleDao())
+    }
+    val pendingTransactionRepository: PendingTransactionRepository by lazy {
+        PendingTransactionRepository(database.pendingTransactionDao())
     }
 
     /** Backed by [GeminiQuickEntryParser] reading the user's stored key from
