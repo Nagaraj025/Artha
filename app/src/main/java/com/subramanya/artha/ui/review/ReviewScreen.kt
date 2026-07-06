@@ -1,15 +1,19 @@
 package com.subramanya.artha.ui.review
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -32,6 +36,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.subramanya.artha.ArthaApplication
 import com.subramanya.artha.R
 import com.subramanya.artha.domain.model.SmsDirection
+import com.subramanya.artha.ui.accounts.AccountFormSheet
+import com.subramanya.artha.ui.cards.CardFormSheet
 import com.subramanya.artha.ui.theme.Expense
 import com.subramanya.artha.ui.theme.Income
 import com.subramanya.artha.ui.transaction.AddTransactionSheet
@@ -62,6 +68,9 @@ fun ReviewScreen() {
 
     var showSheet by remember { mutableStateOf(false) }
     var pendingPrefill: ReviewItem? by remember { mutableStateOf(null) }
+    var chooserForHint: String? by remember { mutableStateOf(null) }
+    var addAccountLast4: String? by remember { mutableStateOf(null) }
+    var addCardLast4: String? by remember { mutableStateOf(null) }
 
     if (showSheet) {
         val txnVm: AddTransactionViewModel = viewModel(
@@ -101,6 +110,35 @@ fun ReviewScreen() {
                 showSheet = false
                 pendingPrefill = null
             },
+        )
+    }
+
+    chooserForHint?.let { hint ->
+        AddAccountKindChooser(
+            onChosen = { kind ->
+                when (kind) {
+                    AddAccountKind.ACCOUNT -> addAccountLast4 = hint
+                    AddAccountKind.CARD -> addCardLast4 = hint
+                }
+                chooserForHint = null
+            },
+            onDismiss = { chooserForHint = null },
+        )
+    }
+
+    addAccountLast4?.let { last4 ->
+        AccountFormSheet(
+            editing = null,
+            onDismiss = { addAccountLast4 = null },
+            prefillLast4 = last4,
+        )
+    }
+
+    addCardLast4?.let { last4 ->
+        CardFormSheet(
+            editing = null,
+            onDismiss = { addCardLast4 = null },
+            prefillLast4 = last4,
         )
     }
 
@@ -148,6 +186,16 @@ fun ReviewScreen() {
                                 )
                                 Text(text = item.pending.merchant ?: item.pending.sender)
                                 item.suggestedCategoryName?.let { Text(text = it) }
+                                if (item.hasUnmatchedHint) {
+                                    val hint = item.pending.accountHint.orEmpty()
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = stringResource(R.string.review_unmatched_account, hint),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.clickable { chooserForHint = hint },
+                                    )
+                                }
                             }
                         }
                     }

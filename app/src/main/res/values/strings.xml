@@ -513,6 +513,10 @@
         <item quantity="one">%d transaction to review</item>
         <item quantity="other">%d transactions to review</item>
     </plurals>
+    <string name="review_unmatched_account">Unknown account ending in %1$s — tap to add it</string>
+    <string name="review_add_kind_title">Add as account or card?</string>
+    <string name="review_add_kind_account">Bank account</string>
+    <string name="review_add_kind_card">Card</string>
     <string name="settings_security_sms_permission_denied">SMS auto-import needs SMS and notification permissions to work.</string>
     <string name="settings_section_ai">AI Quick Entry</string>
     <string name="settings_ai_enable_title">Enable AI Quick Entry</string>
