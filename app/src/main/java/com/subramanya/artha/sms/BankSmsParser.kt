@@ -36,33 +36,49 @@ object BankSmsParser {
         RegexOption.IGNORE_CASE,
     )
 
-    // Non-greedy capture stops at the nearest punctuation or common trailing-clause marker
-    // (e.g. "Avl Bal ...") instead of swallowing the rest of the SMS. A leading pronoun/article
-    // ("to your account", "at the branch") is excluded outright — null is preferable to garbage.
-    private val MERCHANT_REGEX = Regex(
-        """(?:at|to)\s+(?!your\b|the\b)([A-Za-z0-9 &.'-]{3,30}?)(?=[.,:]|\s+(?:avl|bal|on|dt|info)\b|$)""",
-        RegexOption.IGNORE_CASE,
-    )
-
-    // "ICICI ... debited ...; NAGARAJ MALEKOP credited." shape — the counterparty named right
-    // before the direction keyword that follows a semicolon. Tried FIRST in extractMerchant():
-    // this is the only strategy that can name a person in that phrasing, and it must run before
-    // MERCHANT_REGEX so a trailing "SMS BLOCK ... to <phone>" footer never gets a chance to win.
+    // "; NAME credited/debited" (ICICI-style). First char and body allow digits, '&', '-' so
+    // names like "3M INDIA LTD", "PVR-INOX", "H&M" survive. A letter must be present and no
+    // sentence-fragment filler word may appear (guards against "; the amount will be debited").
     private val NAMED_PARTY_REGEX = Regex(
-        """;\s*([A-Za-z][A-Za-z .]{2,40}?)\s+(?:credited|debited)\b""",
+        """;\s*([A-Za-z0-9][A-Za-z0-9 &.'-]{2,40}?)\s+(?:credited|debited)\b""",
         RegexOption.IGNORE_CASE,
     )
 
-    // UPI "from <VPA>" shape, e.g. "from harshita.5395@wahdfcbank". A single non-whitespace
-    // token is captured (VPAs have no internal spaces) rather than stopping at punctuation,
-    // because a VPA's username half can itself contain a "." that must NOT be treated as a
-    // sentence boundary (see extractMerchant()'s "preserves internal dots" test).
-    private val FROM_MERCHANT_REGEX = Regex("""\bfrom\s+(\S{3,60})""", RegexOption.IGNORE_CASE)
+    // A UPI VPA anywhere in the body, e.g. "harshita.5395@wahdfcbank" or "harish@okhdfcbank".
+    // The username (before '@') is the counterparty id regardless of whether the clause said
+    // "from" (credit) or "to" (debit). Tried before the from/at-to clause strategies so a real
+    // VPA counterparty always wins over a footer imperative ("...to report") or the sender's
+    // own bank name.
+    private val VPA_REGEX = Regex("""([A-Za-z0-9][A-Za-z0-9._-]{1,40})@[A-Za-z]{2,}""")
 
-    // Generic filler words that are never a real counterparty name, only ever seen when
-    // FROM_MERCHANT_REGEX's fallback fires on phrasing like "debited from A/c XX1234" that
-    // isn't naming anyone.
-    private val MERCHANT_STOPWORDS = setOf("a/c", "acct", "account", "your", "the")
+    // "from <payer>" up to a trailing boundary word / punctuation. Captures a multi-word human
+    // name ("RAMESH KUMAR") or a slash-delimited UPI ref blob ("UPI/<ref>/<NAME>/Payment") whole,
+    // for refineFromClause() to post-process.
+    private val FROM_CLAUSE_REGEX = Regex(
+        """\bfrom\s+(.+?)(?=\s+(?:on|at|to|ref|via|dt|dated|info|not|avl|bal)\b|[.,;]|$)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    // "at <merchant>" / "to <merchant>". A \b before (at|to) stops it matching the "to" inside a
+    // word like "Auto". Tried LAST — the from-clause strategy already ran, so a footer "...to
+    // report." only surfaces here when nothing better exists, and its all-digit/short results are
+    // still guarded by the caller.
+    private val MERCHANT_REGEX = Regex(
+        """\b(?:at|to)\s+(?!your\b|the\b)([A-Za-z0-9 &.'-]{3,30}?)(?=[.,:]|\s+(?:avl|bal|on|dt|info)\b|$)""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    // First-word fillers on a "from <X>" clause that mean the user's own side, not a counterparty.
+    private val FROM_STOPWORDS = setOf("a/c", "acct", "account", "your", "the", "wallet")
+
+    // Noise segments inside a "UPI/<ref>/<NAME>/<type>" blob — never the counterparty name.
+    private val UPI_NOISE_SEGMENTS = setOf("upi", "neft", "imps", "rtgs", "payment", "transfer", "p2a", "p2m")
+
+    // Words that reveal a "; ... credited" capture is a sentence fragment, not a real name.
+    private val NAMED_PARTY_FILLERS = setOf(
+        "the", "a", "an", "your", "will", "be", "been", "has", "have", "was", "is",
+        "amount", "account", "transaction", "of", "for",
+    )
 
     fun parse(sender: String, body: String, receivedAt: Long): ParsedBankSms? {
         val lower = body.lowercase()
@@ -112,29 +128,58 @@ object BankSmsParser {
     }
 
     /**
-     * Tries three merchant/counterparty extraction strategies in priority order, returning the
-     * first that yields a confident result:
-     *  1. [NAMED_PARTY_REGEX] — "; NAME credited/debited" (must run first: see its doc comment).
-     *  2. [MERCHANT_REGEX] — "at X" / "to X", rejecting an all-digit capture (e.g. a phone number
-     *     from a trailing "SMS BLOCK ... to <phone>" footer) rather than trusting it.
-     *  3. [FROM_MERCHANT_REGEX] — UPI "from <VPA>", truncated at "@"; rejected outright if the
-     *     captured token is a generic filler word ([MERCHANT_STOPWORDS]) rather than a real name.
+     * Extracts the counterparty/merchant name, trying four strategies in priority order and
+     * returning the first confident result:
+     *  1. [NAMED_PARTY_REGEX] — "; NAME credited/debited" (rejects sentence-fragment fillers).
+     *  2. [VPA_REGEX] — a UPI VPA anywhere; its username half is the counterparty (rejects an
+     *     all-digit, i.e. phone-number, VPA username, which is not a usable name).
+     *  3. [FROM_CLAUSE_REGEX] + [refineFromClause] — "from <payer>" (multi-word name or a
+     *     slash-delimited UPI ref blob).
+     *  4. [MERCHANT_REGEX] — "at X" / "to X", rejecting an all-digit capture (e.g. a phone number
+     *     from a trailing "SMS BLOCK ... to <phone>" footer).
      */
     private fun extractMerchant(body: String): String? {
         NAMED_PARTY_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { candidate ->
-            if (candidate.isNotEmpty()) return candidate
+            if (candidate.any(Char::isLetter) &&
+                candidate.split(' ').none { it.lowercase() in NAMED_PARTY_FILLERS }
+            ) {
+                return candidate
+            }
+        }
+
+        VPA_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { username ->
+            if (username.any(Char::isLetter)) return username
+        }
+
+        FROM_CLAUSE_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { clause ->
+            refineFromClause(clause)?.let { return it }
         }
 
         MERCHANT_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { candidate ->
-            if (candidate.any { ch -> ch.isLetter() }) return candidate
+            if (candidate.any(Char::isLetter)) return candidate
         }
 
-        FROM_MERCHANT_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { rawCandidate ->
-            val atIndex = rawCandidate.indexOf('@')
-            val candidate = if (atIndex >= 0) rawCandidate.substring(0, atIndex) else rawCandidate
-            if (candidate.isNotEmpty() && candidate.lowercase() !in MERCHANT_STOPWORDS) return candidate
-        }
+        return null
+    }
 
+    /** Post-processes a raw "from <clause>" capture into a counterparty name, or null if it is
+     *  the user's own side (A/c, wallet), an already-VPA-handled clause, or otherwise not a name. */
+    private fun refineFromClause(clause: String): String? {
+        // A VPA here was already handled by VPA_REGEX (strategy 2); an all-digit VPA username was
+        // intentionally dropped there, so don't resurrect the raw "<digits>@handle" blob.
+        if ('@' in clause) return null
+        // Reject the user's own side up front: "A/c XX1234" has first word "a/c", a stopword.
+        // This MUST run before the slash branch below, because "A/c" itself contains a '/' and
+        // would otherwise be mis-split into ["A", "c XX1234"] and yield a bogus "A" merchant.
+        val firstWord = clause.split(' ').firstOrNull()?.lowercase()
+        if (firstWord in FROM_STOPWORDS) return null
+        // Slash-delimited UPI ref: first letter-bearing, non-noise segment is the name.
+        if ('/' in clause) {
+            return clause.split('/')
+                .map { it.trim() }
+                .firstOrNull { it.any(Char::isLetter) && it.lowercase() !in UPI_NOISE_SEGMENTS }
+        }
+        if (clause.any(Char::isLetter)) return clause
         return null
     }
 }

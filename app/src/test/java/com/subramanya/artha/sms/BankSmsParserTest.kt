@@ -120,4 +120,87 @@ class BankSmsParserTest {
         requireNotNull(result)
         assertEquals(null, result.merchant)
     }
+
+    @Test
+    fun `captures a multi-word payer name from an SBI-style credit transfer`() {
+        val body = "Dear SBI UPI User, your A/c X1234 credited by Rs.500.00 on 05Jul26 transfer from RAMESH KUMAR Ref No 512345678901."
+        val result = BankSmsParser.parse("SBIINB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.CREDIT, result.direction)
+        assertEquals("RAMESH KUMAR", result.merchant)
+    }
+
+    @Test
+    fun `extracts the payer name from a slash-delimited UPI reference blob`() {
+        val body = "Rs.800.00 credited to your A/c XX7286 from UPI/402216758243/PHONEPE/Payment on 05-07-26."
+        val result = BankSmsParser.parse("KOTAKB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("PHONEPE", result.merchant)
+    }
+
+    @Test
+    fun `extracts the payee VPA username from a 'To' clause, not the sender's own bank`() {
+        val body = "Sent Rs.500.00 From HDFC Bank A/C x1234 To harish@okhdfcbank On 06-07-26. Not you? Call 18002586161."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals("harish", result.merchant)
+    }
+
+    @Test
+    fun `returns null merchant for a card-hold notice with a filler semicolon clause`() {
+        val body = "Rs.5000.00 blocked on your HDFC Card XX34; the amount will be debited within 3 working days."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(null, result.merchant)
+    }
+
+    @Test
+    fun `does not fabricate a merchant from the 'to' inside a word like Auto`() {
+        val body = "Rs.499.00 debited for Netflix Auto Pay on 06-07-26. Avl Bal Rs.2000.00."
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(null, result.merchant)
+    }
+
+    @Test
+    fun `returns null rather than a bare phone-number VPA as the merchant`() {
+        val body = "Received Rs.1.00 in your Kotak Bank AC X7286 from 9876543210@ybl on 06-07-26.UPI Ref:500747965294."
+        val result = BankSmsParser.parse("KOTAKB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.CREDIT, result.direction)
+        assertEquals(null, result.merchant)
+    }
+
+    @Test
+    fun `prefers the real UPI counterparty over a 'Call X to report' footer imperative`() {
+        val body = "Rs.500.00 credited to your Kotak Bank A/c X7286 from ramesh.kumar@oksbi on 06-07-26. Not you? Call 18002099191 to report."
+        val result = BankSmsParser.parse("KOTAKB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("ramesh.kumar", result.merchant)
+    }
+
+    @Test
+    fun `captures a hyphenated merchant name in a semicolon credited clause`() {
+        val body = "ICICI Bank Acct XX607 debited for Rs 300.00 on 06-Jul-26; PVR-INOX credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("PVR-INOX", result.merchant)
+    }
+
+    @Test
+    fun `captures a digit-leading merchant name in a semicolon credited clause`() {
+        val body = "ICICI Bank Acct XX607 debited for Rs 50.00 on 06-Jul-26; 3M INDIA LTD credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("3M INDIA LTD", result.merchant)
+    }
+
+    @Test
+    fun `captures a multi-word NEFT payer name from a 'from' clause without truncation`() {
+        val body = "Rs.5000.00 credited to your Kotak Bank A/c X7286 from RAJESH KUMAR on 06-07-26 via NEFT."
+        val result = BankSmsParser.parse("KOTAKB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("RAJESH KUMAR", result.merchant)
+    }
 }
