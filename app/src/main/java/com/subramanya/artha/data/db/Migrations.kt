@@ -53,14 +53,14 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
             """
             CREATE TABLE IF NOT EXISTS `pending_sms_transactions` (
             `id` TEXT NOT NULL,
-            `rawSmsBody` TEXT NOT NULL,
+            `raw_sms_body` TEXT NOT NULL,
             `sender` TEXT NOT NULL,
-            `receivedAt` INTEGER NOT NULL,
+            `received_at` INTEGER NOT NULL,
             `direction` TEXT NOT NULL,
             `amount` REAL NOT NULL,
-            `accountHint` TEXT,
+            `account_hint` TEXT,
             `merchant` TEXT,
-            `suggestedCategoryId` TEXT,
+            `suggested_category_id` TEXT,
             PRIMARY KEY(`id`))
             """.trimIndent(),
         )

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PendingTransactionDao {
-    @Query("SELECT * FROM pending_sms_transactions ORDER BY receivedAt DESC")
+    @Query("SELECT * FROM pending_sms_transactions ORDER BY received_at DESC")
     fun observeAll(): Flow<List<PendingSmsTransactionEntity>>
 
     @Query("SELECT COUNT(*) FROM pending_sms_transactions")

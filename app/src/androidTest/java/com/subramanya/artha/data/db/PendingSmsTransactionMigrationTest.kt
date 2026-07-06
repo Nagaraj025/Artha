@@ -35,7 +35,7 @@ class PendingSmsTransactionMigrationTest {
             migratedDb.execSQL(
                 """
                 INSERT INTO pending_sms_transactions
-                    (id, rawSmsBody, sender, receivedAt, direction, amount, accountHint, merchant, suggestedCategoryId)
+                    (id, raw_sms_body, sender, received_at, direction, amount, account_hint, merchant, suggested_category_id)
                 VALUES
                     ('p1', 'Rs.500 debited', 'HDFCBK', 1700000000000, 'DEBIT', 500.0, '1234', 'Swiggy', NULL)
                 """.trimIndent(),
@@ -45,6 +45,11 @@ class PendingSmsTransactionMigrationTest {
                 cursor.moveToFirst()
                 assertEquals("HDFCBK", cursor.getString(cursor.getColumnIndexOrThrow("sender")))
                 assertEquals(500.0, cursor.getDouble(cursor.getColumnIndexOrThrow("amount")), 0.0001)
+                assertEquals("1234", cursor.getString(cursor.getColumnIndexOrThrow("account_hint")))
+                assertEquals(
+                    1700000000000,
+                    cursor.getLong(cursor.getColumnIndexOrThrow("received_at")),
+                )
             }
         }
     }
