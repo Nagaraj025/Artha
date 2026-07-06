@@ -1,16 +1,17 @@
 package com.subramanya.artha
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.fragment.app.FragmentActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -32,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.subramanya.artha.data.importing.BankImporter
 import com.subramanya.artha.data.preferences.SettingsPreferences
 import com.subramanya.artha.data.preferences.ThemeMode
+import com.subramanya.artha.sms.PendingTransactionNotifier
 import com.subramanya.artha.ui.common.ArthaBottomBar
 import com.subramanya.artha.ui.common.ArthaTopBar
 import com.subramanya.artha.ui.lock.BiometricLockGate
@@ -47,6 +50,7 @@ import com.subramanya.artha.ui.splash.SplashScreen
 import com.subramanya.artha.ui.theme.ArthaTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,10 +60,31 @@ import kotlinx.coroutines.withContext
  * FragmentActivity host. Behaviour is otherwise unchanged from ComponentActivity.
  */
 class MainActivity : FragmentActivity() {
+    // Set when the activity is (re)launched from the pending-transaction notification's
+    // PendingIntent (see PendingTransactionNotifier.EXTRA_OPEN_REVIEW). MainApp observes
+    // this and navigates to the Review tab, then resets it to false so the flag doesn't
+    // re-fire on a later, unrelated resume.
+    private val openReviewRequested = MutableStateFlow(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { ArthaRoot() }
+        handleIntent(intent)
+        setContent { ArthaRoot(openReviewRequested) }
+    }
+
+    // launchMode="singleTop" routes a re-tap of the notification here instead of
+    // recreating the Activity, so we must pick up the new intent's extra manually.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(PendingTransactionNotifier.EXTRA_OPEN_REVIEW, false) == true) {
+            openReviewRequested.value = true
+        }
     }
 }
 
@@ -85,7 +110,7 @@ private const val MIN_SPLASH_MILLIS: Long = 500L
 private const val CURRENT_BUNDLED_IMPORT_VERSION: Int = 3
 
 @Composable
-private fun ArthaRoot() {
+private fun ArthaRoot(openReviewRequested: MutableStateFlow<Boolean>) {
     val context = LocalContext.current
     val app = context.applicationContext as ArthaApplication
 
@@ -120,15 +145,15 @@ private fun ArthaRoot() {
     ArthaTheme(themeMode = themeMode, useDynamicColor = useDynamicColor) {
         // Biometric gate wraps the whole inner scope when enabled.
         if (biometricLock) {
-            BiometricLockGate { ArthaInner(app) }
+            BiometricLockGate { ArthaInner(app, openReviewRequested) }
         } else {
-            ArthaInner(app)
+            ArthaInner(app, openReviewRequested)
         }
     }
 }
 
 @Composable
-private fun ArthaInner(app: ArthaApplication) {
+private fun ArthaInner(app: ArthaApplication, openReviewRequested: MutableStateFlow<Boolean>) {
     // Triggers DB init + reads userName once; emits a Ready/NeedsOnboarding terminal state.
     // Also runs the bundled bank-statement importer when its tracked version is older
     // than [CURRENT_BUNDLED_IMPORT_VERSION] — that covers fresh installs AND post-upgrade
@@ -170,18 +195,30 @@ private fun ArthaInner(app: ArthaApplication) {
         is StartupState.Ready -> MainApp(
             settingsPreferences = app.settingsPreferences,
             initialName = state.userName,
+            openReviewRequested = openReviewRequested,
         )
     }
 }
 
 @Composable
-private fun MainApp(
-    settingsPreferences: SettingsPreferences,
-    initialName: String,
-) {
+private fun MainApp(settingsPreferences: SettingsPreferences, initialName: String, openReviewRequested: MutableStateFlow<Boolean>) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = ArthaDestination.fromRoute(backStackEntry?.destination?.route)
+
+    // Notification tap (or re-tap while already running, via singleTop + onNewIntent)
+    // requests a jump straight to the Review tab. Reset the flag after navigating so
+    // it doesn't re-fire on an unrelated recomposition/resume.
+    val shouldOpenReview by openReviewRequested.collectAsState()
+    LaunchedEffect(shouldOpenReview) {
+        if (shouldOpenReview) {
+            navController.navigate(ArthaDestination.Review.route) {
+                popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                launchSingleTop = true
+            }
+            openReviewRequested.value = false
+        }
+    }
 
     val userName by settingsPreferences.userName.collectAsState(initial = initialName)
     var showMoreSheet by remember { mutableStateOf(false) }
