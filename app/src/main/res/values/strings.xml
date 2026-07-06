@@ -307,6 +307,8 @@
     <string name="account_form_validation_name">Name is required</string>
     <string name="account_form_validation_balance">Enter a valid amount</string>
     <string name="account_form_validation_last4">Enter the last 3–6 digits</string>
+    <!-- Nudge badge on account/card list rows created before last-digits was required. -->
+    <string name="account_add_last_digits_badge">Add last digits</string>
 
     <!-- Account detail -->
     <string name="account_detail_back">Back</string>

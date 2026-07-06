@@ -2,6 +2,7 @@
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -245,7 +246,7 @@ private fun ActiveCardRow(
                 NetworkBadge(row.card.network.name)
             }
         },
-        supportingContent = { CardRowSupport(row = row) },
+        supportingContent = { CardRowSupport(row = row, onEdit = onEdit) },
         trailingContent = {
             if (reorderMode) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -471,15 +472,27 @@ private fun CreditCardTile(
                         ),
                     )
                 }
-                row.card.cardNumberLast4?.let {
+                val last4 = row.card.cardNumberLast4
+                if (!last4.isNullOrBlank()) {
                     Text(
-                        text = "•••• $it",
+                        text = "•••• $last4",
                         color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.85f),
                         style = androidx.compose.ui.text.TextStyle(
                             fontFamily = com.subramanya.artha.ui.theme.IbmPlexMono,
                             fontSize = 11.sp,
                             fontFeatureSettings = "tnum",
                         ),
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.account_add_last_digits_badge),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        modifier = Modifier
+                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(6.dp))
+                            .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.14f))
+                            .clickable(onClick = onEdit)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                     )
                 }
             }
@@ -570,7 +583,12 @@ private fun ArchivedCardRow(row: CardWithBalance, onRestore: () -> Unit, onDelet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CardRowSupport(row: CardWithBalance, showDueChip: Boolean = true, showUtilization: Boolean = true) {
+private fun CardRowSupport(
+    row: CardWithBalance,
+    showDueChip: Boolean = true,
+    showUtilization: Boolean = true,
+    onEdit: (() -> Unit)? = null,
+) {
     Column {
         val subtitle = formatSubtitle(row.card)
         if (subtitle != null) {
@@ -578,6 +596,15 @@ private fun CardRowSupport(row: CardWithBalance, showDueChip: Boolean = true, sh
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (onEdit != null && row.card.cardNumberLast4.isNullOrBlank()) {
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = stringResource(R.string.account_add_last_digits_badge),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable(onClick = onEdit),
             )
         }
         if (showUtilization && row.card.type == CardType.CREDIT) {

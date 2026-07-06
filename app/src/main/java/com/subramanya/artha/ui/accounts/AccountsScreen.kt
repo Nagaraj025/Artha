@@ -2,6 +2,7 @@
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -258,6 +259,15 @@ private fun ActiveAccountRow(
                         style = MaterialTheme.typography.bodySmall,
                         color = com.subramanya.artha.ui.theme.Text3,
                         maxLines = 1,
+                    )
+                }
+                if (row.account.accountNumberLast4.isNullOrBlank()) {
+                    androidx.compose.foundation.layout.Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.account_add_last_digits_badge),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = onEdit),
                     )
                 }
             }
