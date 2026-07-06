@@ -11,6 +11,7 @@ import com.subramanya.artha.data.dao.CategoryDao
 import com.subramanya.artha.data.dao.GoalDao
 import com.subramanya.artha.data.dao.InsuranceDao
 import com.subramanya.artha.data.dao.InvestmentDao
+import com.subramanya.artha.data.dao.PendingTransactionDao
 import com.subramanya.artha.data.dao.PersonDao
 import com.subramanya.artha.data.dao.RecurringRuleDao
 import com.subramanya.artha.data.dao.SubscriptionDao
@@ -24,6 +25,7 @@ import com.subramanya.artha.data.entity.CategoryEntity
 import com.subramanya.artha.data.entity.GoalEntity
 import com.subramanya.artha.data.entity.InsuranceEntity
 import com.subramanya.artha.data.entity.InvestmentEntity
+import com.subramanya.artha.data.entity.PendingSmsTransactionEntity
 import com.subramanya.artha.data.entity.PersonEntity
 import com.subramanya.artha.data.entity.RecurringRuleEntity
 import com.subramanya.artha.data.entity.SubscriptionEntity
@@ -52,8 +54,10 @@ import com.subramanya.artha.data.entity.TransactionTagCrossRef
         GoalEntity::class,
         SubscriptionEntity::class,
         RecurringRuleEntity::class,
+        // Phase 6 — SMS auto-detect
+        PendingSmsTransactionEntity::class,
     ],
-    version = 5,
+    version = 6,
     // Schemas are exported to app/schemas (room.schemaLocation in build.gradle.kts) so
     // MigrationTestHelper can validate migrations against the generated schema.
     exportSchema = true,
@@ -73,6 +77,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun goalDao(): GoalDao
     abstract fun subscriptionDao(): SubscriptionDao
     abstract fun recurringRuleDao(): RecurringRuleDao
+    abstract fun pendingTransactionDao(): PendingTransactionDao
     abstract fun backupDao(): BackupDao
 
     companion object {

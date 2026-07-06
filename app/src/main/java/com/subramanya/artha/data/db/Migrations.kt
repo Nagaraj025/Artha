@@ -46,3 +46,23 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         )
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `pending_sms_transactions` (
+            `id` TEXT NOT NULL,
+            `rawSmsBody` TEXT NOT NULL,
+            `sender` TEXT NOT NULL,
+            `receivedAt` INTEGER NOT NULL,
+            `direction` TEXT NOT NULL,
+            `amount` REAL NOT NULL,
+            `accountHint` TEXT,
+            `merchant` TEXT,
+            `suggestedCategoryId` TEXT,
+            PRIMARY KEY(`id`))
+            """.trimIndent(),
+        )
+    }
+}
