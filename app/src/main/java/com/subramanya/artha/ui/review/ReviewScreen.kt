@@ -78,17 +78,15 @@ fun ReviewScreen() {
             }
         }
 
-        // NOTE: AddTransactionSheet's own internal LaunchedEffect(state.savedAndClose) calls
-        // viewModel.acknowledgeClose() (which resets the VM's state back to defaults, flipping
-        // savedAndClose back to false) BEFORE it invokes onDismiss(). So checking
-        // `txnVm.state.value.savedAndClose` from inside onDismiss would always read false —
-        // the reset already happened. Instead we collect the state here ourselves and react to
-        // the true -> ... transition directly, independent of when/whether onDismiss fires, so
-        // the pending row is removed only on a genuine save and never on a plain sheet dismiss.
-        val txnState by txnVm.state.collectAsState()
-        LaunchedEffect(txnState.savedAndClose) {
-            if (txnState.savedAndClose) {
-                pendingPrefill?.let { vm.dismiss(it.pending.id) }
+        // AddTransactionSheet's own internal LaunchedEffect(state.savedAndClose) resets the VM's
+        // state back to defaults (flipping savedAndClose back to false) as part of closing the
+        // sheet — racing against that from here by watching the same boolean is fragile. Instead
+        // collect the VM's explicit one-shot `saveCompleted` signal, which is independent of
+        // that reset and of onDismiss's timing: it fires exactly once per genuine save, so the
+        // pending row is removed only then and never on a plain sheet dismiss.
+        LaunchedEffect(txnVm) {
+            txnVm.saveCompleted.collect {
+                pendingPrefill?.let { item -> vm.dismiss(item.pending.id) }
             }
         }
 

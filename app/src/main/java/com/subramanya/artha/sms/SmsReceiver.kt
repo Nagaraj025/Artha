@@ -28,30 +28,36 @@ class SmsReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (!app.settingsPreferences.smsAutoImportEnabled.first()) return@launch
+                // Best-effort background parse: any unexpected failure (bad DataStore read,
+                // Room insert failure, unexpected null) should just mean "no pending row created
+                // this time", not an uncaught exception crashing the app process in the
+                // background. runCatching swallows it; pendingResult.finish() still always runs.
+                runCatching {
+                    if (!app.settingsPreferences.smsAutoImportEnabled.first()) return@runCatching
 
-                val parsed = BankSmsParser.parse(sender, body, receivedAt) ?: return@launch
+                    val parsed = BankSmsParser.parse(sender, body, receivedAt) ?: return@runCatching
 
-                val rules = app.transactionRuleRepository.observeActive().first()
-                val people = app.personRepository.observeAll().first()
-                val ruleResult = suggestCategoryFor(parsed, rules, people)
+                    val rules = app.transactionRuleRepository.observeActive().first()
+                    val people = app.personRepository.observeAll().first()
+                    val ruleResult = suggestCategoryFor(parsed, rules, people)
 
-                app.pendingTransactionRepository.insert(
-                    PendingSmsTransaction(
-                        id = UUID.randomUUID().toString(),
-                        rawSmsBody = body,
-                        sender = sender,
-                        receivedAt = receivedAt,
-                        direction = parsed.direction,
-                        amount = parsed.amount,
-                        accountHint = parsed.accountHint,
-                        merchant = parsed.merchant,
-                        suggestedCategoryId = ruleResult.transaction.categoryId,
-                    ),
-                )
-
-                val count = app.pendingTransactionRepository.observeCount().first()
-                PendingTransactionNotifier.update(context, count)
+                    app.pendingTransactionRepository.insert(
+                        PendingSmsTransaction(
+                            id = UUID.randomUUID().toString(),
+                            rawSmsBody = body,
+                            sender = sender,
+                            receivedAt = receivedAt,
+                            direction = parsed.direction,
+                            amount = parsed.amount,
+                            accountHint = parsed.accountHint,
+                            merchant = parsed.merchant,
+                            suggestedCategoryId = ruleResult.transaction.categoryId,
+                        ),
+                    )
+                    // Notification update is handled process-wide by ArthaApplication's
+                    // observeCount() collector (see ArthaApplication.onCreate) — no need to
+                    // update it here too, that would just double-update on every SMS.
+                }
             } finally {
                 pendingResult.finish()
             }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * No DI framework in Phase 1. Repositories are lazy-built singletons attached to the
@@ -98,5 +99,16 @@ class ArthaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         com.subramanya.artha.sms.PendingTransactionNotifier.ensureChannel(this)
+        // Keep the ongoing "N transactions to review" notification in sync with the pending
+        // list for the whole process lifetime — not just on SMS arrival. Without this, an
+        // in-app dismiss (ReviewViewModel.dismiss) or save (last pending row removed) would
+        // leave the notification showing a stale count since setOngoing(true)/setAutoCancel(false)
+        // means it's never swiped away by the user. `pendingTransactionRepository` is `by lazy`,
+        // so referencing it here is safe regardless of its declaration order relative to appScope.
+        appScope.launch {
+            pendingTransactionRepository.observeCount().collect { count ->
+                com.subramanya.artha.sms.PendingTransactionNotifier.update(this@ArthaApplication, count)
+            }
+        }
     }
 }

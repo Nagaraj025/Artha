@@ -28,9 +28,12 @@ import com.subramanya.artha.domain.model.Person
 import com.subramanya.artha.domain.model.Tag
 import com.subramanya.artha.domain.model.Transaction
 import com.subramanya.artha.domain.rules.RuleEngine
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -64,6 +67,17 @@ class AddTransactionViewModel(
 
     private val _state = MutableStateFlow(AddTransactionUiState())
     val state: StateFlow<AddTransactionUiState> = _state.asStateFlow()
+
+    /**
+     * One-shot signal emitted exactly once per successful save — an explicit alternative to
+     * watching `state.savedAndClose` transition, for callers (like ReviewScreen) that need to
+     * react to "a save just completed" without racing [AddTransactionSheet]'s own internal
+     * effect that resets `savedAndClose` back to false via [acknowledgeClose]. Buffered with
+     * capacity 1 so an emission isn't lost if the collector isn't registered yet at the exact
+     * moment commitSave() runs.
+     */
+    private val _saveCompleted = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val saveCompleted: SharedFlow<Unit> = _saveCompleted.asSharedFlow()
 
     /**
      * Live lists for the From/To pickers; merged into a single [FundsEndpoint]
@@ -142,22 +156,26 @@ class AddTransactionViewModel(
      * SMS (amount/direction/merchant/date, plus an optional rule-suggested category); we
      * copy it straight into the form fields the same way [applyAiPrefill] does for AI Quick
      * Entry, leaving source/destination account resolution to the user.
+     *
+     * Builds from a fresh [AddTransactionUiState] rather than `current.copy(...)` — the Review
+     * tab reuses a single VM instance (scoped to the Review NavBackStackEntry) across opening
+     * and dismissing multiple different pending items in one visit. Copying off `current` would
+     * leak the previous item's source/tags/notes/category into the next item's sheet if the
+     * user dismissed without saving.
      */
     fun applyPendingSmsPrefill(pending: com.subramanya.artha.domain.model.PendingSmsTransaction, suggestedCategoryName: String?) {
-        _state.update { current ->
-            current.copy(
-                tab = if (pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT) {
-                    TransactionTab.EXPENSE
-                } else {
-                    TransactionTab.INCOME
-                },
-                amountText = pending.amount.toString(),
-                description = pending.merchant ?: pending.sender,
-                dateTimeMillis = pending.receivedAt,
-                categoryId = pending.suggestedCategoryId ?: current.categoryId,
-                categoryDisplay = suggestedCategoryName ?: current.categoryDisplay,
-            )
-        }
+        _state.value = AddTransactionUiState(
+            tab = if (pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT) {
+                TransactionTab.EXPENSE
+            } else {
+                TransactionTab.INCOME
+            },
+            amountText = pending.amount.toString(),
+            description = pending.merchant ?: pending.sender,
+            dateTimeMillis = pending.receivedAt,
+            categoryId = pending.suggestedCategoryId,
+            categoryDisplay = suggestedCategoryName,
+        )
     }
 
     /**
@@ -546,6 +564,7 @@ class AddTransactionViewModel(
             }
             transactionRepository.save(toSave)
             _state.update { it.copy(isSaving = false, savedAndClose = true) }
+            _saveCompleted.tryEmit(Unit)
         }
     }
 

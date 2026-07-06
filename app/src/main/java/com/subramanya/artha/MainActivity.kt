@@ -84,6 +84,10 @@ class MainActivity : FragmentActivity() {
     private fun handleIntent(intent: Intent?) {
         if (intent?.getBooleanExtra(PendingTransactionNotifier.EXTRA_OPEN_REVIEW, false) == true) {
             openReviewRequested.value = true
+            // Clear the extra from the retained intent so a later config-change/rotation
+            // (which re-delivers the same Intent instance via getIntent()) doesn't re-trigger
+            // navigation to Review after the user has since navigated elsewhere.
+            intent.removeExtra(PendingTransactionNotifier.EXTRA_OPEN_REVIEW)
         }
     }
 }

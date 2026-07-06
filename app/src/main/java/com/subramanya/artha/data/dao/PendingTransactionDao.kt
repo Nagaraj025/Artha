@@ -15,9 +15,6 @@ interface PendingTransactionDao {
     @Query("SELECT COUNT(*) FROM pending_sms_transactions")
     fun observeCount(): Flow<Int>
 
-    @Query("SELECT * FROM pending_sms_transactions WHERE id = :id LIMIT 1")
-    suspend fun getById(id: String): PendingSmsTransactionEntity?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: PendingSmsTransactionEntity)
 
