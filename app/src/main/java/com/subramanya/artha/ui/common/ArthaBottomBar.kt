@@ -48,6 +48,7 @@ fun ArthaBottomBar(
     currentDestination: ArthaDestination?,
     onItemSelected: (ArthaDestination) -> Unit,
     modifier: Modifier = Modifier,
+    reviewBadgeCount: Int = 0,
 ) {
     Column(
         modifier = modifier
@@ -68,6 +69,7 @@ fun ArthaBottomBar(
                     destination = dest,
                     selected = dest == currentDestination,
                     onClick = { onItemSelected(dest) },
+                    badgeCount = if (dest == ArthaDestination.Review) reviewBadgeCount else 0,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -81,6 +83,7 @@ private fun BottomTabItem(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    badgeCount: Int = 0,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pillBg = if (selected) Teal900 else Color.Transparent
@@ -104,12 +107,29 @@ private fun BottomTabItem(
                 .background(pillBg),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = destination.icon,
-                contentDescription = stringResource(destination.labelRes),
-                tint = tint,
-                modifier = Modifier.size(22.dp),
-            )
+            if (badgeCount > 0) {
+                androidx.compose.material3.BadgedBox(
+                    badge = {
+                        androidx.compose.material3.Badge {
+                            Text(text = if (badgeCount > 99) "99+" else badgeCount.toString())
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.labelRes),
+                        tint = tint,
+                        modifier = Modifier.size(22.dp),
+                    )
+                }
+            } else {
+                Icon(
+                    imageVector = destination.icon,
+                    contentDescription = stringResource(destination.labelRes),
+                    tint = tint,
+                    modifier = Modifier.size(22.dp),
+                )
+            }
         }
         Text(
             text = stringResource(destination.labelRes),

@@ -27,6 +27,7 @@ import com.subramanya.artha.ui.investments.InvestmentsScreen
 import com.subramanya.artha.ui.people.PeopleScreen
 import com.subramanya.artha.ui.recurring.RecurringScreen
 import com.subramanya.artha.ui.reports.ReportsScreen
+import com.subramanya.artha.ui.review.ReviewScreen
 import com.subramanya.artha.ui.rules.RulesScreen
 import com.subramanya.artha.ui.search.SearchScreen
 import com.subramanya.artha.ui.settings.AboutScreen
@@ -169,6 +170,9 @@ fun ArthaNavHost(
             CardsScreen(
                 onOpenCard = { id -> navController.navigate(SubRoutes.cardDetail(id)) },
             )
+        }
+        composable(ArthaDestination.Review.route) {
+            ReviewScreen()
         }
         composable(
             route = SubRoutes.ACCOUNT_DETAIL_PATTERN,

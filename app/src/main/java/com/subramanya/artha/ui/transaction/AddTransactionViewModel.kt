@@ -138,6 +138,32 @@ class AddTransactionViewModel(
     }
 
     /**
+     * SMS auto-detect Review tab handoff. The pending row is a structured parse of a bank
+     * SMS (amount/direction/merchant/date, plus an optional rule-suggested category); we
+     * copy it straight into the form fields the same way [applyAiPrefill] does for AI Quick
+     * Entry, leaving source/destination account resolution to the user.
+     */
+    fun applyPendingSmsPrefill(
+        pending: com.subramanya.artha.domain.model.PendingSmsTransaction,
+        suggestedCategoryName: String?,
+    ) {
+        _state.update { current ->
+            current.copy(
+                tab = if (pending.direction == com.subramanya.artha.domain.model.SmsDirection.DEBIT) {
+                    TransactionTab.EXPENSE
+                } else {
+                    TransactionTab.INCOME
+                },
+                amountText = pending.amount.toString(),
+                description = pending.merchant ?: pending.sender,
+                dateTimeMillis = pending.receivedAt,
+                categoryId = pending.suggestedCategoryId ?: current.categoryId,
+                categoryDisplay = suggestedCategoryName ?: current.categoryDisplay,
+            )
+        }
+    }
+
+    /**
      * Investment Detail "Add contribution" flow: pre-fill the sheet on the Invest tab
      * with the given investment pre-selected as the destination. The user still picks
      * the funding account (source) and the amount. Idempotent — safe to call from

@@ -186,6 +186,11 @@ private fun MainApp(
     val userName by settingsPreferences.userName.collectAsState(initial = initialName)
     var showMoreSheet by remember { mutableStateOf(false) }
 
+    // Badge count for the Review tab — how many SMS-detected transactions are awaiting
+    // user action (open Add Transaction pre-filled, or swipe away).
+    val app = LocalContext.current.applicationContext as ArthaApplication
+    val pendingReviewCount by app.pendingTransactionRepository.observeCount().collectAsState(initial = 0)
+
     // Show the global greeting top-bar only on the five bottom-nav destinations.
     // Sub-routes (Settings/Categories/Tags/About/details) bring their own TopAppBar
     // with a back button; stacking two would leave a giant gap above their title.
@@ -210,6 +215,7 @@ private fun MainApp(
         bottomBar = {
             ArthaBottomBar(
                 currentDestination = currentDestination,
+                reviewBadgeCount = pendingReviewCount,
                 onItemSelected = { destination ->
                     if (destination == ArthaDestination.More) {
                         showMoreSheet = true
