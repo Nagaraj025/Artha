@@ -44,6 +44,26 @@ object BankSmsParser {
         RegexOption.IGNORE_CASE,
     )
 
+    // "ICICI ... debited ...; NAGARAJ MALEKOP credited." shape — the counterparty named right
+    // before the direction keyword that follows a semicolon. Tried FIRST in extractMerchant():
+    // this is the only strategy that can name a person in that phrasing, and it must run before
+    // MERCHANT_REGEX so a trailing "SMS BLOCK ... to <phone>" footer never gets a chance to win.
+    private val NAMED_PARTY_REGEX = Regex(
+        """;\s*([A-Za-z][A-Za-z .]{2,40}?)\s+(?:credited|debited)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    // UPI "from <VPA>" shape, e.g. "from harshita.5395@wahdfcbank". A single non-whitespace
+    // token is captured (VPAs have no internal spaces) rather than stopping at punctuation,
+    // because a VPA's username half can itself contain a "." that must NOT be treated as a
+    // sentence boundary (see extractMerchant()'s "preserves internal dots" test).
+    private val FROM_MERCHANT_REGEX = Regex("""\bfrom\s+(\S{3,60})""", RegexOption.IGNORE_CASE)
+
+    // Generic filler words that are never a real counterparty name, only ever seen when
+    // FROM_MERCHANT_REGEX's fallback fires on phrasing like "debited from A/c XX1234" that
+    // isn't naming anyone.
+    private val MERCHANT_STOPWORDS = setOf("a/c", "acct", "account", "your", "the")
+
     fun parse(sender: String, body: String, receivedAt: Long): ParsedBankSms? {
         val lower = body.lowercase()
         if (EXCLUDE_KEYWORDS.any { lower.contains(it) }) return null
@@ -70,7 +90,7 @@ object BankSmsParser {
         if (amount <= 0.0) return null
 
         val accountHint = ACCOUNT_REGEX.find(body)?.groupValues?.get(1)
-        val merchant = MERCHANT_REGEX.find(body)?.groupValues?.get(1)?.trim()
+        val merchant = extractMerchant(body)
 
         return ParsedBankSms(
             sender = sender,
@@ -88,6 +108,33 @@ object BankSmsParser {
             val match = Regex("""\b${Regex.escape(word)}\b""").find(text)
             if (match != null) return match.range.first
         }
+        return null
+    }
+
+    /**
+     * Tries three merchant/counterparty extraction strategies in priority order, returning the
+     * first that yields a confident result:
+     *  1. [NAMED_PARTY_REGEX] — "; NAME credited/debited" (must run first: see its doc comment).
+     *  2. [MERCHANT_REGEX] — "at X" / "to X", rejecting an all-digit capture (e.g. a phone number
+     *     from a trailing "SMS BLOCK ... to <phone>" footer) rather than trusting it.
+     *  3. [FROM_MERCHANT_REGEX] — UPI "from <VPA>", truncated at "@"; rejected outright if the
+     *     captured token is a generic filler word ([MERCHANT_STOPWORDS]) rather than a real name.
+     */
+    private fun extractMerchant(body: String): String? {
+        NAMED_PARTY_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { candidate ->
+            if (candidate.isNotEmpty()) return candidate
+        }
+
+        MERCHANT_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { candidate ->
+            if (candidate.any { ch -> ch.isLetter() }) return candidate
+        }
+
+        FROM_MERCHANT_REGEX.find(body)?.groupValues?.get(1)?.trim()?.let { rawCandidate ->
+            val atIndex = rawCandidate.indexOf('@')
+            val candidate = if (atIndex >= 0) rawCandidate.substring(0, atIndex) else rawCandidate
+            if (candidate.isNotEmpty() && candidate.lowercase() !in MERCHANT_STOPWORDS) return candidate
+        }
+
         return null
     }
 }

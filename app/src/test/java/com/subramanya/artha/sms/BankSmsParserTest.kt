@@ -83,4 +83,41 @@ class BankSmsParserTest {
         val body = "Please give your consent for the KYC update process to continue using UPI worth Rs.500"
         assertNull(BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L))
     }
+
+    @Test
+    fun `extracts a UPI VPA merchant from a 'from' clause, truncated at the at-sign`() {
+        val body = "Received Rs.500.00 in your Kotak Bank AC X7286 from 8299260887singh@ybl on 06-07-26.UPI Ref:697502248275."
+        val result = BankSmsParser.parse("VM-KOTAKB-S", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.CREDIT, result.direction)
+        assertEquals(500.0, result.amount, 0.001)
+        assertEquals("8299260887singh", result.merchant)
+    }
+
+    @Test
+    fun `preserves internal dots in a VPA username while still truncating at the at-sign`() {
+        val body = "Received Rs.800.00 in your Kotak Bank AC X7286 from harshita.5395@wahdfcbank on 05-07-26.UPI Ref:125799986378."
+        val result = BankSmsParser.parse("VM-KOTAKB-S", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals("harshita.5395", result.merchant)
+    }
+
+    @Test
+    fun `extracts a named counterparty from a semicolon-delimited credited clause, not the SMS-BLOCK footer phone number`() {
+        val body = "ICICI Bank Acct XX607 debited for Rs 1.00 on 06-Jul-26; NAGARAJ MALEKOP credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(SmsDirection.DEBIT, result.direction)
+        assertEquals(1.0, result.amount, 0.001)
+        assertEquals("607", result.accountHint)
+        assertEquals("NAGARAJ MALEKOP", result.merchant)
+    }
+
+    @Test
+    fun `does not treat 'A-slash-c' as a merchant when there is no other named counterparty`() {
+        val body = "Rs.500.00 debited from A/c XX1234 on 06-07-26"
+        val result = BankSmsParser.parse("HDFCBK", body, 1_700_000_000_000L)
+        requireNotNull(result)
+        assertEquals(null, result.merchant)
+    }
 }
