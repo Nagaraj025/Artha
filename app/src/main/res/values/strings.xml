@@ -504,6 +504,14 @@
     <string name="settings_security_biometric_unavailable">Set up a screen lock or fingerprint in your device settings first — this phone can\'t prompt yet.</string>
     <string name="settings_security_sms">SMS auto-import (Phase 5)</string>
     <string name="settings_security_sms_body">Listen for bank transaction SMS and pre-fill them for your review. Requires SMS permissions; flipping this off revokes the listener.</string>
+    <string name="nav_review">Review</string>
+    <string name="review_empty_state">No pending transactions</string>
+    <string name="review_notification_channel_name">Pending transaction review</string>
+    <plurals name="review_notification_title">
+        <item quantity="one">%d transaction to review</item>
+        <item quantity="other">%d transactions to review</item>
+    </plurals>
+    <string name="settings_security_sms_permission_denied">SMS auto-import needs SMS and notification permissions to work.</string>
     <string name="settings_section_ai">AI Quick Entry</string>
     <string name="settings_ai_enable_title">Enable AI Quick Entry</string>
     <string name="settings_ai_enable_body">Show the \"Quick add with Gemini\" card on the Dashboard. Off by default.</string>

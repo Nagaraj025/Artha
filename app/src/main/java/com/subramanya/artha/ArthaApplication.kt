@@ -94,4 +94,9 @@ class ArthaApplication : Application() {
     val aiQuickEntryParser: AiQuickEntryParser by lazy {
         GeminiQuickEntryParser(keyProvider = { settingsPreferences.geminiApiKey.first() })
     }
+
+    override fun onCreate() {
+        super.onCreate()
+        com.subramanya.artha.sms.PendingTransactionNotifier.ensureChannel(this)
+    }
 }
