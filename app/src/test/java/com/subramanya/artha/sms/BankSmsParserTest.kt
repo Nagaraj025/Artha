@@ -104,7 +104,8 @@ class BankSmsParserTest {
 
     @Test
     fun `extracts a named counterparty from a semicolon-delimited credited clause, not the SMS-BLOCK footer phone number`() {
-        val body = "ICICI Bank Acct XX607 debited for Rs 1.00 on 06-Jul-26; NAGARAJ MALEKOP credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val body = "ICICI Bank Acct XX607 debited for Rs 1.00 on 06-Jul-26; NAGARAJ MALEKOP credited. " +
+            "UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
         val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
         requireNotNull(result)
         assertEquals(SmsDirection.DEBIT, result.direction)
@@ -174,7 +175,8 @@ class BankSmsParserTest {
 
     @Test
     fun `prefers the real UPI counterparty over a 'Call X to report' footer imperative`() {
-        val body = "Rs.500.00 credited to your Kotak Bank A/c X7286 from ramesh.kumar@oksbi on 06-07-26. Not you? Call 18002099191 to report."
+        val body = "Rs.500.00 credited to your Kotak Bank A/c X7286 from ramesh.kumar@oksbi on 06-07-26. " +
+            "Not you? Call 18002099191 to report."
         val result = BankSmsParser.parse("KOTAKB", body, 1_700_000_000_000L)
         requireNotNull(result)
         assertEquals("ramesh.kumar", result.merchant)
@@ -182,7 +184,8 @@ class BankSmsParserTest {
 
     @Test
     fun `captures a hyphenated merchant name in a semicolon credited clause`() {
-        val body = "ICICI Bank Acct XX607 debited for Rs 300.00 on 06-Jul-26; PVR-INOX credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val body = "ICICI Bank Acct XX607 debited for Rs 300.00 on 06-Jul-26; PVR-INOX credited. " +
+            "UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
         val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
         requireNotNull(result)
         assertEquals("PVR-INOX", result.merchant)
@@ -190,7 +193,8 @@ class BankSmsParserTest {
 
     @Test
     fun `captures a digit-leading merchant name in a semicolon credited clause`() {
-        val body = "ICICI Bank Acct XX607 debited for Rs 50.00 on 06-Jul-26; 3M INDIA LTD credited. UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
+        val body = "ICICI Bank Acct XX607 debited for Rs 50.00 on 06-Jul-26; 3M INDIA LTD credited. " +
+            "UPI:809737170158. Call 18002662 for dispute. SMS BLOCK 607 to 9215676766."
         val result = BankSmsParser.parse("ICICIB", body, 1_700_000_000_000L)
         requireNotNull(result)
         assertEquals("3M INDIA LTD", result.merchant)

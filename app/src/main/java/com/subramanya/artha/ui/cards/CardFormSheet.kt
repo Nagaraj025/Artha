@@ -92,16 +92,19 @@ fun CardFormSheet(editing: Card?, onDismiss: () -> Unit, prefillLast4: String? =
     val parsedDue = dueDayText.toIntOrNull()
     val last4Valid = last4.length in 3..6 && last4.all { it.isDigit() }
 
-    val isValid: Boolean = name.isNotBlank() && last4Valid && when (type) {
-        CardType.CREDIT -> (parsedLimit != null && parsedLimit > 0.0) &&
-            parsedStatement in 1..31 && parsedDue in 1..31
-        // DEBIT cards must point at a real account — that's how transactions
-        // hit the account balance. Previously this validated as `true` so a
-        // user could save a DEBIT card with no linkedAccountId, which then
-        // floated outside the account ledger.
-        CardType.DEBIT -> linkedAccountId != null
-        CardType.PREPAID -> true
-    }
+    val isValid: Boolean = name.isNotBlank() &&
+        last4Valid &&
+        when (type) {
+            CardType.CREDIT -> (parsedLimit != null && parsedLimit > 0.0) &&
+                parsedStatement in 1..31 &&
+                parsedDue in 1..31
+            // DEBIT cards must point at a real account — that's how transactions
+            // hit the account balance. Previously this validated as `true` so a
+            // user could save a DEBIT card with no linkedAccountId, which then
+            // floated outside the account ledger.
+            CardType.DEBIT -> linkedAccountId != null
+            CardType.PREPAID -> true
+        }
 
     val typeOptions = listOf(
         PillOption(CardType.CREDIT, stringResource(R.string.card_form_type_credit)),
