@@ -1,5 +1,7 @@
 package com.subramanya.artha
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,14 +10,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -40,6 +48,7 @@ import com.subramanya.artha.ui.theme.ArthaTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -83,6 +92,30 @@ private fun ArthaRoot() {
     val themeMode by app.settingsPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
     val useDynamicColor by app.settingsPreferences.useDynamicColor.collectAsState(initial = true)
     val biometricLock by app.settingsPreferences.biometricLockEnabled.collectAsState(initial = false)
+
+    // If the user revokes RECEIVE_SMS from system Settings while auto-import is still
+    // flagged on, flip the DataStore flag back off next time the app resumes — otherwise
+    // the Settings toggle would keep showing "on" for a listener that can no longer fire.
+    val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                coroutineScope.launch {
+                    val enabled = app.settingsPreferences.smsAutoImportEnabled.first()
+                    val granted = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECEIVE_SMS,
+                    ) == PackageManager.PERMISSION_GRANTED
+                    if (enabled && !granted) {
+                        app.settingsPreferences.setSmsAutoImportEnabled(false)
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     ArthaTheme(themeMode = themeMode, useDynamicColor = useDynamicColor) {
         // Biometric gate wraps the whole inner scope when enabled.

@@ -1,6 +1,8 @@
 ﻿package com.subramanya.artha.ui.settings
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -159,6 +161,21 @@ fun SettingsScreen(
 
                 HorizontalDivider()
                 SectionHeader(stringResource(R.string.settings_section_security))
+                val smsPermissionLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestMultiplePermissions(),
+                ) { grants ->
+                    val smsGranted = grants[Manifest.permission.RECEIVE_SMS] == true
+                    val notifGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        grants[Manifest.permission.POST_NOTIFICATIONS] == true
+                    } else {
+                        true
+                    }
+                    if (smsGranted && notifGranted) {
+                        vm.onSmsAutoImportChanged(true)
+                    } else {
+                        Toast.makeText(context, R.string.settings_security_sms_permission_denied, Toast.LENGTH_LONG).show()
+                    }
+                }
                 SecuritySection(
                     biometric = state.biometricLockEnabled,
                     smsImport = state.smsAutoImportEnabled,
@@ -176,7 +193,22 @@ fun SettingsScreen(
                             vm.onBiometricLockChanged(enabled)
                         }
                     },
-                    onSmsImportChanged = vm::onSmsAutoImportChanged,
+                    onSmsImportChanged = { enabled ->
+                        // Requesting permission on enable mirrors onBiometricChanged's pre-check
+                        // pattern: gate the ViewModel call behind a capability/consent check so we
+                        // never flip the DataStore flag on without the runtime grant backing it.
+                        if (enabled) {
+                            val permissions = buildList {
+                                add(Manifest.permission.RECEIVE_SMS)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    add(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }
+                            smsPermissionLauncher.launch(permissions.toTypedArray())
+                        } else {
+                            vm.onSmsAutoImportChanged(false)
+                        }
+                    },
                 )
 
                 HorizontalDivider()
