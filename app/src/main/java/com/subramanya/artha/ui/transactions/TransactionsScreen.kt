@@ -570,6 +570,36 @@ private fun CardFilterChip(cards: List<Card>, currentId: String?, onPick: (Strin
     }
 }
 
+/** One selectable row in the category filter — a category plus whether it is a sub-category
+ *  (rendered indented under its parent). */
+internal data class CategoryFilterRow(val category: Category, val isChild: Boolean)
+
+/**
+ * Flattens the full category list into filter rows: each parent (by displayOrder) followed by its
+ * own children (by displayOrder), then any orphan sub-category whose parent is absent. Every
+ * category appears exactly once — the filter must never silently drop sub-categories (the earlier
+ * `parentId == null`-only bug hid them all).
+ */
+internal fun flattenCategoryFilterRows(categories: List<Category>): List<CategoryFilterRow> {
+    val parents = categories.filter { it.parentId == null }.sortedBy { it.displayOrder }
+    val childrenByParent = categories.filter { it.parentId != null }.groupBy { it.parentId }
+    val emittedChildIds = mutableSetOf<String>()
+    return buildList {
+        parents.forEach { parent ->
+            add(CategoryFilterRow(parent, isChild = false))
+            childrenByParent[parent.id].orEmpty().sortedBy { it.displayOrder }.forEach { child ->
+                add(CategoryFilterRow(child, isChild = true))
+                emittedChildIds.add(child.id)
+            }
+        }
+        // Safety net: a sub-category whose parent is missing must still be selectable, so no
+        // category is ever hidden from the filter.
+        categories.filter { it.parentId != null && it.id !in emittedChildIds }
+            .sortedBy { it.displayOrder }
+            .forEach { add(CategoryFilterRow(it, isChild = false)) }
+    }
+}
+
 @Composable
 private fun CategoryFilterChip(categories: List<Category>, currentId: String?, onPick: (String?) -> Unit) {
     if (categories.isEmpty()) return
@@ -581,7 +611,7 @@ private fun CategoryFilterChip(categories: List<Category>, currentId: String?, o
             onClick = { expanded = true },
             label = { Text(currentName ?: stringResource(R.string.transactions_filter_category)) },
         )
-        val parents = remember(categories) { categories.filter { it.parentId == null } }
+        val rows = remember(categories) { flattenCategoryFilterRows(categories) }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.transactions_filter_any)) },
@@ -590,11 +620,11 @@ private fun CategoryFilterChip(categories: List<Category>, currentId: String?, o
                     expanded = false
                 },
             )
-            parents.forEach { cat ->
+            rows.forEach { row ->
                 DropdownMenuItem(
-                    text = { Text(cat.name) },
+                    text = { Text(if (row.isChild) "    ${row.category.name}" else row.category.name) },
                     onClick = {
-                        onPick(cat.id)
+                        onPick(row.category.id)
                         expanded = false
                     },
                 )
